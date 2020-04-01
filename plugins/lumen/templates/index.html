@@ -12,6 +12,7 @@
 {{ super() }}
 <link href="{{ url_for_asset('dataTables.bootstrap.min.css') }}" rel="stylesheet" type="text/css" >
 <link href="{{ url_for_asset('bootstrap-toggle.min.css') }}" rel="stylesheet" type="text/css">
+<link href="{{ url_for('lumen.static', filename='css/lumen.css') }}" rel="stylesheet" type="text/css">
 {% endblock %}
 
 {% block content %}
@@ -21,4 +22,5 @@
 
 {% block tail %}
   {{ super() }}
+  <script src="{{url_for('lumen.static',filename='js/main.js')}}"></script>
 {% endblock %}
