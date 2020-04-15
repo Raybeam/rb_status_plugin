@@ -1,6 +1,9 @@
+import inflection
+
+
 class Report:
     """
-    Report holds a Lumen report configuration.  It is used to build 
+    Report holds a Lumen report configuration.  It is used to build
     Lumen report DAGs
     """
 
@@ -27,6 +30,11 @@ class Report:
     @schedule.setter
     def schedule(self, val):
         self.__schedule = val
+
+    @property
+    def dag_id(self):
+        """ Returns a DAG ID based on the name of this report """
+        return inflection.underscore(inflection.parameterize("lumen %s" % self.name))
 
     @property
     def tests(self):

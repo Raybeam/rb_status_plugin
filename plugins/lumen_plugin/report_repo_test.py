@@ -9,7 +9,7 @@ class VariablesReportRepoTest(unittest.TestCase):
     dummy_test = """
             {
             "tests": [
-                "dag_name.operator_1", 
+                "dag_name.operator_1",
                 "dag_name.operator_3"
             ],
             "emails": ["bbriski@raybeam.com", "msadler@raybeam.com"],

@@ -1,14 +1,10 @@
-import json
-
 from airflow import DAG
 from airflow.operators.dummy_operator import DummyOperator
 from datetime import datetime, timedelta
 
-from airflow.models import Variable
 from airflow.utils.db import create_session
 
 from plugins.lumen_plugin.report_repo import VariablesReportRepo
-from plugins.lumen_plugin.report import Report
 
 # Default settings applied to all tests
 default_args = {
@@ -23,7 +19,9 @@ default_args = {
 
 
 def create_dag(report, default_args):
-    dag = DAG(report.name, schedule_interval=report.schedule, default_args=default_args)
+    dag = DAG(
+        report.dag_id, schedule_interval=report.schedule, default_args=default_args
+    )
 
     with dag:
         start = DummyOperator(task_id="start_dag")
