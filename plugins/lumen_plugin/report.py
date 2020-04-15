@@ -1,4 +1,3 @@
-
 class Report:
     def __init__(self, name):
         self.name = name
@@ -6,7 +5,7 @@ class Report:
         self.__tasks = None
         self.__schedule = None
 
-    @property 
+    @property
     def emails(self):
         return self.__emails
 
@@ -25,7 +24,7 @@ class Report:
     @property
     def tasks(self):
         return self.__tasks
-    
+
     @tasks.setter
     def tasks(self, val):
         self.__tasks = val

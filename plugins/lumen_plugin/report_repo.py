@@ -5,6 +5,7 @@ import abc
 from airflow.models import Variable
 from plugins.lumen_plugin.report import Report
 
+
 class ReportRepo(abc.ABC):
     @abc.abstractmethod
     def list(self):
@@ -14,8 +15,9 @@ class ReportRepo(abc.ABC):
     def get(self):
         pass
 
+
 class VariablesReportRepo(ReportRepo):
-    report_prefix = 'lumen_report_'
+    report_prefix = "lumen_report_"
 
     def __init__(self, session):
         self._session = session
@@ -31,7 +33,7 @@ class VariablesReportRepo(ReportRepo):
     def get(self, name):
         for (n, val) in self.each_from_db():
             if n == name:
-                return self.to_report(n, val) 
+                return self.to_report(n, val)
 
     def each_from_db(self):
         variables = self._session.query(Variable).all()
@@ -45,20 +47,20 @@ class VariablesReportRepo(ReportRepo):
 
     def to_report(self, name, v):
         r = Report(name)
-        r.emails = v['emails']
-        r.tests = v['tests']
-        r.schedule = v['schedule']
+        r.emails = v["emails"]
+        r.tests = v["tests"]
+        r.schedule = v["schedule"]
 
         return r
 
     @staticmethod
     def parse_variable_name(key):
-        m = re.search(r'^%s(.*)$' % VariablesReportRepo.report_prefix, key, re.I)
+        m = re.search(r"^%s(.*)$" % VariablesReportRepo.report_prefix, key, re.I)
         if m is None:
             return None
 
         name = m.group(1)
-        return name        
+        return name
 
     @staticmethod
     def parse_variable_val(json_val):
@@ -66,5 +68,3 @@ class VariablesReportRepo(ReportRepo):
             return json.loads(json_val)
         except json.decoder.JSONDecodeError:
             return None
-
-
