@@ -9,7 +9,7 @@ from plugins.lumen_plugin.report import Report
 class ReportRepo(abc.ABC):
     """
     ReportRepo is an abstract class that all classes must inherit from if
-    the intend on returning lists of reports from a repository.
+    they intend on returning lists of reports from a repository.
     """
 
     @abc.abstractmethod
