@@ -10,7 +10,7 @@ from airflow.utils.db import create_session
 from plugins.lumen_plugin.report_repo import VariablesReportRepo
 from plugins.lumen_plugin.report import Report
 
-# Default settings applied to all tasks
+# Default settings applied to all tests
 default_args = {
     "owner": "airflow",
     "depends_on_past": False,
