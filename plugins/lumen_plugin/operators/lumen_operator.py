@@ -2,7 +2,7 @@ from airflow.operators import BaseOperator
 from airflow.utils.decorators import apply_defaults
 from airflow.models.taskinstance import TaskInstance
 from airflow.utils.db import create_session
-
+from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 
 class LumenOperator(BaseOperator):
     """
@@ -33,9 +33,13 @@ class LumenOperator(BaseOperator):
         self.log.info("Querying postgres for %s's result.." % (self.test_name))
         # Query postgres and save to test_result
         with create_session() as curr_session:
-            output = curr_session.query(TaskInstance).filter(
-                TaskInstance.task_id == self.test_task_id,
-                TaskInstance.dag_id == self.test_dag_id,
-            ).order_by(TaskInstance.execution_date.desc()).first()
-            self.log.info("\n\n\nQuery output:\n%s\n\n\n" % output)
-        return True
+            try:
+                output = curr_session.query(TaskInstance).filter(
+                    TaskInstance.task_id == self.test_task_id,
+                    TaskInstance.dag_id == self.test_dag_id,
+                ).order_by(TaskInstance.execution_date.desc()).one()
+                self.log.info("\n\n\nQuery output:\n%s\n\n\n" % output)
+            except MultipleResultsFound:
+                self.log.info("Multiple Results Found")
+            except NoResultFound:
+                self.log.info("No latest result found for this task")
