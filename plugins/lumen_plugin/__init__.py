@@ -3,6 +3,10 @@ from airflow.plugins_manager import AirflowPlugin
 from flask import Blueprint
 from flask_appbuilder import BaseView as AppBuilderBaseView, expose
 
+from lumen_plugin.operators.lumen_operator import (
+    LumenOperator,
+)
+
 # Creating a flask appbuilder BaseView
 class LumenBuilderBaseView(AppBuilderBaseView):
     @expose("/")
@@ -29,7 +33,7 @@ bp = Blueprint(
 
 class LumenPlugin(AirflowPlugin):
     name = "lumen"
-    operators = []
+    operators = [LumenOperator]
     flask_blueprints = [bp]
     hooks = []
     executors = []
