@@ -33,13 +33,9 @@ class LumenOperator(BaseOperator):
         self.log.info("Querying postgres for %s's result.." % (self.test_name))
         # Query postgres and save to test_result
         with create_session() as curr_session:
-            try:
-                output = curr_session.query(TaskInstance).filter(
-                    TaskInstance.task_id == self.test_task_id,
-                    TaskInstance.dag_id == self.test_dag_id,
-                ).order_by(TaskInstance.execution_date.desc()).one()
-                self.log.info("\n\n\nQuery output:\n%s\n\n\n" % output)
-            except MultipleResultsFound:
-                self.log.info("Multiple Results Found")
-            except NoResultFound:
-                self.log.info("No latest result found for this task")
+            output = curr_session.query(TaskInstance).filter(
+                TaskInstance.task_id == self.test_task_id,
+                TaskInstance.dag_id == self.test_dag_id,
+            ).order_by(TaskInstance.execution_date.desc()).first()
+            if not output:
+                self.log.info("No task instance was for for this dag_id and task_id")
