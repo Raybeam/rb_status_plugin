@@ -32,6 +32,6 @@ class LumenOperator(BaseOperator):
         self.log.info("Querying postgres for %s's result.." % (self.test_name))
         # Query postgres and save to test_result
         with create_session() as curr_session:
-            output = urr_session.query(self.test_name).all()
+            output = curr_session.query(self.test_name).all()
             self.log.info("\n\n\nQuery output:\n%s\n\n\n" % output)
         return True
