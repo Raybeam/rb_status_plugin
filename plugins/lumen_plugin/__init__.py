@@ -19,6 +19,10 @@ from flask_appbuilder.security.decorators import has_access
 # from airflow import appbuilder
 
 
+from lumen_plugin.operators.lumen_operator import (
+    LumenOperator,
+)
+
 # Creating a flask appbuilder BaseView
 class LumenStatusView(AppBuilderBaseView):
     route_base = "/lumen"
@@ -179,7 +183,7 @@ bp = Blueprint(
 
 class LumenPlugin(AirflowPlugin):
     name = "lumen"
-    operators = []
+    operators = [LumenOperator]
     flask_blueprints = [bp]
     hooks = []
     executors = []
