@@ -2,7 +2,7 @@ from airflow.operators import BaseOperator
 from airflow.utils.decorators import apply_defaults
 from airflow.models.taskinstance import TaskInstance
 from airflow.utils.db import create_session
-from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
+from sqlalchemy.orm.exc import NoResultFound
 
 class LumenOperator(BaseOperator):
     """
@@ -39,3 +39,4 @@ class LumenOperator(BaseOperator):
             ).order_by(TaskInstance.execution_date.desc()).first()
             if not output:
                 self.log.info("No task instance was for for this dag_id and task_id")
+                raise NoResultFound
