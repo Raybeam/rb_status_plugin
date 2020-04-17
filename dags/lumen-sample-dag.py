@@ -9,7 +9,7 @@ import random
 
 def my_custom_function(ts, **kwargs):
     """
-    This can be any python code you want and is called from the python operator. 
+    This can be any python code you want and is called from the python operator.
     The code is not executed until the task is run by the airflow scheduler.
     """
     print(
