@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from airflow.utils.db import create_session
 
 from plugins.lumen_plugin.report_repo import VariablesReportRepo
-from plugins.lumen_plugin.operators.lumen_sensor import LumenSensor
+from plugins.lumen_plugin.sensors.lumen_sensor import LumenSensor
 
 # Default settings applied to all tests
 default_args = {
