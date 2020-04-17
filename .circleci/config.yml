@@ -19,7 +19,6 @@ jobs:
             # Use a virtual env to encapsulate everything in one folder for
             # caching. And make sure it lives outside the checkout, so that any
             # style checkers don't run on all the installed modules
-            pip install venv
             python -m venv ~/.venv
             . ~/.venv/bin/activate
             pip install -r requirements.txt
