@@ -14,6 +14,9 @@ jobs:
           # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
       - run:
+          name: Set Python Version 3
+          command: pyenv global 3.6.5
+      - run:
           name: Install test deps
           command: |
             # Use a virtual env to encapsulate everything in one folder for
