@@ -17,7 +17,7 @@
 
 {% block content %}
   <h1>This is Lumen</h1>
-  <p>{{ content }}</p>
+  <p>{{ content  | tojson}}</p>
 {% endblock %}
 
 {% block tail %}
