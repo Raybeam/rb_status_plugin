@@ -15,7 +15,7 @@ jobs:
           - v1-dependencies-
       - run:
           name: Set Python Version 3
-          command: pyenv global 3.6.5
+          command: pyenv global 3.7.5
       - run:
           name: Install test deps
           command: |
