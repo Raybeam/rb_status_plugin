@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from airflow.utils.db import create_session
 
 from plugins.lumen_plugin.report_repo import VariablesReportRepo
-from plugins.lumen_plugin.operators.lumen_operator import LumenOperator
+from plugins.lumen_plugin.operators.lumen_sensor import LumenSensor
 
 # Default settings applied to all tests
 default_args = {
@@ -29,7 +29,7 @@ def create_dag(report, default_args):
         send_report = DummyOperator(task_id="send_report")
 
         for test in report.tests:
-            t1 = LumenOperator(
+            t1 = LumenSensor(
                 task_id="test_%s" % test,
                 test_name=test,
             )

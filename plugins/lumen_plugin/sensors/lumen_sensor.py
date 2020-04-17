@@ -5,7 +5,8 @@ from airflow.utils.db import create_session
 from airflow.utils.state import State
 from sqlalchemy.orm.exc import NoResultFound
 
-class LumenOperator(BaseSensorOperator):
+
+class LumenSensor(BaseSensorOperator):
     """
     This operator will check whether a test (task_instance) succeeded or failed, and
     will reflect that result as it's state.
