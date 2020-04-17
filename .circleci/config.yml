@@ -19,6 +19,7 @@ jobs:
             # Use a virtual env to encapsulate everything in one folder for
             # caching. And make sure it lives outside the checkout, so that any
             # style checkers don't run on all the installed modules
+            pip install venv
             python -m venv ~/.venv
             . ~/.venv/bin/activate
             pip install -r requirements.txt
@@ -42,9 +43,9 @@ jobs:
           name: Push to Docker Hub
           command: |
             TAG=0.1.$CIRCLE_BUILD_NUM
-            docker build -t registry.gcp0001.us-east4.astronomer.io/infrared-photon-7780/airflow:ci-$TAG .
+            docker build -t registry.gcp0001.us-east4.astronomer.io/${RELEASE_NAME}/airflow:ci-$TAG .
             docker login registry.gcp0001.us-east4.astronomer.io -u _ -p $SERVICE_ACCOUNT_KEY
-            docker push registry.gcp0001.us-east4.astronomer.io/infrared-photon-7780/airflow:ci-$TAG
+            docker push registry.gcp0001.us-east4.astronomer.io/${RELEASE_NAME}/airflow:ci-$TAG
 
 workflows:
   version: 2
