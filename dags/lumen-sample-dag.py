@@ -4,6 +4,8 @@ from airflow.operators.bash_operator import BashOperator
 from airflow.operators.python_operator import PythonOperator
 from datetime import datetime, timedelta
 
+import random
+
 
 def my_custom_function(ts, **kwargs):
     """
@@ -11,14 +13,27 @@ def my_custom_function(ts, **kwargs):
     The code is not executed until the task is run by the airflow scheduler.
     """
     print(
-        f"""
-        I am task number {kwargs['task_number']}. This DAG Run execution date
-        is {ts} and the current time is {datetime.now()}"""
+        f"""I am task number {kwargs['task_number']}. This DAG Run execution date is
+        {ts} and the current time is {datetime.now()}"""
     )
     print(
         "Here is the full DAG Run context. It is available because provide_context=True"
     )
     print(kwargs)
+
+
+def failing_function(ts, **kwargs):
+    """
+    This function just fails
+    """
+    raise ValueError("I failed today: {ts}")
+
+
+def random_function(ts, **kwargs):
+    if bool(random.getrandbits(1)):
+        raise ValueError("Randomly failed")
+    else:
+        print("I made it!")
 
 
 # Default settings applied to all tasks
@@ -30,6 +45,7 @@ default_args = {
     "retries": 1,
     "retry_delay": timedelta(minutes=5),
 }
+
 
 # Using a DAG context manager, you don't have to specify the dag property of each task
 with DAG(
@@ -56,14 +72,30 @@ with DAG(
     )
 
     # generate tasks with a loop. task_id must be unique
-    for task in range(5):
+    for task in range(2):
         tn = PythonOperator(
             task_id=f"python_print_date_{task}",
             python_callable=my_custom_function,
             op_kwargs={"task_number": task},
             provide_context=True,
         )
+
+        tf = PythonOperator(
+            task_id=f"python_failing_{task}",
+            python_callable=failing_function,
+            provide_context=True,
+        )
+
+        tr = PythonOperator(
+            task_id=f"python_random_{task}",
+            python_callable=random_function,
+            op_kwargs={"task_number": task},
+            provide_context=True,
+        )
+
         t0 >> tn  # indented inside for loop so each task is added downstream of t0
+        t0 >> tf
+        t0 >> tr
 
     t0 >> t1
     t1 >> [t2, t3]  # lists can be used to specify mutliple tasks
