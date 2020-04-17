@@ -1,0 +1,41 @@
+{
+  "name": "lumen_plugin",
+  "version": "1.0.0",
+  "description": "Data confidence tool for Airflow",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "webpack --env.development --watch",
+    "build": "webpack --env.production",
+    "lint": "eslint src/js/**"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Raybeam/lumen.git"
+  },
+  "keywords": [
+    "lumen"
+  ],
+  "author": "Raybeam",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Raybeam/lumen/issues"
+  },
+  "homepage": "https://github.com/Raybeam/lumen#readme",
+  "devDependencies": {
+    "@babel/core": "^7.9.0",
+    "@babel/preset-env": "^7.9.5",
+    "babel-loader": "^8.1.0",
+    "css-loader": "^3.5.2",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.10.1",
+    "eslint-plugin-prettier": "^3.1.3",
+    "mini-css-extract-plugin": "^0.9.0",
+    "prettier": "^2.0.4",
+    "sass": "^1.26.3",
+    "sass-loader": "^8.0.2",
+    "style-loader": "^1.1.4",
+    "webpack": "^4.42.1",
+    "webpack-cli": "^3.3.11"
+  }
+}
