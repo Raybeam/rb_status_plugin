@@ -19,7 +19,7 @@ from flask_appbuilder.security.decorators import has_access
 # from airflow import appbuilder
 
 
-from lumen_plugin.operators.lumen_sensor import (
+from lumen_plugin.sensors.lumen_sensor import (
     LumenSensor,
 )
 
