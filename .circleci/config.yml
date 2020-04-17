@@ -34,7 +34,7 @@ jobs:
           name: run linter
           command: |
             . ~/.venv/bin/activate
-            pycodestyle .
+            flake8 .
   deploy:
     docker:
       - image:  astronomerio/ap-build:0.0.7
