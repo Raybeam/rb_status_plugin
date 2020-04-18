@@ -1,8 +1,10 @@
+import datetime
+
 dummy_reports = [
     {
         "id": 1,
         "passed": False,
-        "updated": "2020-04-17T17:35:00.350Z",
+        "updated": datetime.datetime.now(),
         "title": "Diary of a Madman",
         "description": "Donec posuere tincidunt metus sed dictum. Proin commodo nibh magna, vitae tristique ex rhoncus vitae.",
         "owner_name": "Odele Barnewelle",
@@ -23,7 +25,7 @@ dummy_reports = [
     {
         "id": 2,
         "passed": True,
-        "updated": "2020-04-17T17:35:00.350Z",
+        "updated": datetime.datetime.now(),
         "title": "Atragon (Kaitei Gunkan)",
         "description": "Morbi eget diam porta, auctor est a, hendrerit lorem. Nulla sit amet tincidunt lacus, id varius tellus.",
         "owner_name": "Godard McOnie",
@@ -32,7 +34,7 @@ dummy_reports = [
     {
         "id": 3,
         "passed": True,
-        "updated": "2020-04-17T17:35:00.350Z",
+        "updated": datetime.datetime.now(),
         "title": "Sweet Mud (Adama Meshuga'at)",
         "description": "Nunc augue nulla, imperdiet eu ornare a, dignissim convallis ipsum. Praesent tellus ipsum, malesuada at neque id, scelerisque consequat magna.",
         "owner_name": "Camila Dickinson",
@@ -41,7 +43,7 @@ dummy_reports = [
     {
         "id": 4,
         "passed": False,
-        "updated": "2020-04-17T17:35:00.350Z",
+        "updated": datetime.datetime.now(),
         "title": "Say It Isn't So",
         "description": "Nam hendrerit mauris est, laoreet pulvinar elit laoreet vel.",
         "owner_name": "Ian Iskower",
@@ -57,7 +59,7 @@ dummy_reports = [
     {
         "id": 5,
         "passed": True,
-        "updated": "2020-04-17T17:35:00.350Z",
+        "updated": datetime.datetime.now(),
         "title": "Soldier of Orange (a.k.a. Survival Run) (Soldaat van Oranje)",
         "description": "Ut semper dolor sit amet diam ultrices, nec porttitor erat viverra. Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
         "owner_name": "Brad Edgeson",

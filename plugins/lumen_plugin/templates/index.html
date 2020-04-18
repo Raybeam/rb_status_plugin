@@ -16,8 +16,29 @@
 {% endblock %}
 
 {% block content %}
-  <h1>This is Lumen</h1>
-  <p>{{ content  | tojson}}</p>
+  <div id="reports-status">
+    <div id="summary" class="{% if content.summary.passed %}passed{% else %}failed{% endif %}">
+      <div class="status">
+      {% if content.summary.passed %}
+        <i class="fa fa-check-circle" aria-hidden="true"></i>
+        All Tests Are Passing 
+      {% else %}
+        <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+        Some Tests Are Failing
+      {% endif %}
+      </div>
+      <div class="updated">
+        {{ content.summary.updated.strftime('%Y-%m-%d') }}
+      </div>
+    </div>
+  </div>
+
+
+  <pre>
+    <code>
+      {{ content  | pprint}}
+    </code>
+  </pre> 
 {% endblock %}
 
 {% block tail %}
