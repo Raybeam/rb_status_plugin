@@ -3,25 +3,26 @@ from airflow.utils.db import create_session
 from airflow.operators.dummy_operator import DummyOperator
 from datetime import datetime, timedelta
 from airflow.operators.python_operator import PythonOperator
-from plugins.lumen_plugin.sensors.lumen_sensor import LumenSensor
+from lumen_plugin.sensors.lumen_sensor import LumenSensor
 from airflow.utils.db import create_session
 
 import unittest
 
 
-class CreateLumenOperatorsTestDag(unittest.TestCase):
+class CreateLumenSensorsTestDag:
     # create and run temporary dag
-    dag_name = "lumen_operator_test"
-    default_args = {
-        "owner": "airflow",
-        "depends_on_past": False,
-        "email_on_failure": False,
-        "email_on_retry": False,
-        "schedule_interval": None,
-        "retries": 1,
-        "start_date": datetime(2019, 1, 1),
-        "retry_delay": timedelta(minutes=5),
-    }
+    def __init__(self):
+        self.dag_name = "lumen_sensor_test"
+        self.default_args = {
+            "owner": "airflow",
+            "depends_on_past": False,
+            "email_on_failure": False,
+            "email_on_retry": False,
+            "schedule_interval": None,
+            "retries": 1,
+            "start_date": datetime(2019, 1, 1),
+            "retry_delay": timedelta(minutes=5),
+        }
 
     def test_success_fail(self, state):
         # helper to pass or fail a task instance
@@ -33,7 +34,7 @@ class CreateLumenOperatorsTestDag(unittest.TestCase):
 
     def create_dag(self, task_state):
         # create dag with success and failure instances
-        dag = DAG(dag_name=self.dag_name, default_args=self.default_args)
+        dag = DAG(self.dag_name, default_args=self.default_args)
 
         with dag:
             start = DummyOperator(task_id="start_dag")
@@ -47,17 +48,18 @@ class CreateLumenOperatorsTestDag(unittest.TestCase):
         return dag
 
 
-def run_lumen_operator(task_state):
-    # run Lumen operator against temporary dag and show results
-    return LumenSensor.execute(
+def run_lumen_sensor(task_state):
+    # run Lumen sensor against temporary dag and show results
+    my_sensor =  LumenSensor(
         task_id="test_%s" % task_state,
-        test_name="lumen_operator_test.%s" % ("test_expected_to_%s" % "succeed" if task_state else "fail"),
+        test_name="lumen_sensor_test.%s" % ("test_expected_to_%s" % "succeed" if task_state else "fail"),
     )
+    return my_sensor.execute(context={})
 
 
-# class DeleteLumenOperatorsTestDag(unittest.TestCase):
+# class DeleteLumenSensorsTestDag(unittest.TestCase):
 #     # delete temporary dag
-#     dag_name = "lumen_operator_test"
+#     dag_name = "lumen_sensor_test"
 #     query = {'delete from xcom where dag_id = "' + dag_name + '"',
 #             'delete from task_instance where dag_id = "' + dag_name + '"',
 #             'delete from sla_miss where dag_id = "' + dag_name + '"',
@@ -71,19 +73,21 @@ def run_lumen_operator(task_state):
 #             curr_session.delete(Dag)
 
 
-class LumenOperatorTest(unittest.TestCase):
+class LumenSensorTest(unittest.TestCase):
     def test_success(self):
-        # test that LumenOperator correctly interprets successful test
+        # test that LumenSensor correctly interprets successful test
         task_state = True
         expected_response = True
-        CreateLumenOperatorsTestDag.create_dag(task_state=task_state)
-        lumen_operator_response = run_lumen_operator(task_state=task_state)
-        self.assertEqual(expected_response, lumen_operator_response)
+        success_dag = CreateLumenSensorsTestDag()
+        success_dag.create_dag(task_state=task_state)
+        lumen_sensor_response = run_lumen_sensor(task_state=task_state)
+        self.assertEqual(expected_response, lumen_sensor_response)
 
     def test_failure(self):
-        # test that LumenOperator correctly interprets failed test
+        # test that LumenSensor correctly interprets failed test
         task_state = False
         expected_response = False
-        CreateLumenOperatorsTestDag.create_dag(task_state=task_state)
-        lumen_operator_response = run_lumen_operator(task_state=task_state)
-        self.assertEqual(expected_response, lumen_operator_response)
+        failure_dag = CreateLumenSensorsTestDag()
+        failure_dag.create_dag(task_state=task_state)
+        lumen_sensor_response = run_lumen_sensor(task_state=task_state)
+        self.assertEqual(expected_response, lumen__response)
