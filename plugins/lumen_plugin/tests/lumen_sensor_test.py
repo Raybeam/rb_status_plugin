@@ -1,6 +1,5 @@
 from plugins.lumen_plugin.sensors.lumen_sensor import LumenSensor
 from airflow.operators.dummy_operator import DummyOperator
-from airflow.utils.db import create_session
 from airflow.models.taskinstance import TaskInstance
 from datetime import datetime, timedelta
 import unittest
@@ -68,7 +67,7 @@ class LumenSensorTest(unittest.TestCase):
         sensor = self.__create_sensor(state)
 
         context = self.__create_context_with_state(dummy_failure, state)
-        self.assertRaises(ValueError, sensor.poke, context)
+        self.assertRaises(expected_response, sensor.poke, context)
 
     def test_intermittant_states(self):
         # test that LumenSensor poke returns False when a test operation
