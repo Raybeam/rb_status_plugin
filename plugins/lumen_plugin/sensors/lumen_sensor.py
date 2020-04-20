@@ -8,9 +8,10 @@ from sqlalchemy.orm.exc import NoResultFound
 
 class LumenSensor(BaseSensorOperator):
     """
-    This operator will check whether a test (task_instance) succeeded or failed, and
+    This operator will check whether a test
+    (task_instance) succeeded or failed, and
     will reflect that result as it's state.
-    
+
     :param test_name: Name of task_instance to be tested
     :type test_name: str
     """
@@ -41,15 +42,21 @@ class LumenSensor(BaseSensorOperator):
             ).order_by(TaskInstance.execution_date.desc()).first()
 
             if not ti:
-                self.log.info("No task instance was for for this dag_id and task_id")
+                self.log.info(
+                    "No task instance was for for this dag_id and task_id"
+                )
                 raise NoResultFound
 
             state = ti.state
-            terminal_failure_states = [State.FAILED, State.UPSTREAM_FAILED, State.SHUTDOWN, State.REMOVED]
+            terminal_failure_states = [
+                State.FAILED, State.UPSTREAM_FAILED,
+                State.SHUTDOWN, State.REMOVED
+            ]
             terminal_success_states = [State.SUCCESS, State.SKIPPED]
 
             self.log.info(ti)
             self.log.info(ti.state)
+
             if state in terminal_failure_states:
                 self.log.error('Test was in a terminal failed state')
                 raise ValueError()

@@ -19,15 +19,17 @@ default_args = {
     "retry_delay": timedelta(minutes=5),
 }
 
+
 class LumenSensorTest(unittest.TestCase):
 
-    dag = DAG('adhoc_Airflow', schedule_interval=None, default_args=default_args)
+    dag = DAG(
+        "adhoc_Airflow",
+        schedule_interval=None,
+        default_args=default_args
+    )
 
     def __create_dummy_op(self, state, dag):
-        dummy = DummyOperator(
-            task_id=f'dummy_{state}',
-            dag=dag
-        )
+        dummy = DummyOperator(task_id=f"dummy_{state}", dag=dag)
         return dummy
 
     def __create_sensor(self, state):
@@ -70,7 +72,8 @@ class LumenSensorTest(unittest.TestCase):
 
     def test_intermittant_states(self):
         # test that LumenSensor poke returns False when a test operation
-        # is not yet complete and the sensor keeps poking (return a False value)
+        # is not yet complete and the sensor keeps poking
+        # (return a False value)
         expected_response = False
         state = State.RUNNING
 
