@@ -54,8 +54,9 @@ class LumenSensor(BaseSensorOperator):
             ]
             terminal_success_states = [State.SUCCESS, State.SKIPPED]
 
-            self.log.info(ti)
-            self.log.info(ti.state)
+            self.log.info(
+                f"{test_dag_id}.{test.task_id} is in state {ti.state}"
+            )
 
             if state in terminal_failure_states:
                 self.log.error('Test was in a terminal failed state')
