@@ -55,7 +55,7 @@ class LumenSensorTest(unittest.TestCase):
         result = sensor.poke(context=context)
         self.assertEqual(expected_response, result)
 
-    def test_failure(self):
+    def test_failures(self):
         # test that LumenOperator correctly interprets failed test
         expected_response = ValueError
         state = State.FAILED
@@ -65,6 +65,17 @@ class LumenSensorTest(unittest.TestCase):
 
         context = self.__create_context_with_state(dummy_failure, state)
         self.assertRaises(ValueError, sensor.poke, context)
+
+    def test_intermittant_states(self):
+        expected_response = False
+        state = State.RUNNING
+
+        dummy_failure = self.__create_dummy_op(state, self.dag)
+        sensor = self.__create_sensor(state)
+
+        context = self.__create_context_with_state(dummy_failure, state)
+        result = sensor.poke(context=context)
+        self.assertEqual(expected_response, result)
 
 
 if __name__ == "__main__":
