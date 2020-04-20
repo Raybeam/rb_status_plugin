@@ -2,12 +2,26 @@ from airflow.plugins_manager import AirflowPlugin
 
 from flask import Blueprint
 from flask_appbuilder import BaseView as AppBuilderBaseView, expose
+from plugins.lumen_plugin import test_data
+
 
 # Creating a flask appbuilder BaseView
 class LumenBuilderBaseView(AppBuilderBaseView):
+    # !temporary method
+    def reports_data(self):
+        data = {
+            # TODO: summary must be calculated
+            "summary": {
+                "passed": test_data.dummy_reports[0]["passed"],
+                "updated": test_data.dummy_reports[0]["updated"],
+            },
+            "reports": test_data.dummy_reports,
+        }
+        return data
+
     @expose("/")
     def list(self):
-        return self.render_template("index.html", content="Hello galaxy!")
+        return self.render_template("index.html", content=self.reports_data())
 
 
 v_appbuilder_view = LumenBuilderBaseView()
