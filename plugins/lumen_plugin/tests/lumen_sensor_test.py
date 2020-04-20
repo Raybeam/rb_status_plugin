@@ -22,7 +22,7 @@ default_args = {
 class LumenSensorTest(unittest.TestCase):
 
     dag = DAG(
-        "adhoc_Airflow",
+        "adhoc_airflow",
         schedule_interval=None,
         default_args=default_args
     )
