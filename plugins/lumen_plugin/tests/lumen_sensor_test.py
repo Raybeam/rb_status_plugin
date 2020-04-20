@@ -4,7 +4,6 @@ from airflow.operators.dummy_operator import DummyOperator
 from datetime import datetime, timedelta
 from airflow.operators.python_operator import PythonOperator
 from lumen_plugin.sensors.lumen_sensor import LumenSensor
-from airflow.utils.db import create_session
 
 import unittest
 
@@ -90,4 +89,4 @@ class LumenSensorTest(unittest.TestCase):
         failure_dag = CreateLumenSensorsTestDag()
         failure_dag.create_dag(task_state=task_state)
         lumen_sensor_response = run_lumen_sensor(task_state=task_state)
-        self.assertEqual(expected_response, lumen__response)
+        self.assertEqual(expected_response, lumen_sensor_response)
