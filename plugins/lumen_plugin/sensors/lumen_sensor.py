@@ -45,9 +45,6 @@ class LumenSensor(BaseSensorOperator):
             ).order_by(TaskInstance.execution_date.desc()).first()
 
             if not ti:
-                self.log.info(
-                    "No task instance was for for this dag_id and task_id"
-                )
                 raise NoResultFound
 
             state = ti.state
