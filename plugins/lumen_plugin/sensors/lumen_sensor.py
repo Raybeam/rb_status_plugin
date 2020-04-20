@@ -17,24 +17,27 @@ class LumenSensor(BaseSensorOperator):
     """
 
     template_fields = (
-        "test_name",
+        "test_dag_id",
+        "test_task_id"
     )
 
     @apply_defaults
     def __init__(
         self,
-        test_name,
+        test_dag_id,
+        test_task_id,
         *args,
         **kwargs
     ):
         super().__init__(*args, **kwargs)
-        self.test_name = test_name
-        self.test_dag_id = test_name.split('.')[0]
-        self.test_task_id = test_name.split('.')[1]
+        self.test_dag_id = test_dag_id
+        self.test_task_id = test_task_id
 
     def poke(self, context):
-        self.log.info("Querying postgres for %s's result.." % (self.test_name))
-        # Query postgres and save to test_result
+        self.log.info(
+            f"Querying for {self.test_dag_id}.{self.test_task_id}'s result..."
+        )
+        # Query metadata and save to test_result
         with create_session() as curr_session:
             ti = curr_session.query(TaskInstance).filter(
                 TaskInstance.task_id == self.test_task_id,
