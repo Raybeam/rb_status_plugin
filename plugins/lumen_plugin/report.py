@@ -1,7 +1,5 @@
 import inflection
 
-from airflow.models.dag import Dag
-
 
 class Report:
     """
@@ -46,12 +44,3 @@ class Report:
     @tests.setter
     def tests(self, val):
         self.__tests = val
-
-    def get_last_dagrun(self, session, include_externally_triggered=True):
-        """
-        Gets the last DagRun for this report.
-
-        NOTE: The include_externally_triggered is set to True, which is
-        the opposite of the Dag object method of the same name.
-        """
-        return Dag.get_last_dagrun(self.dag_id, session, include_externally_triggered)
