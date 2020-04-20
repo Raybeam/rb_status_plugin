@@ -64,7 +64,7 @@ class LumenSensor(BaseSensorOperator):
             if state in terminal_failure_states:
                 self.log.error('Test was in a terminal failed state')
                 raise ValueError()
-            elif state in terminal_success_states:
+            if state in terminal_success_states:
                 return True
             else:
                 return False
