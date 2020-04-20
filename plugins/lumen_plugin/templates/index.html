@@ -31,7 +31,7 @@
           </h2>
         </div>
         <div class="updated">
-          {{ content.summary.updated.strftime('%Y-%m-%d') }}
+          Updated {{ content.summary.updated.strftime('%b %d at %H:%M') }}
         </div>
       </div>
     </div>
@@ -51,7 +51,7 @@
                 Failed
               {% endif %} 
               </span> / 
-              Updated {{ report.updated.strftime('%Y-%m-%d') }}
+              Updated {{ report.updated.strftime('%b %d at %H:%M') }}
               <h3>{{ report.title }}</h3>
             </div>
           </div>
