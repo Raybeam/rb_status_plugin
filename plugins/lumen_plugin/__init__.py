@@ -7,7 +7,7 @@ from plugins.lumen_plugin import test_data
 
 # Creating a flask appbuilder BaseView
 class LumenBuilderBaseView(AppBuilderBaseView):
-    #! temporary method
+    # !temporary method
     def reports_data(self):
         data = {
             # TODO: summary must be calculated
