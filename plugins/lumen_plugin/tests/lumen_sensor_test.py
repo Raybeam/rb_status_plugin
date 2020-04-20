@@ -34,7 +34,8 @@ class LumenSensorTest(unittest.TestCase):
     def __create_sensor(self, state):
         sensor = LumenSensor(
             task_id="test_%s" % state,
-            test_name=f"{self.dag.dag_id}.dummy_{state}"
+            test_dag_id=f"{self.dag.dag_id}",
+            test_task_id=f"dummy_{state}"
         )
         return sensor
 
