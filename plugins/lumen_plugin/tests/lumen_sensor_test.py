@@ -44,7 +44,8 @@ class LumenSensorTest(unittest.TestCase):
         return context
 
     def test_success(self):
-        # test that LumenOperator correctly interprets successful test
+        # test that LumenSensor processes a successful test operation
+        # and stops poking (returning True value)
         expected_response = True
         state = State.SUCCESS
 
@@ -56,7 +57,8 @@ class LumenSensorTest(unittest.TestCase):
         self.assertEqual(expected_response, result)
 
     def test_failures(self):
-        # test that LumenOperator correctly interprets failed test
+        # test that LumenSensor fails when a test operation is unsuccessful
+        # and raises an exception (returning ValueError)
         expected_response = ValueError
         state = State.FAILED
 
@@ -67,6 +69,8 @@ class LumenSensorTest(unittest.TestCase):
         self.assertRaises(ValueError, sensor.poke, context)
 
     def test_intermittant_states(self):
+        # test that LumenSensor poke returns False when a test operation
+        # is not yet complete and the sensor keeps poking (return a False value)
         expected_response = False
         state = State.RUNNING
 
