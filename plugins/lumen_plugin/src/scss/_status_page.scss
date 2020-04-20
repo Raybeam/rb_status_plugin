@@ -1,0 +1,151 @@
+#reports-wrap {
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 40px;
+  margin-bottom: 20px;
+  max-width: 746px;
+}
+
+.report-base {
+  border-radius: $borderRadius;
+  box-shadow: 0 0 1px rgba(#000, 0.3);
+}
+
+.report-header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 20px;
+}
+
+.reports-summary {
+  color: #fff;
+
+  &.passed {
+    background-color: $success;
+  }
+
+  &.failed {
+    background-color: $error;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 20px;
+    color: #fff;
+  }
+}
+
+.report {
+  background-color: $bgColor;
+
+  + .report {
+    margin-top: 15px;
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 18px;
+  }
+}
+
+.report-highlights {
+  display: flex;
+  align-items: center;
+}
+
+.report-indicator {
+  border-radius: 50%;
+  box-shadow: 0 0 1px #000;
+  height: 20px;
+  margin-right: 10px;
+  width: 20px;
+
+  .passed & {
+    background-image: radial-gradient(
+      lighten($success, 10) 40%,
+      $success 70%,
+      darken($success, 30)
+    );
+  }
+
+  .failed & {
+    background-image: radial-gradient(
+      lighten($error, 10) 40%,
+      $error 70%,
+      darken($error, 30)
+    );
+  }
+}
+
+.report-status {
+  .passed & {
+    color: $success;
+  }
+
+  .failed & {
+    color: $error;
+  }
+}
+
+button.btn.report-details-trigger {
+  border: none;
+  color: $fontColor;
+  opacity: 0.7;
+  padding: 0;
+
+  &:focus,
+  &:hover {
+    outline: none;
+    text-decoration: none;
+    opacity: 1;
+  }
+
+  i {
+    font-size: 1.3em;
+    line-height: 20px;
+    vertical-align: middle;
+  }
+
+  &:not(.collapsed) {
+    i {
+      transform: rotate(180deg);
+    }
+  }
+}
+
+.report-details {
+  padding: 15px 20px;
+  position: relative;
+
+  &:before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 20px;
+    left: 20px;
+    height: 1px;
+    background-color: $borderColor;
+  }
+}
+
+.report-errors-list {
+  border-top: 1px solid $borderColor;
+  margin-top: 15px;
+  padding-top: 15px;
+}
+
+.report-error {
+  h5 {
+    margin: 0;
+
+    strong {
+      color: $error;
+    }
+  }
+
+  + .report-error {
+    margin-top: 10px;
+  }
+}
