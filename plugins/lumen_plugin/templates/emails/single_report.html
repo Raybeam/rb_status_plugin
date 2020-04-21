@@ -14,8 +14,7 @@
   >
     <div style="max-width: 746px; margin: 40px auto;">
       <p>
-        New status update on the “Duis ullamcorper semper placerat” report you
-        subscribed to
+        New status update on the “{{ title }}” report you subscribed to
       </p>
 
       <div
@@ -36,50 +35,56 @@
           >
             <div style="display: table-row;">
               <div style="display: table-cell; vertical-align: middle;">
-                <div
-                  class="report-indicator"
-                  style="
-                    border-radius: 50%;
-                    height: 20px;
-                    width: 20px;
-                    margin-right: 10px;
-                    background-color: #00c853;
-                    background-image: radial-gradient(
-                      #00fb68 40%,
-                      #00c853 70%,
-                      #002f14
-                    );
-                  "
-                ></div>
-                <!-- <div
-                  class="report-indicator"
-                  style="
-                    border-radius: 50%;
-                    height: 20px;
-                    width: 20px;
-                    margin-right: 10px;
-                    background-color: #dd2c00;
-                    background-image: radial-gradient(
-                      #ff4011 40%,
-                      #dd2c00 70%,
-                      #440e00
-                    );
-                  "
-                ></div> -->
+                {% if passed %}
+                  <div
+                    class="report-indicator"
+                    style="
+                      border-radius: 50%;
+                      height: 20px;
+                      width: 20px;
+                      margin-right: 10px;
+                      background-color: #00c853;
+                      background-image: radial-gradient(
+                        #00fb68 40%,
+                        #00c853 70%,
+                        #002f14
+                      );
+                    "
+                  ></div>
+                {% else %}
+                  <div
+                    class="report-indicator"
+                    style="
+                      border-radius: 50%;
+                      height: 20px;
+                      width: 20px;
+                      margin-right: 10px;
+                      background-color: #dd2c00;
+                      background-image: radial-gradient(
+                        #ff4011 40%,
+                        #dd2c00 70%,
+                        #440e00
+                      );
+                    "
+                  ></div>
+                {% endif %}
               </div>
               <div
                 class="report-meta"
                 style="display: table-cell; vertical-align: middle;"
               >
-                <span class="report-status" style="color: #00c853;">
-                  Passed
-                </span>
-                <!-- <span class="report-status" style="color: #dd2c00;">
-                  Failed
-                </span> -->
-                / Updated Apr 8 at 15:45
+                {% if passed %}
+                  <span class="report-status" style="color: #00c853;">
+                    Passed
+                  </span>
+                {% else %}
+                  <span class="report-status" style="color: #dd2c00;">
+                    Failed
+                  </span>
+                {% endif %}
+                / Updated {{ updated.strftime('%b %d at %H:%M') }}
                 <h4 style="margin: 0; color: #2e2e2e;">
-                  Suspendisse congue mi eu lorem pulvinar
+                  {{ title }}
                 </h4>
               </div>
             </div>
@@ -91,7 +96,7 @@
               text-align: right;
             "
           >
-            <a href="#" style="color: #707070;">Details</a>
+            <a href="{{ details_link }}" style="color: #707070;">Details</a>
           </div>
         </div>
       </div>
