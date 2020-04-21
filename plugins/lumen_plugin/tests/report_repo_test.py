@@ -40,7 +40,7 @@ class VariablesReportRepoTest(unittest.TestCase):
         self.assertIsNone(parsed)
 
     def test_return_report(self):
-        vrr = VariablesReportRepo(None)
+        vrr = VariablesReportRepo()
 
         parsed = json.loads(self.dummy_test)
         r = vrr.to_report("bob", parsed)

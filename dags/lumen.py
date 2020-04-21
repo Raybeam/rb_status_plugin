@@ -35,7 +35,6 @@ def create_dag(report, default_args):
 
 
 report = []
-with create_session() as session:
-    repos = VariablesReportRepo(session)
-    for report in repos.list():
-        globals()[report.name] = create_dag(report, default_args)
+repos = VariablesReportRepo()
+for report in repos.list():
+    globals()[report.name] = create_dag(report, default_args)

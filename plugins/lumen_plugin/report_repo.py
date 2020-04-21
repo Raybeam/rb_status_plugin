@@ -2,6 +2,8 @@ import json
 import re
 import abc
 
+from airflow.utils.db import provide_session
+
 from airflow.models import Variable
 from plugins.lumen_plugin.report import Report
 
@@ -33,11 +35,6 @@ class VariablesReportRepo(ReportRepo):
     # Only variables with this prefix will be parsed
     report_prefix = "lumen_report_"
 
-    def __init__(self, session):
-        """ Returns a repo for use.  The Airflow db session must
-        be included """
-        self._session = session
-
     def list(self):
         """ Return a list of all matching reports in variables """
         reports = []
@@ -53,9 +50,10 @@ class VariablesReportRepo(ReportRepo):
             if n == name:
                 return self.to_report(n, val)
 
-    def each_from_db(self):
+    @provide_session
+    def each_from_db(self, session=None):
         """ Iterator for Airflow variables """
-        variables = self._session.query(Variable).all()
+        variables = session.query(Variable).all()
         for var in variables:
             n = self.parse_variable_name(var.key)
             if n is None:
