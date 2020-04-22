@@ -2,13 +2,7 @@ from airflow.utils.db import provide_session
 from airflow.utils.state import State
 
 from airflow import models
-from airflow import settings
 import logging
-
-
-dagbag = models.DagBag(
-    settings.DAGS_FOLDER, store_serialized_dags=settings.STORE_SERIALIZED_DAGS
-)
 
 
 class ReportInstance:
