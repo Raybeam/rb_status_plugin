@@ -6,6 +6,7 @@ from airflow.utils.db import create_session
 
 from plugins.lumen_plugin.report_repo import VariablesReportRepo
 from plugins.lumen_plugin.sensors.lumen_sensor import LumenSensor
+from plugins.lumen_plugin.helpers.email_helpers import generic_email_success, generic_email_failure
 
 # Default settings applied to all tests
 default_args = {
@@ -21,7 +22,11 @@ default_args = {
 
 def create_dag(report, default_args):
     dag = DAG(
-        report.dag_id, schedule_interval=report.schedule, default_args=default_args
+        report.dag_id,
+        schedule_interval=report.schedule,
+        on_failure_callback=generic_email_failure,
+        on_success_callback=generic_email_success,
+        default_args=default_args
     )
 
     with dag:
