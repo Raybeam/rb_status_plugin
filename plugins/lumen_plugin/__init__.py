@@ -26,9 +26,23 @@ class LumenBuilderBaseView(AppBuilderBaseView):
 
 v_appbuilder_view = LumenBuilderBaseView()
 v_appbuilder_package = {
-    "name": "Lumen View",
+    "name": "Status Page",
     "category": "Lumen",
     "view": v_appbuilder_view,
+}
+
+# Creating a flask appbuilder BaseView
+class LumenBuilderMgmtView(AppBuilderBaseView):
+    @expose("/mgmt")
+    def list(self):
+        return self.render_template("management.html", content="Hello Galaxy!")
+
+
+v_appbuilder_mgmt_view = LumenBuilderMgmtView()
+v_appbuilder_mgmt_package = {
+    "name": "Reports Management",
+    "category": "Lumen",
+    "view": v_appbuilder_mgmt_view,
 }
 
 # Creating a flask blueprint to intergrate the templates and static folder
@@ -50,5 +64,5 @@ class LumenPlugin(AirflowPlugin):
     macros = []
     admin_views = []
     menu_links = []
-    appbuilder_views = [v_appbuilder_package]
+    appbuilder_views = [v_appbuilder_package, v_appbuilder_mgmt_package]
     appbuilder_menu_items = []

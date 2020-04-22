@@ -1,0 +1,27 @@
+
+{% extends base_template %}
+
+{% block page_title %}
+  {% if search_query %}
+    "{{ search_query }}" - Lumen - Airflow
+  {% else %}
+    Lumen - Airflow
+  {% endif %}
+{% endblock %}
+
+{% block head_css %}
+{{ super() }}
+<link href="{{ url_for_asset('dataTables.bootstrap.min.css') }}" rel="stylesheet" type="text/css" >
+<link href="{{ url_for_asset('bootstrap-toggle.min.css') }}" rel="stylesheet" type="text/css">
+<link href="{{ url_for('lumen.static', filename='main.css') }}" rel="stylesheet" type="text/css">
+{% endblock %}
+
+{% block content %}
+  Management 
+  {{ content }}
+{% endblock %}
+
+{% block tail %}
+  {{ super() }}
+  <script src="{{url_for('lumen.static',filename='main.js')}}"></script>
+{% endblock %}
