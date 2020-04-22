@@ -1,7 +1,14 @@
 from airflow.utils.db import provide_session
 from airflow.utils.state import State
 
-import airflow.models.dag as dag
+from airflow import models
+from airflow import settings
+import logging
+
+
+dagbag = models.DagBag(
+    settings.DAGS_FOLDER, store_serialized_dags=settings.STORE_SERIALIZED_DAGS
+)
 
 
 class ReportInstance:
@@ -10,8 +17,7 @@ class ReportInstance:
     with a few Lumen-specific helpers
     """
 
-    def __init__(self, report, dag_run):
-        self.report = report
+    def __init__(self, dag_run):
         self.dag_run = dag_run
 
     @property
@@ -26,15 +32,19 @@ class ReportInstance:
     def updated(self):
         return self.dag_run.execution_date
 
-    @property
-    def title(self):
-        return f"Lumen report : {self.report.name}"
-
-    def failed_task_instances(self):
+    def errors(self):
         if self.passed:
             return []
 
-        return self.dag_run.get_task_instances(state=State.FAILED)
+        failed = []
+        for ti in self.dag_run.get_task_instances(state=State.FAILED):
+            ti.refresh_from_db()
+
+            failed.append(
+                {"id": ti.job_id, "name": ti.task_id, "description": ti.log_url}
+            )
+
+        return failed
 
     @classmethod
     @provide_session
@@ -46,20 +56,19 @@ class ReportInstance:
         the opposite of the Dag object method of the same name.
         """
 
-        retries = 3
-        dag_run = dag.get_last_dagrun(
+        dag_run = models.dag.get_last_dagrun(
             report.dag_id, session, include_externally_triggered
         )
 
-        # Retry 3 times if the DAG is still running
+        # Retry until we find a finished DAG or there are no more
         while True:
             if dag_run is None:
                 raise LookupError(f"Could not find finished DagRun for {report.dag_id}")
-            if retries < 0:
-                raise LookupError(f"Could not find finished DagRun for {report.dag_id}")
             if dag_run.get_state() in State.finished():
                 break
-            dag_run = dag_run.get_previous_dagrun
-            retries -= 1
+            logging.info(
+                f"DagRun {dag_run.id} is {dag_run.get_state()} ... trying again."
+            )
+            dag_run = dag_run.get_previous_dagrun()
 
-        return cls(report, dag_run)
+        return cls(dag_run)
