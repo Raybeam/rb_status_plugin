@@ -1,7 +1,7 @@
 from airflow import DAG
 from airflow.operators.dummy_operator import DummyOperator
 from datetime import datetime, timedelta
-
+from airflow.models.variable import Variable
 from airflow.utils.db import create_session
 
 from plugins.lumen_plugin.report_repo import VariablesReportRepo
@@ -19,13 +19,15 @@ default_args = {
     "retry_delay": timedelta(minutes=5),
 }
 
+emails = Variable.get('emails')
+
 
 def create_dag(report, default_args):
     dag = DAG(
         report.dag_id,
         schedule_interval=report.schedule,
-        on_failure_callback=generic_email_failure,
-        on_success_callback=generic_email_success,
+        on_failure_callback=generic_email_failure(emails),
+        on_success_callback=generic_email_success(emails),
         default_args=default_args
     )
 
