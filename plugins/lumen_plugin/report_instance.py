@@ -1,7 +1,7 @@
 from airflow.utils.db import provide_session
 from airflow.utils.state import State
 
-from airflow.models.dag import Dag
+import airflow.models.dag as dag
 
 
 class ReportInstance:
@@ -36,9 +36,9 @@ class ReportInstance:
 
         return self.dag_run.get_task_instances(state=State.FAILED)
 
+    @classmethod
     @provide_session
-    @staticmethod
-    def get_latest(report, include_externally_triggered=True, session=None):
+    def get_latest(cls, report, include_externally_triggered=True, session=None):
         """
         Gets the last ReportInstance for a Report.
 
@@ -47,17 +47,19 @@ class ReportInstance:
         """
 
         retries = 3
-        dag_run = Dag.get_last_dagrun(
+        dag_run = dag.get_last_dagrun(
             report.dag_id, session, include_externally_triggered
         )
 
         # Retry 3 times if the DAG is still running
         while True:
-            if dag_run.get_state() in State.finished:
-                break
+            if dag_run is None:
+                raise LookupError(f"Could not find finished DagRun for {report.dag_id}")
             if retries < 0:
                 raise LookupError(f"Could not find finished DagRun for {report.dag_id}")
+            if dag_run.get_state() in State.finished():
+                break
             dag_run = dag_run.get_previous_dagrun
             retries -= 1
 
-        return ReportInstance(report, dag_run)
+        return cls(report, dag_run)
