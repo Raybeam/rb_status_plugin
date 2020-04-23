@@ -24,8 +24,7 @@ def get_test_status(test_prefix, context):
             task_status = TaskInstance(
                 operator_instance, execution_date
             ).current_state()
-            test_status[task] = task_status
-    logging.info(status_dict)
+            status_dict[task] = task_status
     return status_dict
 
 def are_all_tasks_successful(status_dict):
@@ -33,8 +32,8 @@ def are_all_tasks_successful(status_dict):
     Iterate over all the test tasks status and return True if all pass
     and False if otherwise
     """
-    for k, v in status_dict:
-        if v == State.FAILED:
+    for test_id in status_dict:
+        if status_dict[test_id] == State.FAILED:
             return False
     return True
 
