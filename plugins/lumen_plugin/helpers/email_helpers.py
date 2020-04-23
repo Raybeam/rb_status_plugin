@@ -61,7 +61,7 @@ def report_notify_email(
 
     dag_name = context["ti"].dag_id
     updated_time = datetime.now()
-    email_subject = f"[{status}] {dag_name} {updated_time}"
+    email_subject = f"[{status}] {dag_name}"
 
     with open(email_template_location) as file:
         send_email = EmailOperator(
