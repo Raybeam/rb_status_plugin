@@ -17,6 +17,7 @@ Lumen - Airflow
 
 {% block content %}
 <div id="reports-wrap">
+  {% if content.summary.updated %}
   <div class="report-base reports-summary {% if content.summary.passed %}passed{% else %}failed{% endif %}">
     <div class="report-header">
       <div class="status">
@@ -35,6 +36,7 @@ Lumen - Airflow
       </div>
     </div>
   </div>
+  {% endif %}
 
   <h2>Reports</h2>
 
@@ -69,10 +71,16 @@ Lumen - Airflow
       <div class="report-details">
         <p>
           <strong>Report Owner:</strong>
-          {{ report.owner_name }} /
-          <a href="mailto:{{ report.owner_email}}">{{ report.owner_email }}</a>
+          {% if report.owner_name %}
+          {{ report.owner_name }}
+          {% endif %}
+          {% if report.owner_email %}
+          / <a href="mailto:{{ report.owner_email}}">{{ report.owner_email }}</a>
+          {% endif %}
         </p>
+        {% if report.description %}
         <p>{{ report.description }}</p>
+        {% endif %}
         {% if not report.passed %}
         <div class="report-errors-list">
           {% for error in report.errors %}
