@@ -29,8 +29,12 @@ def report_notify_email(emails, **context):
             params={
                 "passed": report_passed,
                 "updated": "ts",
-                "title": "ti.dag_id",
+                "title": subject_line,
                 "details_link": "#"
             }
+        )
+        send_email.render_template_fields(
+            context=context,
+            jinja_env=context['dag'].get_template_env()
         )
         send_email.execute(context)
