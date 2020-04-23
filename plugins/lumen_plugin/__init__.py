@@ -6,44 +6,50 @@ from plugins.lumen_plugin import test_data
 
 
 # Creating a flask appbuilder BaseView
-class LumenBuilderBaseView(AppBuilderBaseView):
+class LumenStatusView(AppBuilderBaseView):
     # !temporary method
     def reports_data(self):
         data = {
             # TODO: summary must be calculated
             "summary": {
-                "passed": test_data.dummy_reports[0]["passed"],
-                "updated": test_data.dummy_reports[0]["updated"],
+                "passed": test_data.dummy_report_runs[0]["passed"],
+                "updated": test_data.dummy_report_runs[0]["updated"],
             },
-            "reports": test_data.dummy_reports,
+            "reports": test_data.dummy_report_runs,
         }
         return data
 
     @expose("/")
     def list(self):
-        return self.render_template("index.html", content=self.reports_data())
+        return self.render_template("status.html", content=self.reports_data())
 
 
-v_appbuilder_view = LumenBuilderBaseView()
-v_appbuilder_package = {
+v_appbuilder_status_view = LumenStatusView()
+v_appbuilder_status_package = {
     "name": "Status Page",
     "category": "Lumen",
-    "view": v_appbuilder_view,
+    "view": v_appbuilder_status_view,
 }
 
-# Creating a flask appbuilder BaseView
-class LumenBuilderMgmtView(AppBuilderBaseView):
-    @expose("/mgmt")
+
+class LumenReportsView(AppBuilderBaseView):
+    @expose("/reports")
     def list(self):
-        return self.render_template("management.html", content="Hello Galaxy!")
+        return self.render_template("reports.html", content=test_data.dummy_reports)
 
 
-v_appbuilder_mgmt_view = LumenBuilderMgmtView()
-v_appbuilder_mgmt_package = {
-    "name": "Reports Management",
+v_appbuilder_reports_view = LumenReportsView()
+v_appbuilder_reports_package = {
+    "name": "Reports",
     "category": "Lumen",
-    "view": v_appbuilder_mgmt_view,
+    "view": v_appbuilder_reports_view,
 }
+
+
+# class LumenReportForm():
+#     @expose("/reports/<string:id>")
+#     def list(self):
+
 
 # Creating a flask blueprint to intergrate the templates and static folder
 bp = Blueprint(
@@ -64,5 +70,5 @@ class LumenPlugin(AirflowPlugin):
     macros = []
     admin_views = []
     menu_links = []
-    appbuilder_views = [v_appbuilder_package, v_appbuilder_mgmt_package]
+    appbuilder_views = [v_appbuilder_status_package, v_appbuilder_reports_package]
     appbuilder_menu_items = []

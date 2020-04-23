@@ -3,6 +3,29 @@ import datetime
 dummy_reports = [
     {
         "id": 1,
+        "title": "Test Title",
+        "description": "Test Description",
+        "schedule": "* * * * *",
+        "emails": ["email1@mail.com", "email2@mail.com", "email3@mail.com"],
+        "owner_name": "John Doe",
+        "owner_email": "johndoe@mail.com",
+        "tests": [{"id": 1, "name": "Test Name 1"}, {"id": 2, "name": "Test Name 2"}],
+    },
+    {
+        "id": 2,
+        "title": "Test Title 2",
+        "description": "Test Description 2",
+        "schedule": "* * * * *",
+        "emails": ["email1@mail.com", "email2@mail.com", "email3@mail.com"],
+        "owner_name": "John Doe",
+        "owner_email": "johndoe@mail.com",
+        "tests": [{"id": 1, "name": "Test Name 1"}, {"id": 2, "name": "Test Name 2"}],
+    },
+]
+
+dummy_report_runs = [
+    {
+        "id": 1,
         "passed": False,
         "updated": datetime.datetime.now(),
         "title": "Diary of a Madman",
