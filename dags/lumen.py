@@ -17,7 +17,7 @@ default_args = {
     "email_on_retry": False,
     "retries": 1,
     "start_date": datetime(2019, 1, 1),
-    "retry_delay": timedelta(minutes=1),
+    "retry_delay": timedelta(minutes=5),
 }
 airflow_home = os.environ["AIRFLOW_HOME"]
 
