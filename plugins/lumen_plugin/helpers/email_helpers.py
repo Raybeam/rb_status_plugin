@@ -16,11 +16,17 @@ def are_all_tasks_successful(context):
     return True
 
 
-def report_notify_email(emails, **context):
+def get_dag_id_from_context(context):
+    return context['ti'].dag_id
+
+
+def report_notify_email(email_template_location, emails, **context):
     """Send custom email alerts."""
     report_passed = are_all_tasks_successful(context)
-    with open("plugins/lumen_plugin/templates/emails/single_report.html") as file:
-        subject_line = f"[{report_passed}] {context['ti'].dag_id}"
+    report_name = get_dag_id_from_context(context)
+    subject_line = f"[{report_passed}] {report_name}"
+
+    with open(email_template_location) as file:
         send_email = EmailOperator(
             task_id="custom_email_notification",
             to=emails,
@@ -30,10 +36,9 @@ def report_notify_email(emails, **context):
         params = {
                 "passed": report_passed,
                 "updated": datetime.now(),
-                "title": subject_line,
+                "title": report_name,
                 "details_link": "#"
         }
-        context['params'] = params
         send_email.render_template_fields(
             context=params,
             jinja_env=context['dag'].get_template_env()

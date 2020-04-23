@@ -3,10 +3,11 @@ from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.python_operator import PythonOperator
 from datetime import datetime, timedelta
 from airflow.utils.db import create_session
-
 from plugins.lumen_plugin.report_repo import VariablesReportRepo
 from plugins.lumen_plugin.sensors.lumen_sensor import LumenSensor
 from plugins.lumen_plugin.helpers.email_helpers import report_notify_email
+from airflow.models import Variable
+import os
 
 # Default settings applied to all tests
 default_args = {
@@ -18,6 +19,13 @@ default_args = {
     "start_date": datetime(2019, 1, 1),
     "retry_delay": timedelta(minutes=1),
 }
+airflow_home = os.environ["AIRFLOW_HOME"]
+
+# Consider moving these constants to an Airflow variable...
+EMAIL_TEMPLATE_LOCATION = f'{airflow_home}/plugins/lumen_plugin/templates/emails'
+
+SINGLE_STATUS_EMAIL_TEMPLATE_LOC = f"{EMAIL_TEMPLATE_LOCATION}/single_report.html"
+MULTIPLE_STATUS_EMAIL_TEMPLATE_LOC = f"{EMAIL_TEMPLATE_LOCATION}/multiple_report.html"
 
 
 def create_dag(report, default_args):
@@ -39,6 +47,7 @@ def create_dag(report, default_args):
             trigger_rule="all_done",
             op_kwargs={
                 "emails": report.emails,
+                "email_template_location": SINGLE_STATUS_EMAIL_TEMPLATE_LOC
             },
             provide_context=True
         )
