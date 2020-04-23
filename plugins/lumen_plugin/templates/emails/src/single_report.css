@@ -1,0 +1,82 @@
+table.body {
+  margin-top: 40px;
+}
+
+body,
+table.body,
+p,
+td,
+th,
+a {
+  color: #0a0a0a;
+  font-family: "Roboto", sans-serif;
+  font-weight: 300;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 500;
+  color: #0a0a0a;
+}
+
+.report {
+  margin-top: 20px;
+  margin-bottom: 30px;
+}
+
+.report > tbody > tr > th > div {
+  border: 1px solid #dedede;
+  border-radius: 6px;
+  background-color: #f0f4f5;
+  padding: 15px 12px 0 12px;
+}
+
+.status-indicator {
+  width: 1%;
+}
+
+.status-indicator div {
+  border-radius: 50%;
+  height: 20px;
+  width: 20px;
+  margin-right: 10px;
+}
+
+.report h4 {
+  font-size: 18px;
+  margin-bottom: 0;
+  margin-top: 0;
+}
+
+.report th,
+.report td {
+  vertical-align: middle;
+}
+
+.details-link {
+  text-align: right;
+}
+
+.details-link a {
+  text-decoration: underline;
+}
+
+hr {
+  border: none;
+  height: 1px;
+  background-color: #dedede;
+  margin-bottom: 30px;
+}
+
+@media only screen and (max-width: 596px) {
+  .report > tbody > tr > th > div {
+    border: 1px solid #dedede;
+    border-radius: 6px;
+    background-color: #f0f4f5;
+    padding: 15px 0 0 0;
+  }
+}

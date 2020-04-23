@@ -16,5 +16,5 @@ module.exports = {
   rules: {
     "prettier/prettier": "error",
   },
-  ignorePatterns: ["webpack.config.js", "node_modules/"],
+  ignorePatterns: ["webpack.config.js", "node_modules/", "*.html"],
 };
