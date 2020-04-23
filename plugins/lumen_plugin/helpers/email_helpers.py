@@ -1,7 +1,7 @@
 from airflow.operators.email_operator import EmailOperator
 from airflow.models.taskinstance import TaskInstance
 from airflow.utils.state import State
-import datetime
+from datetime import datetime
 
 
 def are_all_tasks_successful(context):
@@ -25,16 +25,17 @@ def report_notify_email(emails, **context):
             task_id="custom_email_notification",
             to=emails,
             subject=subject_line,
-            html_content=file.read(),
-            params={
+            html_content=file.read()
+        )
+        params = {
                 "passed": report_passed,
-                "updated": "ts",
+                "updated": datetime.now(),
                 "title": subject_line,
                 "details_link": "#"
-            }
-        )
+        }
+        context['params'] = params
         send_email.render_template_fields(
-            context=context,
+            context=params,
             jinja_env=context['dag'].get_template_env()
         )
         send_email.execute(context)
