@@ -16,7 +16,7 @@ def are_all_tasks_successful(context):
     return True
 
 
-def report_notify_email(emails, report, **context):
+def report_notify_email(emails, **context):
     """Send custom email alerts."""
     report_passed = are_all_tasks_successful(context)
     with open("plugins/lumen_plugin/templates/emails/single_report.html") as file:
