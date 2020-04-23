@@ -20,8 +20,6 @@ default_args = {
     "retry_delay": timedelta(minutes=5),
 }
 
-emails = Variable.get('emails')
-
 
 def create_dag(report, default_args):
     dag = DAG(
