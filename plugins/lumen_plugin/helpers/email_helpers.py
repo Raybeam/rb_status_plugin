@@ -29,8 +29,9 @@ def get_error_details(test_prefix, errors):
 
 def are_all_tasks_successful(test_prefix, errors):
     """
-    Iterate over all the test tasks status and return True if all pass
-    and False if otherwise
+    Iterate over all the tasks and checks to see if any test tasks
+    are among the tasks that failed...
+    Returns True if all pass and False if otherwise
     """
 
     if len(errors) == 0:
