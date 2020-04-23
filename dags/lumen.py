@@ -2,7 +2,6 @@ from airflow import DAG
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.python_operator import PythonOperator
 from datetime import datetime, timedelta
-from airflow.models.variable import Variable
 from airflow.utils.db import create_session
 
 from plugins.lumen_plugin.report_repo import VariablesReportRepo
@@ -17,7 +16,7 @@ default_args = {
     "email_on_retry": False,
     "retries": 1,
     "start_date": datetime(2019, 1, 1),
-    "retry_delay": timedelta(minutes=5),
+    "retry_delay": timedelta(minutes=1),
 }
 
 
@@ -30,14 +29,18 @@ def create_dag(report, default_args):
 
     with dag:
         start = DummyOperator(task_id="start_dag")
-        send_report = DummyOperator(task_id="send_report")
+        send_report = DummyOperator(
+            task_id="send_report",
+            trigger_rule="all_done",
+        )
         send_email = PythonOperator(
             task_id='call_email_function',
             python_callable=report_notify_email,
+            trigger_rule="all_done",
             op_kwargs={
-                "emails": report.emails
+                "emails": report.emails,
             },
-            provide_context=True,
+            provide_context=True
         )
         for test in report.tests:
             t1 = LumenSensor(

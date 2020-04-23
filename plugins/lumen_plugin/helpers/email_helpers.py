@@ -7,19 +7,19 @@ import datetime
 def are_all_tasks_successful(context):
     dag_instance = context["dag"]
     execution_date = context["execution_date"]
-    tasks = dag_instance.task_ids()
+    tasks = dag_instance.task_ids
     for task in tasks:
-        operator_instance = dag_instance.get_task(task_id)
+        operator_instance = dag_instance.get_task(task)
         task_status = TaskInstance(operator_instance, execution_date).current_state()
         if task_status == State.FAILED:
             return False
     return True
 
 
-def report_notify_email(emails, context):
+def report_notify_email(emails, report, **context):
     """Send custom email alerts."""
     report_passed = are_all_tasks_successful(context)
-    with open("templates/emails/single_report.html") as file:
+    with open("plugins/lumen_plugin/templates/emails/single_report.html") as file:
         subject_line = f"[{report_passed}] {context['ti'].dag_id}"
         send_email = EmailOperator(
             task_id="custom_email_notification",
