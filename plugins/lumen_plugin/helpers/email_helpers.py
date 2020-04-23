@@ -3,7 +3,7 @@ from airflow.models.taskinstance import TaskInstance
 from airflow.utils.state import State
 from datetime import datetime
 import re
-import logging
+
 
 def get_test_status(test_prefix, context):
     """
@@ -27,6 +27,7 @@ def get_test_status(test_prefix, context):
             status_dict[task] = task_status
     return status_dict
 
+
 def are_all_tasks_successful(status_dict):
     """
     Iterate over all the test tasks status and return True if all pass
@@ -38,7 +39,12 @@ def are_all_tasks_successful(status_dict):
     return True
 
 
-def report_notify_email(emails, email_template_location, test_prefix, **context):
+def report_notify_email(
+        emails,
+        email_template_location,
+        test_prefix,
+        **context
+    ):
     """
     :param emails: emails to send report status to
     :type emails: list
