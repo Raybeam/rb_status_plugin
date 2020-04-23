@@ -47,7 +47,7 @@ def create_dag(report, default_args):
         )
         for test in report.tests:
             t1 = LumenSensor(
-                task_id=f"{test_prefix}{test}",
+                task_id=test_prefix + test,
                 test_dag_id=test.split(".")[0],
                 test_task_id=test.split(".")[1],
             )
