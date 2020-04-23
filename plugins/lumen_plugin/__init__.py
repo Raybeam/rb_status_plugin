@@ -2,24 +2,48 @@ from airflow.plugins_manager import AirflowPlugin
 
 from flask import Blueprint
 from flask_appbuilder import BaseView as AppBuilderBaseView, expose
-from plugins.lumen_plugin import test_data
+from plugins.lumen_plugin.report_repo import VariablesReportRepo
+from plugins.lumen_plugin.report_instance import ReportInstance
 
 
-from lumen_plugin.sensors.lumen_sensor import (
-    LumenSensor,
-)
+from lumen_plugin.sensors.lumen_sensor import LumenSensor
+import logging
 
 # Creating a flask appbuilder BaseView
 class LumenBuilderBaseView(AppBuilderBaseView):
     # !temporary method
     def reports_data(self):
+        reports = []
+        passed = True
+        updated = None
+        for report in VariablesReportRepo.list():
+            ri = ReportInstance.get_latest(report)
+
+            if not updated:
+                updated = ri.updated
+
+            if updated < ri.updated:
+                updated = ri.updated
+
+            r = {
+                "id": ri.id,
+                "passed": ri.passed,
+                "updated": ri.updated,
+                "title": report.name,
+                "owner_email": report.emails,
+            }
+
+            r["errors"] = ri.errors()
+            if len(r["errors"]) > 0:
+                passed = False
+
+            logging.info(r)
+            reports.append(r)
+
         data = {
             # TODO: summary must be calculated
-            "summary": {
-                "passed": test_data.dummy_reports[0]["passed"],
-                "updated": test_data.dummy_reports[0]["updated"],
-            },
-            "reports": test_data.dummy_reports,
+            "summary": {"passed": passed, "updated": updated},
+            "reports": reports,
         }
         return data
 

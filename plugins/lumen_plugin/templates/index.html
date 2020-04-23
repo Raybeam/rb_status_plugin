@@ -1,107 +1,106 @@
 {% extends base_template %}
 
 {% block page_title %}
-  {% if search_query %}
-    "{{ search_query }}" - Lumen - Airflow
-  {% else %}
-    Lumen - Airflow
-  {% endif %}
+{% if search_query %}
+"{{ search_query }}" - Lumen - Airflow
+{% else %}
+Lumen - Airflow
+{% endif %}
 {% endblock %}
 
 {% block head_css %}
 {{ super() }}
-<link href="{{ url_for_asset('dataTables.bootstrap.min.css') }}" rel="stylesheet" type="text/css" >
+<link href="{{ url_for_asset('dataTables.bootstrap.min.css') }}" rel="stylesheet" type="text/css">
 <link href="{{ url_for_asset('bootstrap-toggle.min.css') }}" rel="stylesheet" type="text/css">
 <link href="{{ url_for('lumen.static', filename='main.css') }}" rel="stylesheet" type="text/css">
 {% endblock %}
 
 {% block content %}
-  <div id="reports-wrap">
-    <div class="report-base reports-summary {% if content.summary.passed %}passed{% else %}failed{% endif %}">
-      <div class="report-header">
-        <div class="status">
-          <h2>
+<div id="reports-wrap">
+  {% if content.summary.updated %}
+  <div class="report-base reports-summary {% if content.summary.passed %}passed{% else %}failed{% endif %}">
+    <div class="report-header">
+      <div class="status">
+        <h2>
           {% if content.summary.passed %}
-            <i class="fa fa-check-circle" aria-hidden="true"></i>
-            All Tests Are Passing 
+          <i class="fa fa-check-circle" aria-hidden="true"></i>
+          All Tests Are Passing
           {% else %}
-            <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
-            Some Tests Are Failing
+          <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+          Some Tests Are Failing
           {% endif %}
-          </h2>
-        </div>
-        <div class="updated">
-          Updated {{ content.summary.updated.strftime('%b %d at %H:%M') }}
-        </div>
+        </h2>
+      </div>
+      <div class="updated">
+        Updated {{ content.summary.updated.strftime('%b %d at %H:%M') }}
       </div>
     </div>
-
-    <h2>Reports</h2>
-
-    {% for report in content.reports %}
-      <div class="report-base report {% if report.passed %}passed{% else %}failed{% endif %}">
-        <div id="report-{{ report.id }}-heading" class="report-header" role="tab">
-          <div class="report-highlights">
-            <div class="report-indicator"></div> 
-            <div class="report-meta">
-              <span class="report-status">
-              {% if report.passed %}
-                Passed 
-              {% else %}
-                Failed
-              {% endif %} 
-              </span> / 
-              Updated {{ report.updated.strftime('%b %d at %H:%M') }}
-              <h3>{{ report.title }}</h3>
-            </div>
-          </div>
-          <div>
-            <button 
-              type="button" 
-              class="btn btn-link report-details-trigger collapsed" 
-              data-toggle="collapse" 
-              data-target="#report-{{ report.id }}-details" 
-              aria-expanded="false" 
-              aria-controls="report-{{ report.id }}-details"
-            >
-              Details
-              <i class="fa fa-angle-down" aria-hidden="true"></i>   
-            </button> 
-          </div>
-        </div>
-        <div 
-          id="report-{{ report.id }}-details" 
-          class="collapse" 
-          role="tabpanel" 
-          aria-labelledby="report-{{ report.id }}-heading"
-        >
-          <div class="report-details">
-            <p>
-              <strong>Report Owner:</strong>
-              {{ report.owner_name }} / 
-              <a href="mainto:{{ report.owner_email}}">{{ report.owner_email }}</a>
-            </p>
-            <p>{{ report.description }}</p>
-            {% if not report.passed %}
-              <div class="report-errors-list">
-                {% for error in report.errors %}
-                  <div class="report-error">
-                    <h5>
-                      <strong>Test Failed:</strong> {{ error.title }}
-                    </h5>
-                    {{ error.description }}
-                  </div> 
-                {% endfor %}
-              </div>
-            {% endif %}
-          </div>
-        </div>
-      </div> 
-    {% endfor %}
   </div>
+  {% endif %}
+
+  <h2>Reports</h2>
+
+  {% for report in content.reports %}
+  <div class="report-base report {% if report.passed %}passed{% else %}failed{% endif %}">
+    <div id="report-{{ report.id }}-heading" class="report-header" role="tab">
+      <div class="report-highlights">
+        <div class="report-indicator"></div>
+        <div class="report-meta">
+          <span class="report-status">
+            {% if report.passed %}
+            Passed
+            {% else %}
+            Failed
+            {% endif %}
+          </span> /
+          Updated {{ report.updated.strftime('%b %d at %H:%M') }}
+          <h3>{{ report.title }}</h3>
+        </div>
+      </div>
+      <div>
+        <button type="button" class="btn btn-link report-details-trigger collapsed" data-toggle="collapse"
+          data-target="#report-{{ report.id }}-details" aria-expanded="false"
+          aria-controls="report-{{ report.id }}-details">
+          Details
+          <i class="fa fa-angle-down" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+    <div id="report-{{ report.id }}-details" class="collapse" role="tabpanel"
+      aria-labelledby="report-{{ report.id }}-heading">
+      <div class="report-details">
+        <p>
+          <strong>Report Owner:</strong>
+          {% if report.owner_name %}
+          {{ report.owner_name }}
+          {% endif %}
+          {% if report.owner_email %}
+          / <a href="mailto:{{ report.owner_email}}">{{ report.owner_email }}</a>
+          {% endif %}
+        </p>
+        {% if report.description %}
+        <p>{{ report.description }}</p>
+        {% endif %}
+        {% if not report.passed %}
+        <div class="report-errors-list">
+          {% for error in report.errors %}
+          <div class="report-error">
+            <h5>
+              <strong>Test Failed:</strong> {{ error.title }}
+            </h5>
+            {{ error.description }}
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
 {% endblock %}
 
 {% block tail %}
-  {{ super() }}
-  <script src="{{url_for('lumen.static',filename='main.js')}}"></script>
+{{ super() }}
+<script src="{{url_for('lumen.static',filename='main.js')}}"></script>
 {% endblock %}
