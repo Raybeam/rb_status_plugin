@@ -2,19 +2,7 @@ from airflow.operators.email_operator import EmailOperator
 import datetime
 
 
-def generic_email_failure(emails):
-    def report_notify_email_failure(context):
-        report_notify_email('Failed', emails, context)
-    return report_notify_email_failure
-
-
-def generic_email_success(emails):
-    def report_notify_email_failure(context):
-        report_notify_email('Success', emails, context)
-    return report_notify_email_failure
-
-
-def report_notify_email(report_status, emails, context):
+def report_notify_email(emails, context):
     """Send custom email alerts."""
 
     with open("templates/emails/single_report.html") as file:

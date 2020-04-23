@@ -1,12 +1,13 @@
 from airflow import DAG
 from airflow.operators.dummy_operator import DummyOperator
+from airflow.operators.python_operator import PythonOperator
 from datetime import datetime, timedelta
 from airflow.models.variable import Variable
 from airflow.utils.db import create_session
 
 from plugins.lumen_plugin.report_repo import VariablesReportRepo
 from plugins.lumen_plugin.sensors.lumen_sensor import LumenSensor
-from plugins.lumen_plugin.helpers.email_helpers import generic_email_success, generic_email_failure
+from plugins.lumen_plugin.helpers.email_helpers import report_notify_email
 
 # Default settings applied to all tests
 default_args = {
@@ -34,7 +35,14 @@ def create_dag(report, default_args):
     with dag:
         start = DummyOperator(task_id="start_dag")
         send_report = DummyOperator(task_id="send_report")
-
+        send_email = PythonOperator(
+            task_id='call_email_function',
+            python_callable=report_notify_email,
+            op_kwargs={
+                "emails": report.emails
+            },
+            provide_context=True,
+        )
         for test in report.tests:
             t1 = LumenSensor(
                 task_id="test_%s" % test,
