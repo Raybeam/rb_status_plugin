@@ -26,7 +26,16 @@ def are_all_tasks_successful(test_prefix, context):
 
 
 def report_notify_email(emails, email_template_location, test_prefix, **context):
-    """Send custom email alerts."""
+    """
+    :param emails: emails to send report status to
+    :type emails: list
+
+    :param email_template_location: location of html template to use for status
+    :type email_template_location: str
+
+    :param test_prefix: the prefix that precedes all test tasks
+    :type test_prefix: str
+    """
     report_passed = are_all_tasks_successful(test_prefix, context)
     dag_name = context['ti'].dag_id
     email_subject = f"[{report_passed}] {report_name}"
