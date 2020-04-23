@@ -65,7 +65,7 @@ def report_notify_email(emails, email_template_location, test_prefix, **context)
     """
     ri = create_report_instance(context)
 
-    dag_name = ri.id
+    dag_name = ri.dag_id
     updated_time = ri.updated
     errors = get_test_status(ri)
     details_link = get_error_details(test_prefix, errors)
