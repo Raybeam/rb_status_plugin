@@ -1,8 +1,5 @@
 from airflow.operators.email_operator import EmailOperator
-from airflow.models.taskinstance import TaskInstance
 from plugins.lumen_plugin.report_instance import ReportInstance
-from airflow.utils.state import State
-from datetime import datetime
 import re
 import logging
 
@@ -81,7 +78,7 @@ def report_notify_email(emails, email_template_location, test_prefix, **context)
             "status": status,
             "updated": updated_time,
             "title": dag_name,
-            "details_link": "#",
+            "details_link": details_link,
         }
         send_email.render_template_fields(
             context=params, jinja_env=context["dag"].get_template_env()
