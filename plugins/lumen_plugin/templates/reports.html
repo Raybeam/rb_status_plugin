@@ -37,7 +37,7 @@
           </th>
           <th>Report</th>
           <th>Schedule</th>
-          <th>Tests</th>
+          {# <th>Tests</th> #}
           <th>Owner</th>
           <th>Subscribers</th>
           <th class="text-center">Links</th>
@@ -70,12 +70,12 @@
               {{ report.schedule }}
             </td>
 
-            <!-- Column 4: Report Tests -->
+            {# <!-- Column 4: Report Tests -->
             <td>
               {% for test in report.tests %}
                 {{ test.name }}, <br> 
               {% endfor %}
-            </td>
+            </td> #}
 
             <!-- Column 5: Report Owner -->
             <td>
@@ -91,20 +91,31 @@
             <!-- Column 6: Report Subscribers -->
             <td>
               {% for subscriber in report.emails %}
-                {{ subscriber }}, 
+                {{ subscriber }}{% if not loop.last %},{% endif %}
               {% endfor %}
             </td>
 
-            <!-- Column 9: Links -->
+            <!-- Column 7: Links -->
             <td class="text-center" >
                 <!-- Trigger Report -->
                 <a href="#">
-                  <span class="glyphicon glyphicon-play-circle" aria-hidden="true" data-original-title="Trigger Report"></span>
+                  <span 
+                    class="glyphicon glyphicon-play-circle" 
+                    aria-hidden="true" 
+                    data-original-title="Trigger Report"
+                  >
+                  </span>
                 </a>
 
                 <!-- Delete Report -->
                 <a href="#">
-                  <span class="glyphicon glyphicon-remove-circle" style="color:red" aria-hidden="true" data-original-title="Delete Delete"></span>
+                  <span 
+                    class="glyphicon glyphicon-remove-circle" 
+                    style="color:red" 
+                    aria-hidden="true" 
+                    data-original-title="Delete Report"
+                  >
+                  </span>
                 </a>
             </td>
           </tr>

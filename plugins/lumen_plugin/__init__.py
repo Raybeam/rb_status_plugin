@@ -1,7 +1,16 @@
 from airflow.plugins_manager import AirflowPlugin
 
 from flask import Blueprint
+from flask import flash
+from flask_appbuilder import SimpleFormView
 from flask_appbuilder import BaseView as AppBuilderBaseView, expose
+from flask_appbuilder.forms import DynamicForm
+from flask_appbuilder.fieldwidgets import (
+    BS3TextFieldWidget,
+    BS3TextAreaFieldWidget,
+    Select2ManyWidget,
+)
+from wtforms import StringField, TextAreaField, SelectMultipleField
 from plugins.lumen_plugin import test_data
 
 
@@ -46,10 +55,48 @@ v_appbuilder_reports_package = {
 }
 
 
-# class LumenReportForm():
-#     @expose("/reports/<string:id>")
-#     def list(self):
+class ReportForm(DynamicForm):
+    title = StringField(("Title"), widget=BS3TextFieldWidget())
+    description = TextAreaField(("Description"), widget=BS3TextAreaFieldWidget())
+    schedule = StringField(
+        ("Schedule"), description=("Cron time string"), widget=BS3TextFieldWidget()
+    )
+    owner_name = StringField(("Owner Name"), widget=BS3TextFieldWidget())
+    owner_email = StringField(("Owner Email"), widget=BS3TextFieldWidget())
+    emails = StringField(
+        ("Subscribers"),
+        description=(
+            "List of comma separeted emails that should receive email notifications"
+        ),
+        widget=BS3TextFieldWidget(),
+    )
+    tests = SelectMultipleField(
+        ("Tests"),
+        description=("List of the tests to include in the report"),
+        choices=[(1, "Test 1"), (2, "Test 2")],
+        widget=Select2ManyWidget(),
+    )
 
+
+class ReportFormView(SimpleFormView):
+    form = ReportForm
+    form_title = "Report Form"
+    message = "My form submitted"
+
+    def form_get(self, form):
+        form.title.data = "This was prefilled"
+
+    def form_post(self, form):
+        # post process form
+        flash(self.message, "info")
+
+
+v_appbuilder_report_form_view = ReportFormView()
+v_appbuilder_report_form_package = {
+    "name": "Report Form",
+    "category": "Lumen",
+    "view": v_appbuilder_report_form_view,
+}
 
 # Creating a flask blueprint to intergrate the templates and static folder
 bp = Blueprint(
@@ -70,5 +117,9 @@ class LumenPlugin(AirflowPlugin):
     macros = []
     admin_views = []
     menu_links = []
-    appbuilder_views = [v_appbuilder_status_package, v_appbuilder_reports_package]
+    appbuilder_views = [
+        v_appbuilder_status_package,
+        v_appbuilder_reports_package,
+        v_appbuilder_report_form_package,
+    ]
     appbuilder_menu_items = []
