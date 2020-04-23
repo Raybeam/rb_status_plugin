@@ -16,7 +16,7 @@ class ReportInstance:
 
     @property
     def id(self):
-        return self.dag_run.id
+        return self.dag_run.dag_id
 
     @property
     def passed(self):
