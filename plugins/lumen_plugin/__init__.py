@@ -93,13 +93,12 @@ class ReportFormView(SimpleFormView):
         flash(self.message, "info")
 
 
-# appbuilder.add_view_no_menu(ReportFormView())
 v_appbuilder_report_form_view = ReportFormView()
 v_appbuilder_report_form_package = {
-    # "name": None,
-    # "category": None,
-    "name": "Report Form",
-    "category": "Lumen",
+    "name": None,
+    "category": None,
+    # "name": "Report Form",
+    # "category": "Lumen",
     "view": v_appbuilder_report_form_view,
 }
 
@@ -126,6 +125,5 @@ class LumenPlugin(AirflowPlugin):
         v_appbuilder_status_package,
         v_appbuilder_reports_package,
         v_appbuilder_report_form_package,
-        # v_appbuilder_report_form_view,
     ]
     appbuilder_menu_items = []
