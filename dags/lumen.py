@@ -23,9 +23,7 @@ airflow_home = os.environ["AIRFLOW_HOME"]
 
 # Consider moving these constants to an Airflow variable...
 EMAIL_TEMPLATE_LOCATION = f"{airflow_home}/plugins/lumen_plugin/templates/emails"
-
 SINGLE_STATUS_EMAIL_TEMPLATE_LOC = f"{EMAIL_TEMPLATE_LOCATION}/single_report.html"
-MULTIPLE_STATUS_EMAIL_TEMPLATE_LOC = f"{EMAIL_TEMPLATE_LOCATION}/multiple_report.html"
 
 
 def create_dag(report, default_args):
