@@ -17,10 +17,9 @@ def get_test_status(test_prefix, context):
     execution_date = context["execution_date"]
     tasks = dag_instance.task_ids
 
-    test_regex = f"\b{test_prefix}"
     for task in tasks:
         # Evaluate only test tasks via regex
-        if re.match(test_regex, task):
+        if re.match(test_prefix, task) is not None:
             operator_instance = dag_instance.get_task(task)
             task_status = TaskInstance(
                 operator_instance, execution_date
@@ -55,7 +54,7 @@ def report_notify_email(emails, email_template_location, test_prefix, **context)
     report_passed = are_all_tasks_successful(status_dict)
 
     dag_name = context["ti"].dag_id
-    email_subject = f"[{report_passed}] {report_name}"
+    email_subject = f"[{report_passed}] {dag_name}"
 
     with open(email_template_location) as file:
         send_email = EmailOperator(
