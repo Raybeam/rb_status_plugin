@@ -57,9 +57,11 @@ def report_notify_email(
     """
     status_dict = get_test_status(test_prefix, context)
     report_passed = are_all_tasks_successful(status_dict)
+    status = "Success" if report_passed else "Failed"
 
     dag_name = context["ti"].dag_id
-    email_subject = f"[{report_passed}] {dag_name}"
+    updated_time = datetime.now()
+    email_subject = f"[{status}] {dag_name} {updated_time}"
 
     with open(email_template_location) as file:
         send_email = EmailOperator(
@@ -70,7 +72,7 @@ def report_notify_email(
         )
         params = {
             "passed": report_passed,
-            "updated": datetime.now(),
+            "updated": updated_time,
             "title": dag_name,
             "details_link": "#",
         }
