@@ -40,11 +40,11 @@ def are_all_tasks_successful(status_dict):
 
 
 def report_notify_email(
-        emails,
-        email_template_location,
-        test_prefix,
-        **context
-    ):
+    emails,
+    email_template_location,
+    test_prefix,
+    **context
+):
     """
     :param emails: emails to send report status to
     :type emails: list
