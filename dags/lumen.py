@@ -4,6 +4,7 @@ from airflow.operators.python_operator import PythonOperator
 from datetime import datetime, timedelta
 from plugins.lumen_plugin.report_repo import VariablesReportRepo
 from plugins.lumen_plugin.sensors.lumen_sensor import LumenSensor
+from airflow.utils.db import create_session
 from plugins.lumen_plugin.helpers.email_helpers import report_notify_email
 import os
 
@@ -57,5 +58,7 @@ def create_dag(report, default_args):
 
 
 report = []
-for report in VariablesReportRepo.list():
-    globals()[report.name] = create_dag(report, default_args)
+with create_session() as session:
+    repos = VariablesReportRepo()
+    for report in repos.list():
+        globals()[report.name] = create_dag(report, default_args)

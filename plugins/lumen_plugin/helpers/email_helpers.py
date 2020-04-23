@@ -1,41 +1,37 @@
 from airflow.operators.email_operator import EmailOperator
 from airflow.models.taskinstance import TaskInstance
+from plugins.lumen_plugin.report_instance import ReportInstance
 from airflow.utils.state import State
 from datetime import datetime
 import re
 
 
-def get_test_status(test_prefix, context):
+def create_report_instance(context):
+    return ReportInstance(context["dag_run"])
+
+
+def get_test_status(report_instance):
     """
-    Uses the context dictionary passed via the Python Operator
-    to iterate over all the test tasks (identified by the test prefix)
-    and create a dict with all test status values
+    Uses the report_instance passed via the Python Operator
+    and create a list with all test status values
     """
-    status_dict = {}
-
-    dag_instance = context["dag"]
-    execution_date = context["execution_date"]
-    tasks = dag_instance.task_ids
-
-    for task in tasks:
-        # Evaluate only test tasks via regex
-        if re.match(test_prefix, task) is not None:
-            operator_instance = dag_instance.get_task(task)
-            task_status = TaskInstance(
-                operator_instance, execution_date
-            ).current_state()
-            status_dict[task] = task_status
-    return status_dict
+    return report_instance.errors()
 
 
-def are_all_tasks_successful(status_dict):
+def are_all_tasks_successful(test_prefix, errors):
     """
     Iterate over all the test tasks status and return True if all pass
     and False if otherwise
     """
-    for test_id in status_dict:
-        if status_dict[test_id] == State.FAILED:
+
+    if len(errors) == 0:
+        return True
+
+    for failed_task in errors:
+        # If the failed task is a test task
+        if re.match(test_prefix, task) is not None:
             return False
+
     return True
 
 
@@ -55,12 +51,14 @@ def report_notify_email(
     :param test_prefix: the prefix that precedes all test tasks
     :type test_prefix: str
     """
-    status_dict = get_test_status(test_prefix, context)
-    report_passed = are_all_tasks_successful(status_dict)
+    ri = create_report_instance(context)
+
+    errors = get_test_status(ri)
+    report_passed = are_all_tasks_successful(test_prefix, errors)
     status = "Success" if report_passed else "Failed"
 
-    dag_name = context["ti"].dag_id
-    updated_time = datetime.now()
+    dag_name = ri.id
+    updated_time = ri.updated
     email_subject = f"[{status}] {dag_name}"
 
     with open(email_template_location) as file:
