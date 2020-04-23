@@ -19,10 +19,12 @@ def get_test_status(report_instance):
 def get_error_details(test_prefix, errors):
     """
     This just returns the first error log link
+    Or, if no errors, empty link
     """
     for failed_task in errors:
         if re.match(test_prefix, failed_task["name"]) is not None:
             return failed_task["description"]
+    return "#"
 
 
 def are_all_tasks_successful(test_prefix, errors):
