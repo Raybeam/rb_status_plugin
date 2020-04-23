@@ -4,7 +4,7 @@ from airflow.utils.state import State
 from datetime import datetime
 import re
 
-def are_all_tasks_successful(context):
+def are_all_tasks_successful(test_prefix, context):
     '''
     Uses the context dictionary passed via the Python Operator
     to iterate over all the test tasks and return True if all pass
@@ -13,9 +13,11 @@ def are_all_tasks_successful(context):
     dag_instance = context["dag"]
     execution_date = context["execution_date"]
     tasks = dag_instance.task_ids
+
+    test_regex = f'\b{test_prefix}'
     for task in tasks:
         # Evaluate only test tasks via regex
-        if re.match('\btest_', task):
+        if re.match(test_regex, task):
             operator_instance = dag_instance.get_task(task)
             task_status = TaskInstance(operator_instance, execution_date).current_state()
             if task_status == State.FAILED:
@@ -23,9 +25,9 @@ def are_all_tasks_successful(context):
     return True
 
 
-def report_notify_email(email_template_location, emails, **context):
+def report_notify_email(emails, email_template_location, test_prefix, **context):
     """Send custom email alerts."""
-    report_passed = are_all_tasks_successful(context)
+    report_passed = are_all_tasks_successful(test_prefix, context)
     dag_name = context['ti'].dag_id
     email_subject = f"[{report_passed}] {report_name}"
 

@@ -36,6 +36,8 @@ def create_dag(report, default_args):
     )
 
     with dag:
+        test_prefix = 'test_'
+
         start = DummyOperator(task_id="start_dag")
         send_report = DummyOperator(
             task_id="send_report",
@@ -47,13 +49,14 @@ def create_dag(report, default_args):
             trigger_rule="all_done",
             op_kwargs={
                 "emails": report.emails,
-                "email_template_location": SINGLE_STATUS_EMAIL_TEMPLATE_LOC
+                "email_template_location": SINGLE_STATUS_EMAIL_TEMPLATE_LOC,
+                "test_prefix": test_prefix
             },
             provide_context=True
         )
         for test in report.tests:
             t1 = LumenSensor(
-                task_id="test_%s" % test,
+                task_id="%s%s" % (test_prefix, test),
                 test_dag_id=test.split('.')[0],
                 test_task_id=test.split('.')[1]
             )
