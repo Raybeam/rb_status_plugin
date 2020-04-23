@@ -2,7 +2,6 @@ from airflow.plugins_manager import AirflowPlugin
 
 from flask import Blueprint
 from flask_appbuilder import BaseView as AppBuilderBaseView, expose
-from plugins.lumen_plugin import test_data
 from plugins.lumen_plugin.report_repo import VariablesReportRepo
 from plugins.lumen_plugin.report_instance import ReportInstance
 
@@ -38,6 +37,7 @@ class LumenBuilderBaseView(AppBuilderBaseView):
             if len(r["errors"]) > 0:
                 passed = False
 
+            logging.info(r)
             reports.append(r)
 
         data = {
