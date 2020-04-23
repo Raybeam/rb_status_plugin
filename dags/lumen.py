@@ -27,8 +27,6 @@ def create_dag(report, default_args):
     dag = DAG(
         report.dag_id,
         schedule_interval=report.schedule,
-        on_failure_callback=generic_email_failure(emails),
-        on_success_callback=generic_email_success(emails),
         default_args=default_args
     )
 
@@ -49,7 +47,7 @@ def create_dag(report, default_args):
                 test_dag_id=test.split('.')[0],
                 test_task_id=test.split('.')[1]
             )
-            start >> t1 >> send_report
+            start >> t1 >> [send_report, send_email]
 
     return dag
 
