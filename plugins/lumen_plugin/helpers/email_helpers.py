@@ -3,14 +3,16 @@ from airflow.models.taskinstance import TaskInstance
 from airflow.utils.state import State
 from datetime import datetime
 import re
+import logging
 
-
-def are_all_tasks_successful(test_prefix, context):
+def get_test_status(test_prefix, context):
     """
     Uses the context dictionary passed via the Python Operator
-    to iterate over all the test tasks and return True if all pass
-    and False if otherwise
+    to iterate over all the test tasks (identified by the test prefix)
+    and create a dict with all test status values
     """
+    status_dict = {}
+
     dag_instance = context["dag"]
     execution_date = context["execution_date"]
     tasks = dag_instance.task_ids
@@ -23,8 +25,18 @@ def are_all_tasks_successful(test_prefix, context):
             task_status = TaskInstance(
                 operator_instance, execution_date
             ).current_state()
-            if task_status == State.FAILED:
-                return False
+            test_status[task] = task_status
+    logging.info(status_dict)
+    return status_dict
+
+def are_all_tasks_successful(status_dict):
+    """
+    Iterate over all the test tasks status and return True if all pass
+    and False if otherwise
+    """
+    for k, v in status_dict:
+        if v == State.FAILED:
+            return False
     return True
 
 
@@ -39,7 +51,9 @@ def report_notify_email(emails, email_template_location, test_prefix, **context)
     :param test_prefix: the prefix that precedes all test tasks
     :type test_prefix: str
     """
-    report_passed = are_all_tasks_successful(test_prefix, context)
+    status_dict = get_test_status(test_prefix, context)
+    report_passed = are_all_tasks_successful(status_dict)
+
     dag_name = context["ti"].dag_id
     email_subject = f"[{report_passed}] {report_name}"
 
