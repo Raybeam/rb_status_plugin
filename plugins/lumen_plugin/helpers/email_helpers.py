@@ -26,6 +26,11 @@ def get_error_details(test_prefix, errors):
             return failed_task["description"]
     return "#"
 
+def get_status_from_passed(passed):
+    if passed:
+        return "Success"
+    else:
+        return "Failed"
 
 def are_all_tasks_successful(test_prefix, errors):
     """
@@ -63,11 +68,7 @@ def report_notify_email(emails, email_template_location, test_prefix, **context)
     errors = get_test_status(ri)
     details_link = get_error_details(test_prefix, errors)
     passed = are_all_tasks_successful(test_prefix, errors)
-
-    if passed:
-        status = "Success"
-    else:
-        status = "Failed"
+    status = get_status_from_passed(passed)
 
     with open(email_template_location) as file:
         send_email = EmailOperator(
