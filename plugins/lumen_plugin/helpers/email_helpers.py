@@ -23,20 +23,20 @@ def get_dag_id_from_context(context):
 def report_notify_email(email_template_location, emails, **context):
     """Send custom email alerts."""
     report_passed = are_all_tasks_successful(context)
-    report_name = get_dag_id_from_context(context)
-    subject_line = f"[{report_passed}] {report_name}"
+    title = get_dag_id_from_context(context)
+    email_subject = f"[{report_passed}] {report_name}"
 
     with open(email_template_location) as file:
         send_email = EmailOperator(
             task_id="custom_email_notification",
             to=emails,
-            subject=subject_line,
+            subject=email_subject,
             html_content=file.read()
         )
         params = {
                 "passed": report_passed,
                 "updated": datetime.now(),
-                "title": report_name,
+                "title": title,
                 "details_link": "#"
         }
         send_email.render_template_fields(
