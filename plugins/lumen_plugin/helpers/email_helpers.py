@@ -26,11 +26,13 @@ def get_error_details(test_prefix, errors):
             return failed_task["description"]
     return "#"
 
+
 def get_status_from_passed(passed):
     if passed:
         return "Success"
     else:
         return "Failed"
+
 
 def are_all_tasks_successful(test_prefix, errors):
     """
