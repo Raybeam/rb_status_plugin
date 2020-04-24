@@ -30,17 +30,24 @@ class ReportInstance:
     def updated(self):
         return self.dag_run.execution_date
 
-    def errors(self):
+    def errors(self, test_prefix=".*"):
+        """
+        Gets errors
+        By default it accepts any test name
+        """
+
         if self.passed:
             return []
 
         failed = []
         for ti in self.dag_run.get_task_instances(state=State.FAILED):
-            ti.refresh_from_db()
+            matched = re.match(test_prefix, failed_task["name"]) is not None
+            if matched:
+                ti.refresh_from_db()
 
-            failed.append(
-                {"id": ti.job_id, "name": ti.task_id, "description": ti.log_url}
-            )
+                failed.append(
+                    {"id": ti.job_id, "name": ti.task_id, "description": ti.log_url}
+                )
 
         return failed
 
