@@ -4,7 +4,7 @@ import re
 import logging
 
 
-def create_report_instance(context):
+def get_report_instance(context):
     return ReportInstance(context["dag_run"])
 
 
@@ -63,7 +63,7 @@ def report_notify_email(emails, email_template_location, test_prefix, **context)
     :param test_prefix: the prefix that precedes all test tasks
     :type test_prefix: str
     """
-    ri = create_report_instance(context)
+    ri = get_report_instance(context)
 
     dag_name = ri.dag_id
     updated_time = ri.updated
