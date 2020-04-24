@@ -19,6 +19,10 @@ class ReportInstance:
         return self.dag_run.id
 
     @property
+    def dag_id(self):
+        return self.dag_run.dag_id
+
+    @property
     def passed(self):
         return self.dag_run.get_state() == State.SUCCESS
 
