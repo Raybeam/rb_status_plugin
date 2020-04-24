@@ -13,11 +13,16 @@ from flask_appbuilder.fieldwidgets import (
 from wtforms import StringField, TextAreaField, SelectMultipleField
 from plugins.lumen_plugin import test_data
 
+
+from flask_appbuilder.security.decorators import has_access
+
 # from airflow import appbuilder
 
 
 # Creating a flask appbuilder BaseView
 class LumenStatusView(AppBuilderBaseView):
+    route_base = "/lumen"
+
     # !temporary method
     def reports_data(self):
         data = {
@@ -30,7 +35,7 @@ class LumenStatusView(AppBuilderBaseView):
         }
         return data
 
-    @expose("/")
+    @expose("/status")
     def list(self):
         return self.render_template("status.html", content=self.reports_data())
 
@@ -44,6 +49,8 @@ v_appbuilder_status_package = {
 
 
 class LumenReportsView(AppBuilderBaseView):
+    route_base = "/lumen"
+
     @expose("/reports")
     def list(self):
         return self.render_template("reports.html", content=test_data.dummy_reports)
@@ -55,6 +62,10 @@ v_appbuilder_reports_package = {
     "category": "Lumen",
     "view": v_appbuilder_reports_view,
 }
+
+test_choices = []
+for test in test_data.dummy_tests:
+    test_choices.append((test["id"], test["name"]))
 
 
 class ReportForm(DynamicForm):
@@ -75,32 +86,86 @@ class ReportForm(DynamicForm):
     tests = SelectMultipleField(
         ("Tests"),
         description=("List of the tests to include in the report"),
-        choices=[(1, "Test 1"), (2, "Test 2")],
+        choices=test_choices,
         widget=Select2ManyWidget(),
     )
 
 
-class ReportFormView(SimpleFormView):
+class NewReportFormView(SimpleFormView):
+    route_base = "/lumen/report"
     form = ReportForm
-    form_title = "Report Form"
+    form_title = "New Report"
     message = "My form submitted"
 
-    def form_get(self, form):
-        form.title.data = "This was prefilled"
+    @expose("/new", methods=["GET"])
+    @has_access
+    def this_form_get(self):
+        return super().this_form_get()
 
     def form_post(self, form):
         # post process form
         flash(self.message, "info")
 
 
-v_appbuilder_report_form_view = ReportFormView()
-v_appbuilder_report_form_package = {
+v_appbuilder_new_report_form_view = NewReportFormView()
+v_appbuilder_new_report_form_package = {
     "name": None,
     "category": None,
-    # "name": "Report Form",
-    # "category": "Lumen",
-    "view": v_appbuilder_report_form_view,
+    "view": v_appbuilder_new_report_form_view,
 }
+
+
+class EditReportFormView(SimpleFormView):
+    form = ReportForm
+    form_title = "New Report"
+    message = "My form submitted"
+
+    route_base = "/lumen/report"
+
+    @expose("/<string:report_id>/edit", methods=["GET"])
+    @has_access
+    def this_form_get(self, report_id):
+        self._init_vars()
+        form = self.form.refresh()
+
+        self.form_get(form, report_id)
+        widgets = self._get_edit_widget(form=form)
+        self.update_redirect()
+        return self.render_template(
+            self.form_template,
+            title=self.form_title,
+            widgets=widgets,
+            appbuilder=self.appbuilder,
+        )
+
+    def form_get(self, form, report_id):
+        # !get report by report_id and prefill form with its values
+        requested_report = {}
+        for report in test_data.dummy_reports:
+            if str(report["id"]) == report_id:
+                requested_report = report
+
+        if requested_report:
+            form.title.data = requested_report["title"]
+            form.description.data = requested_report["description"]
+            form.schedule.data = requested_report["schedule"]
+            form.emails.data = ", ".join(requested_report["emails"])
+            form.owner_name.data = requested_report["owner_name"]
+            form.owner_email.data = requested_report["owner_email"]
+            form.tests.data = [str(test["id"]) for test in requested_report["tests"]]
+
+    def form_post(self, form):
+        # post process form
+        flash(self.message, "info")
+
+
+v_appbuilder_edit_report_form_view = EditReportFormView()
+v_appbuilder_edit_report_form_package = {
+    "name": None,
+    "category": None,
+    "view": v_appbuilder_edit_report_form_view,
+}
+
 
 # Creating a flask blueprint to intergrate the templates and static folder
 bp = Blueprint(
@@ -124,6 +189,7 @@ class LumenPlugin(AirflowPlugin):
     appbuilder_views = [
         v_appbuilder_status_package,
         v_appbuilder_reports_package,
-        v_appbuilder_report_form_package,
+        v_appbuilder_new_report_form_package,
+        v_appbuilder_edit_report_form_package,
     ]
     appbuilder_menu_items = []

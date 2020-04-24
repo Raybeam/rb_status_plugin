@@ -1,25 +1,33 @@
 import datetime
 
+dummy_tests = [
+    {"id": 1, "name": "Test 1"},
+    {"id": 2, "name": "Test 2"},
+    {"id": 3, "name": "Test 3"},
+    {"id": 4, "name": "Test 4"},
+    {"id": 5, "name": "Test 5"},
+]
+
 dummy_reports = [
     {
         "id": 1,
-        "title": "Test Title",
-        "description": "Test Description",
-        "schedule": "* * * * *",
+        "title": "Test Title 1",
+        "description": "Test Title 1 Description",
+        "schedule": "* * 4 * *",
         "emails": ["email1@mail.com", "email2@mail.com", "email3@mail.com"],
         "owner_name": "John Doe",
         "owner_email": "johndoe@mail.com",
-        "tests": [{"id": 1, "name": "Test Name 1"}, {"id": 2, "name": "Test Name 2"}],
+        "tests": [dummy_tests[3], dummy_tests[0], dummy_tests[2]],
     },
     {
         "id": 2,
         "title": "Test Title 2",
-        "description": "Test Description 2",
-        "schedule": "* * * * *",
-        "emails": ["email1@mail.com", "email2@mail.com", "email3@mail.com"],
+        "description": "Test Title 2 Description",
+        "schedule": "* 22 * * 6",
+        "emails": ["email1@mail.com"],
         "owner_name": "John Doe",
         "owner_email": "johndoe@mail.com",
-        "tests": [{"id": 1, "name": "Test Name 1"}, {"id": 2, "name": "Test Name 2"}],
+        "tests": [dummy_tests[4]],
     },
 ]
 

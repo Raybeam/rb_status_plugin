@@ -21,7 +21,7 @@
   <div id="reports-heading">
     <h2>Reports</h2>
 
-    <a href="#" class="btn btn-sm btn-primary">
+    <a href="{{ url_for('NewReportFormView.this_form_get') }}" class="btn btn-sm btn-primary">
       <i class="fa fa-edit"></i>
       Create New Report
     </a>
@@ -37,7 +37,7 @@
           </th>
           <th>Report</th>
           <th>Schedule</th>
-          {# <th>Tests</th> #}
+          <th>Tests</th>
           <th>Owner</th>
           <th>Subscribers</th>
           <th class="text-center">Links</th>
@@ -48,7 +48,7 @@
           <tr>
             <!-- Column 1: View Report -->
             <td class="text-center" style="width:10px;">
-              <a href="#" title="Edit">
+              <a href="{{ url_for('EditReportFormView.this_form_get', report_id=report.id) }}" title="Edit">
                 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
               </a>
             </td>
@@ -60,9 +60,7 @@
 
             <!-- Column 2: Name -->
             <td>
-              <a href="#" title="Click to see report details">
-                {{ report.title }}
-              </a>
+              {{ report.title }}
             </td>
 
             <!-- Column 3: Report Schedule -->
@@ -70,12 +68,12 @@
               {{ report.schedule }}
             </td>
 
-            {# <!-- Column 4: Report Tests -->
+            <!-- Column 4: Report Tests -->
             <td>
               {% for test in report.tests %}
-                {{ test.name }}, <br> 
+                {{ test.name }}{% if not loop.last %}, <br>{% endif %}
               {% endfor %}
-            </td> #}
+            </td>
 
             <!-- Column 5: Report Owner -->
             <td>
