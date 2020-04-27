@@ -10,11 +10,10 @@ class ReportInstance:
     An instance of a Lumen report.  This is currently a basic wrapper for a DagRun
     with a few Lumen-specific helpers
     """
-    _cached_passed = None
-
     def __init__(self, dag_run, test_prefix):
         self.dag_run = dag_run
         self.test_prefix = test_prefix
+        self._cached_passed = None
 
     @property
     def id(self):
