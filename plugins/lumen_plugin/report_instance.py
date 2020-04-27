@@ -1,6 +1,6 @@
 from airflow.utils.db import provide_session
 from airflow.utils.state import State
-
+import re
 from airflow import models
 import logging
 
@@ -10,9 +10,11 @@ class ReportInstance:
     An instance of a Lumen report.  This is currently a basic wrapper for a DagRun
     with a few Lumen-specific helpers
     """
+    _cached_passed = None
 
-    def __init__(self, dag_run):
+    def __init__(self, dag_run, test_prefix):
         self.dag_run = dag_run
+        self.test_prefix = test_prefix
 
     @property
     def id(self):
@@ -24,7 +26,9 @@ class ReportInstance:
 
     @property
     def passed(self):
-        return len(self.errors()) == 0
+        if self._cached_passed is None:
+            self._cached_passed = (self.errors(test_prefix=self.test_prefix) == 0)
+        return self._cached_passed
 
     @property
     def status(self):
@@ -39,9 +43,6 @@ class ReportInstance:
         Gets errors
         By default it accepts any test name
         """
-
-        if self.passed:
-            return []
 
         failed = []
         for ti in self.dag_run.get_task_instances(state=State.FAILED):
@@ -80,4 +81,4 @@ class ReportInstance:
             )
             dag_run = dag_run.get_previous_dagrun()
 
-        return cls(dag_run)
+        return cls(dag_run, report.test_prefix)

@@ -31,7 +31,7 @@ def create_dag(report, default_args):
     )
 
     with dag:
-        test_prefix = "test_"
+        test_prefix = report.test_prefix
 
         start = DummyOperator(task_id="start_dag")
         send_email = PythonOperator(
@@ -39,9 +39,8 @@ def create_dag(report, default_args):
             python_callable=report_notify_email,
             trigger_rule="all_done",
             op_kwargs={
-                "emails": report.emails,
-                "email_template_location": SINGLE_EMAIL_TEMPLATE,
-                "test_prefix": test_prefix,
+                "report": report,
+                "email_template_location": SINGLE_EMAIL_TEMPLATE
             },
             provide_context=True,
         )

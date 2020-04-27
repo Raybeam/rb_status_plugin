@@ -4,58 +4,10 @@ import re
 import logging
 
 
-def get_report_instance(context):
-    return ReportInstance(context["dag_run"])
-
-
-def get_test_status(report_instance):
+def report_notify_email(report, email_template_location, **context):
     """
-    Uses the report_instance passed via the Python Operator
-    and create a list with all test status values
-    """
-    return report_instance.errors()
-
-
-def get_error_details(test_prefix, errors):
-    """
-    This just returns the first error log link
-    Or, if no errors, empty link
-    """
-    for failed_task in errors:
-        if re.match(test_prefix, failed_task["name"]) is not None:
-            return failed_task["description"]
-    return "#"
-
-
-def get_status_from_passed(passed):
-    if passed:
-        return "Success"
-    else:
-        return "Failed"
-
-
-def are_all_tasks_successful(test_prefix, errors):
-    """
-    Iterate over all the tasks and checks to see if any test tasks
-    are among the tasks that failed...
-    Returns True if all pass and False if otherwise
-    """
-
-    if len(errors) == 0:
-        return True
-
-    for failed_task in errors:
-        # If the failed task is a test task
-        if re.match(test_prefix, failed_task["name"]) is not None:
-            return False
-
-    return True
-
-
-def report_notify_email(emails, email_template_location, test_prefix, **context):
-    """
-    :param emails: emails to send report status to
-    :type emails: list
+    :param report: report being notified on
+    :type report: Report
 
     :param email_template_location: location of html template to use for status
     :type email_template_location: str
@@ -63,19 +15,18 @@ def report_notify_email(emails, email_template_location, test_prefix, **context)
     :param test_prefix: the prefix that precedes all test tasks
     :type test_prefix: str
     """
-    ri = get_report_instance(context)
+    ri = ReportInstance(context["dag_run"], test_prefix)
 
     dag_name = ri.dag_id
     updated_time = ri.updated
-    errors = get_test_status(ri)
-    details_link = get_error_details(test_prefix, errors)
-    passed = are_all_tasks_successful(test_prefix, errors)
-    status = get_status_from_passed(passed)
+    passed = ri.passed
+    status = ri.status
+    details_link = "#"
 
     with open(email_template_location) as file:
         send_email = EmailOperator(
             task_id="custom_email_notification",
-            to=emails,
+            to=report.emails,
             subject="[{{status}}] {{title}}",
             html_content=file.read(),
         )
