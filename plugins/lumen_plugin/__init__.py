@@ -1,6 +1,6 @@
 from airflow.plugins_manager import AirflowPlugin
 
-from flask import Blueprint
+from flask import Blueprint, flash
 from flask_appbuilder import BaseView as AppBuilderBaseView, expose
 from plugins.lumen_plugin.report_repo import VariablesReportRepo
 from plugins.lumen_plugin.report_instance import ReportInstance
@@ -9,6 +9,8 @@ from plugins.lumen_plugin.report_instance import ReportInstance
 from lumen_plugin.sensors.lumen_sensor import LumenSensor
 import logging
 
+log = logging.getLogger(__name__)
+
 # Creating a flask appbuilder BaseView
 class LumenBuilderBaseView(AppBuilderBaseView):
     # !temporary method
@@ -16,35 +18,37 @@ class LumenBuilderBaseView(AppBuilderBaseView):
         reports = []
         passed = True
         updated = None
+        log.debug("Loading reports")
         for report in VariablesReportRepo.list():
-            ri = ReportInstance.get_latest(report)
+            try:
+                ri = ReportInstance.get_latest(report)
 
-            if not updated:
-                updated = ri.updated
+                if not updated:
+                    updated = ri.updated
 
-            if updated < ri.updated:
-                updated = ri.updated
+                if updated < ri.updated:
+                    updated = ri.updated
 
-            r = {
-                "id": ri.id,
-                "passed": ri.passed,
-                "updated": ri.updated,
-                "title": report.name,
-                "owner_email": report.emails,
-            }
+                r = {
+                    "id": ri.id,
+                    "passed": ri.passed,
+                    "updated": ri.updated,
+                    "title": report.name,
+                    "owner_email": report.emails,
+                }
 
-            r["errors"] = ri.errors()
-            if len(r["errors"]) > 0:
-                passed = False
+                r["errors"] = ri.errors()
+                if len(r["errors"]) > 0:
+                    passed = False
 
-            logging.info(r)
-            reports.append(r)
+                log.info(r)
+                reports.append(r)
+            except Exception as e:
+                log.exception(e)
+                log.error("Failed to generate report: " + str(e))
+                flash("Failed to generate report: " + str(e), "error")
 
-        data = {
-            # TODO: summary must be calculated
-            "summary": {"passed": passed, "updated": updated},
-            "reports": reports,
-        }
+        data = {"summary": {"passed": passed, "updated": updated}, "reports": reports}
         return data
 
     @expose("/")
