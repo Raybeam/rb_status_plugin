@@ -27,7 +27,7 @@ class ReportInstance:
     @property
     def passed(self):
         if self._cached_passed is None:
-            self._cached_passed = (self.errors(test_prefix=self.test_prefix) == 0)
+            self._cached_passed = (self.errors(task_prefix=self.test_prefix) == 0)
         return self._cached_passed
 
     @property
@@ -38,15 +38,15 @@ class ReportInstance:
     def updated(self):
         return self.dag_run.execution_date
 
-    def errors(self, test_prefix=".*"):
+    def errors(self, task_prefix=".*"):
         """
-        Gets errors
+        Gets errors that match task_prefix
         By default it accepts any test name
         """
 
         failed = []
         for ti in self.dag_run.get_task_instances(state=State.FAILED):
-            matched = re.match(test_prefix, ti.task_id) is not None
+            matched = re.match(task_prefix, ti.task_id) is not None
             if matched:
                 ti.refresh_from_db()
 
