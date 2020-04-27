@@ -12,9 +12,13 @@ from flask_appbuilder.fieldwidgets import (
 )
 from wtforms import StringField, TextAreaField, SelectMultipleField
 from plugins.lumen_plugin import test_data
-
+from plugins.lumen_plugin.report_repo import VariablesReportRepo
+from plugins.lumen_plugin.report_instance import ReportInstance
+from lumen_plugin.sensors.lumen_sensor import LumenSensor
 
 from flask_appbuilder.security.decorators import has_access
+
+import logging
 
 # from airflow import appbuilder
 
@@ -25,13 +29,37 @@ class LumenStatusView(AppBuilderBaseView):
 
     # !temporary method
     def reports_data(self):
+        reports = []
+        passed = True
+        updated = None
+        for report in VariablesReportRepo.list():
+            ri = ReportInstance.get_latest(report)
+
+            if not updated:
+                updated = ri.updated
+
+            if updated < ri.updated:
+                updated = ri.updated
+
+            r = {
+                "id": ri.id,
+                "passed": ri.passed,
+                "updated": ri.updated,
+                "title": report.name,
+                "owner_email": report.emails,
+            }
+
+            r["errors"] = ri.errors()
+            if len(r["errors"]) > 0:
+                passed = False
+
+            logging.info(r)
+            reports.append(r)
+
         data = {
             # TODO: summary must be calculated
-            "summary": {
-                "passed": test_data.dummy_report_runs[0]["passed"],
-                "updated": test_data.dummy_report_runs[0]["updated"],
-            },
-            "reports": test_data.dummy_report_runs,
+            "summary": {"passed": passed, "updated": updated},
+            "reports": reports,
         }
         return data
 
@@ -180,6 +208,7 @@ bp = Blueprint(
 class LumenPlugin(AirflowPlugin):
     name = "lumen"
     operators = []
+    sensors = [LumenSensor]
     flask_blueprints = [bp]
     hooks = []
     executors = []

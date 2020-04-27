@@ -20,7 +20,7 @@ class Report:
 
     @emails.setter
     def emails(self, val):
-        self.__emails == val
+        self.__emails = val
 
     @property
     def schedule(self):
