@@ -1,7 +1,6 @@
 from airflow.plugins_manager import AirflowPlugin
 
-from flask import Blueprint
-from flask import flash
+from flask import Blueprint, flash
 from flask_appbuilder import SimpleFormView
 from flask_appbuilder import BaseView as AppBuilderBaseView, expose
 from flask_appbuilder.forms import DynamicForm
@@ -20,37 +19,54 @@ from flask_appbuilder.security.decorators import has_access
 
 import logging
 
+log = logging.getLogger(__name__)
+
 # Creating a flask appbuilder BaseView
 class LumenStatusView(AppBuilderBaseView):
+    """
+    LumenStatusView is responsible for Lumen Status Page
+    """
+
     route_base = "/lumen"
 
     def reports_data(self):
+        """
+        Generate reports data.
+        It retrieves a list of reports, generates summary status
+        and pass it all down to the template
+        """
         reports = []
         passed = True
         updated = None
+        log.debug("Loading reports")
         for report in VariablesReportRepo.list():
-            ri = ReportInstance.get_latest(report)
+            try:
+                ri = ReportInstance.get_latest(report)
 
-            if not updated:
-                updated = ri.updated
+                if not updated:
+                    updated = ri.updated
 
-            if updated < ri.updated:
-                updated = ri.updated
+                if updated < ri.updated:
+                    updated = ri.updated
 
-            r = {
-                "id": ri.id,
-                "passed": ri.passed,
-                "updated": ri.updated,
-                "title": report.name,
-                "owner_email": report.emails,
-            }
+                r = {
+                    "id": ri.id,
+                    "passed": ri.passed,
+                    "updated": ri.updated,
+                    "title": report.name,
+                    "owner_email": report.emails,
+                }
 
-            r["errors"] = ri.errors()
-            if len(r["errors"]) > 0:
-                passed = False
+                r["errors"] = ri.errors()
+                if len(r["errors"]) > 0:
+                    passed = False
 
-            logging.info(r)
-            reports.append(r)
+                log.info(r)
+                reports.append(r)
+            except Exception as e:
+                log.exception(e)
+                log.error("Failed to generate report: " + str(e))
+                flash("Failed to generate report: " + str(e), "error")
 
         data = {"summary": {"passed": passed, "updated": updated}, "reports": reports}
         return data
