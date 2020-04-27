@@ -20,14 +20,10 @@ from flask_appbuilder.security.decorators import has_access
 
 import logging
 
-# from airflow import appbuilder
-
-
 # Creating a flask appbuilder BaseView
 class LumenStatusView(AppBuilderBaseView):
     route_base = "/lumen"
 
-    # !temporary method
     def reports_data(self):
         reports = []
         passed = True
@@ -56,11 +52,7 @@ class LumenStatusView(AppBuilderBaseView):
             logging.info(r)
             reports.append(r)
 
-        data = {
-            # TODO: summary must be calculated
-            "summary": {"passed": passed, "updated": updated},
-            "reports": reports,
-        }
+        data = {"summary": {"passed": passed, "updated": updated}, "reports": reports}
         return data
 
     @expose("/status")
