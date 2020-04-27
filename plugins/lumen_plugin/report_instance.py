@@ -24,9 +24,6 @@ class ReportInstance:
 
     @property
     def passed(self):
-        if self.passed:
-            return self.passed
-
         return len(self.errors()) == 0
 
     @property
@@ -48,7 +45,7 @@ class ReportInstance:
 
         failed = []
         for ti in self.dag_run.get_task_instances(state=State.FAILED):
-            matched = re.match(test_prefix, failed_task["name"]) is not None
+            matched = re.match(test_prefix, ti.task_id) is not None
             if matched:
                 ti.refresh_from_db()
 
