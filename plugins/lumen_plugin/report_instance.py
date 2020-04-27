@@ -13,7 +13,7 @@ class ReportInstance:
     def __init__(self, dag_run, test_prefix):
         self.dag_run = dag_run
         self.test_prefix = test_prefix
-        self._cached_passed = None
+        self._passed = None
 
     @property
     def id(self):
@@ -25,9 +25,9 @@ class ReportInstance:
 
     @property
     def passed(self):
-        if self._cached_passed is None:
-            self._cached_passed = (self.errors(task_prefix=self.test_prefix) == 0)
-        return self._cached_passed
+        if self._passed is None:
+            self._passed = (self.errors(task_prefix=self.test_prefix) == 0)
+        return self._passed
 
     @property
     def status(self):
