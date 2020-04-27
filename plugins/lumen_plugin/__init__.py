@@ -12,9 +12,19 @@ import logging
 log = logging.getLogger(__name__)
 
 # Creating a flask appbuilder BaseView
-class LumenBuilderBaseView(AppBuilderBaseView):
-    # !temporary method
+class LumenStatusView(AppBuilderBaseView):
+    """
+    LumenStatusView is responsible for Lumen Status Page
+    """
+
+    route_base = "/lumen"
+
     def reports_data(self):
+        """
+        Generate reports data.
+        It retrieves a list of reports, generates summary status
+        and pass it all down to the template
+        """
         reports = []
         passed = True
         updated = None
@@ -51,16 +61,16 @@ class LumenBuilderBaseView(AppBuilderBaseView):
         data = {"summary": {"passed": passed, "updated": updated}, "reports": reports}
         return data
 
-    @expose("/")
+    @expose("/status")
     def list(self):
-        return self.render_template("index.html", content=self.reports_data())
+        return self.render_template("status.html", content=self.reports_data())
 
 
-v_appbuilder_view = LumenBuilderBaseView()
-v_appbuilder_package = {
-    "name": "Lumen View",
+v_appbuilder_status_view = LumenStatusView()
+v_appbuilder_status_package = {
+    "name": "Status Page",
     "category": "Lumen",
-    "view": v_appbuilder_view,
+    "view": v_appbuilder_status_view,
 }
 
 # Creating a flask blueprint to intergrate the templates and static folder
@@ -83,5 +93,5 @@ class LumenPlugin(AirflowPlugin):
     macros = []
     admin_views = []
     menu_links = []
-    appbuilder_views = [v_appbuilder_package]
+    appbuilder_views = [v_appbuilder_status_package]
     appbuilder_menu_items = []
