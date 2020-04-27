@@ -1,9 +1,8 @@
 from airflow.operators.email_operator import EmailOperator
-from plugins.lumen_plugin.report_instance import ReportInstance
-import re
-import logging
 from airflow import configuration
+from plugins.lumen_plugin.report_instance import ReportInstance
 from plugins.lumen_plugin import LumenBuilderBaseView
+import logging
 
 
 def get_details_link():
