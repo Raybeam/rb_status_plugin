@@ -24,7 +24,14 @@ class ReportInstance:
 
     @property
     def passed(self):
-        return self.dag_run.get_state() == State.SUCCESS
+        if self.passed:
+            return self.passed
+
+        return len(self.errors()) == 0
+
+    @property
+    def status(self):
+        return "Passed" if self.passed else "Failed"
 
     @property
     def updated(self):
