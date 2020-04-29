@@ -1,6 +1,6 @@
 from airflow.plugins_manager import AirflowPlugin
 
-from flask import Blueprint
+from flask import Blueprint, flash
 from flask_appbuilder import BaseView as AppBuilderBaseView, expose
 from plugins.lumen_plugin.report_repo import VariablesReportRepo
 from plugins.lumen_plugin.report_instance import ReportInstance
@@ -9,54 +9,68 @@ from plugins.lumen_plugin.report_instance import ReportInstance
 from lumen_plugin.sensors.lumen_sensor import LumenSensor
 import logging
 
+log = logging.getLogger(__name__)
+
 # Creating a flask appbuilder BaseView
-class LumenBuilderBaseView(AppBuilderBaseView):
-    # !temporary method
+class LumenStatusView(AppBuilderBaseView):
+    """
+    LumenStatusView is responsible for Lumen Status Page
+    """
+
+    route_base = "/lumen"
+
     def reports_data(self):
+        """
+        Generate reports data.
+        It retrieves a list of reports, generates summary status
+        and pass it all down to the template
+        """
         reports = []
         passed = True
         updated = None
+        log.debug("Loading reports")
         for report in VariablesReportRepo.list():
-            ri = ReportInstance.get_latest(report)
+            try:
+                ri = ReportInstance.get_latest(report)
 
-            if not updated:
-                updated = ri.updated
+                if not updated:
+                    updated = ri.updated
 
-            if updated < ri.updated:
-                updated = ri.updated
+                if updated < ri.updated:
+                    updated = ri.updated
 
-            r = {
-                "id": ri.id,
-                "passed": ri.passed,
-                "updated": ri.updated,
-                "title": report.name,
-                "owner_email": report.emails,
-            }
+                r = {
+                    "id": ri.id,
+                    "passed": ri.passed,
+                    "updated": ri.updated,
+                    "title": report.name,
+                    "owner_email": report.emails,
+                }
 
-            r["errors"] = ri.errors()
-            if len(r["errors"]) > 0:
-                passed = False
+                r["errors"] = ri.errors()
+                if len(r["errors"]) > 0:
+                    passed = False
 
-            logging.info(r)
-            reports.append(r)
+                log.info(r)
+                reports.append(r)
+            except Exception as e:
+                log.exception(e)
+                log.error("Failed to generate report: " + str(e))
+                flash("Failed to generate report: " + str(e), "error")
 
-        data = {
-            # TODO: summary must be calculated
-            "summary": {"passed": passed, "updated": updated},
-            "reports": reports,
-        }
+        data = {"summary": {"passed": passed, "updated": updated}, "reports": reports}
         return data
 
-    @expose("/")
+    @expose("/status")
     def list(self):
-        return self.render_template("index.html", content=self.reports_data())
+        return self.render_template("status.html", content=self.reports_data())
 
 
-v_appbuilder_view = LumenBuilderBaseView()
-v_appbuilder_package = {
-    "name": "Lumen View",
+v_appbuilder_status_view = LumenStatusView()
+v_appbuilder_status_package = {
+    "name": "Status Page",
     "category": "Lumen",
-    "view": v_appbuilder_view,
+    "view": v_appbuilder_status_view,
 }
 
 # Creating a flask blueprint to intergrate the templates and static folder
@@ -79,5 +93,5 @@ class LumenPlugin(AirflowPlugin):
     macros = []
     admin_views = []
     menu_links = []
-    appbuilder_views = [v_appbuilder_package]
+    appbuilder_views = [v_appbuilder_status_package]
     appbuilder_menu_items = []
