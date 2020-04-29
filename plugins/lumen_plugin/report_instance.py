@@ -44,7 +44,6 @@ class ReportInstance:
         failed = []
         for ti in self.dag_run.get_task_instances(state=State.FAILED):
             is_test_op = (ti.operator == 'LumenSensor')
-            logging.info(is_test_op)
             if is_test_op:
                 ti.refresh_from_db()
 
