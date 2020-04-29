@@ -1,6 +1,5 @@
 from airflow.utils.db import provide_session
 from airflow.utils.state import State
-import re
 from airflow import models
 import logging
 
