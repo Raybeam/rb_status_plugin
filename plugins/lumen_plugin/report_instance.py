@@ -43,13 +43,12 @@ class ReportInstance:
 
         failed = []
         for ti in self.dag_run.get_task_instances(state=State.FAILED):
-            is_test_op = (ti.operator == 'LumenSensor')
-            if is_test_op:
-                ti.refresh_from_db()
-
-                failed.append(
-                    {"id": ti.job_id, "name": ti.task_id, "description": ti.log_url}
-                )
+            if (ti.operator != 'LumenSensor'):
+                continue
+            ti.refresh_from_db()
+            failed.append(
+                {"id": ti.job_id, "name": ti.task_id, "description": ti.log_url}
+            )
 
         return failed
 
