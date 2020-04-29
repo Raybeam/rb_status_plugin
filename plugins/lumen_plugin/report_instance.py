@@ -10,9 +10,8 @@ class ReportInstance:
     An instance of a Lumen report.  This is currently a basic wrapper for a DagRun
     with a few Lumen-specific helpers
     """
-    def __init__(self, dag_run, test_prefix):
+    def __init__(self, dag_run):
         self.dag_run = dag_run
-        self.test_prefix = test_prefix
         self._passed = None
 
     @property
@@ -26,7 +25,7 @@ class ReportInstance:
     @property
     def passed(self):
         if self._passed is None:
-            self._passed = (self.errors(task_prefix=self.test_prefix) == 0)
+            self._passed = (self.errors() == 0)
         return self._passed
 
     @property
@@ -37,7 +36,7 @@ class ReportInstance:
     def updated(self):
         return self.dag_run.execution_date
 
-    def errors(self, task_prefix=".*"):
+    def errors(self):
         """
         Gets errors that match task_prefix
         By default it accepts any test name
@@ -45,8 +44,9 @@ class ReportInstance:
 
         failed = []
         for ti in self.dag_run.get_task_instances(state=State.FAILED):
-            matched = re.match(task_prefix, ti.task_id) is not None
-            if matched:
+            is_test_op = (ti.operator == 'LumenSensor')
+            logging.info(is_test_op)
+            if is_test_op:
                 ti.refresh_from_db()
 
                 failed.append(
@@ -80,4 +80,4 @@ class ReportInstance:
             )
             dag_run = dag_run.get_previous_dagrun()
 
-        return cls(dag_run, report.test_prefix)
+        return cls(dag_run)

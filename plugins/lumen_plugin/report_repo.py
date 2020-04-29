@@ -74,8 +74,6 @@ class VariablesReportRepo(ReportRepo):
         r.emails = v["emails"]
         r.tests = v["tests"]
         r.schedule = v["schedule"]
-        if "test_prefix" in v:
-            r.test_prefix = v["test_prefix"]
         return r
 
     @staticmethod

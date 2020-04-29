@@ -31,7 +31,7 @@ def create_dag(report, default_args):
     )
 
     with dag:
-        test_prefix = report.test_prefix
+        test_prefix = "test_"
 
         start = DummyOperator(task_id="start_dag")
         send_email = PythonOperator(

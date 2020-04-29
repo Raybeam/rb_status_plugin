@@ -26,7 +26,7 @@ def report_notify_email(report, email_template_location, **context):
     :param test_prefix: the prefix that precedes all test tasks
     :type test_prefix: str
     """
-    ri = ReportInstance(context["dag_run"], report.test_prefix)
+    ri = ReportInstance(context["dag_run"])
 
     updated_time = ri.updated
     passed = ri.passed

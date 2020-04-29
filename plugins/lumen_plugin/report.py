@@ -12,7 +12,6 @@ class Report:
         self.__emails = None
         self.__tests = None
         self.__schedule = None
-        self.__test_prefix = 'test_'
 
     @property
     def emails(self):
@@ -22,14 +21,6 @@ class Report:
     @emails.setter
     def emails(self, val):
         self.__emails = val
-
-    @property
-    def test_prefix(self):
-        return self.__test_prefix
-
-    @test_prefix.setter
-    def test_prefix(self, val):
-        self.__test_prefix = val
 
     @property
     def schedule(self):
