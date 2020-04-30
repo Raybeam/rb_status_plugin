@@ -9,8 +9,16 @@ from flask_appbuilder.fieldwidgets import (
     BS3TextFieldWidget,
     BS3TextAreaFieldWidget,
     Select2ManyWidget,
+    Select2Widget,
 )
-from wtforms import StringField, TextAreaField, SelectMultipleField
+from wtforms import (
+    StringField,
+    TextAreaField,
+    SelectMultipleField,
+    SelectField,
+    FormField,
+)
+from wtforms_components import TimeField
 from plugins.lumen_plugin import test_data
 from plugins.lumen_plugin.report_repo import VariablesReportRepo
 from plugins.lumen_plugin.report_instance import ReportInstance
@@ -39,7 +47,7 @@ class LumenStatusView(AppBuilderBaseView):
         reports = []
         passed = True
         updated = None
-        log.debug("Loading reports")
+        log.info("Loading reports")
         for report in VariablesReportRepo.list():
             try:
                 ri = ReportInstance.get_latest(report)
@@ -108,9 +116,6 @@ for test in test_data.dummy_tests:
 class ReportForm(DynamicForm):
     title = StringField(("Title"), widget=BS3TextFieldWidget())
     description = TextAreaField(("Description"), widget=BS3TextAreaFieldWidget())
-    schedule = StringField(
-        ("Schedule"), description=("Cron time string"), widget=BS3TextFieldWidget()
-    )
     owner_name = StringField(("Owner Name"), widget=BS3TextFieldWidget())
     owner_email = StringField(("Owner Email"), widget=BS3TextFieldWidget())
     subscribers = StringField(
@@ -126,6 +131,28 @@ class ReportForm(DynamicForm):
         choices=test_choices,
         widget=Select2ManyWidget(),
     )
+    schedule_type = SelectField(
+        ("Schedule"),
+        description=("Select how you want to schedule the report"),
+        choices=[("daily", "Daily"), ("weekly", "Weekly"), ("custom", "Custom (Cron)")],
+        widget=Select2Widget(),
+    )
+    schedule_time = TimeField("Time", render_kw={"class": "form-control"})
+    schedule_week_day = SelectField(
+        ("Day of week"),
+        description=("Select day of a week you want to schedule the report"),
+        choices=[
+            ("0", "Monday"),
+            ("1", "Tuesday"),
+            ("2", "Wednesday"),
+            ("3", "Thursday"),
+            ("4", "Friday"),
+            ("5", "Saturday"),
+            ("6", "Sunday"),
+        ],
+        widget=Select2Widget(),
+    )
+    schedule_custom = StringField(("Cron schedule"), widget=BS3TextFieldWidget())
 
 
 class NewReportFormView(SimpleFormView):
@@ -171,7 +198,17 @@ class EditReportFormView(SimpleFormView):
                 ]
             },
         ),
-        ("Schedule", {"fields": ["schedule"]}),
+        (
+            "Schedule",
+            {
+                "fields": [
+                    "schedule_type",
+                    "schedule_week_day",
+                    "schedule_time",
+                    "schedule_custom",
+                ]
+            },
+        ),
         ("Tests", {"fields": ["tests"]}),
     ]
     message = "My form submitted"

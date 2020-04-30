@@ -1,2 +1,3 @@
 inflection
 flake8
+WTForms-Components
