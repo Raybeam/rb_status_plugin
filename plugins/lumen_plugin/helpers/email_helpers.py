@@ -17,6 +17,9 @@ def get_details_link():
 
 def report_notify_email(report, email_template_location, **context):
     """
+    For the given report, sends a notification email in the format given
+    in the email_template
+
     :param report: report being notified on
     :type report: Report
 
