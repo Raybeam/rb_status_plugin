@@ -1,10 +1,9 @@
 from airflow.sensors.base_sensor_operator import BaseSensorOperator
 from airflow.utils.decorators import apply_defaults
 from airflow.models.taskinstance import TaskInstance
-from airflow.utils.db import create_session
 from airflow.utils.state import State
 from sqlalchemy.orm.exc import NoResultFound
-
+from airflow.utils.db import provide_session
 
 class LumenSensor(BaseSensorOperator):
     """
@@ -33,35 +32,37 @@ class LumenSensor(BaseSensorOperator):
         self.test_dag_id = test_dag_id
         self.test_task_id = test_task_id
 
-    def poke(self, context):
-        self.log.info(
-            f"Querying for {self.test_dag_id}.{self.test_task_id}'s result..."
-        )
-        # Query metadata and save to test_result
-        with create_session() as curr_session:
-            ti = curr_session.query(TaskInstance).filter(
+    def push_test_status(ti, is_passed):
+        if force_status:
+            ti.xcom_push(key=self.test_task_id, val=is_passed)
+        else:
+            ti.xcom_push(key=self.test_task_id, val=is_passed)
+
+    @provide_session
+    def poke(self, context, session=None):
+        self.log.info(f"Querying for {self.test_dag_id}.{self.test_task_id}'s result...")
+        try:
+            ti = session.query(TaskInstance).filter(
                 TaskInstance.task_id == self.test_task_id,
                 TaskInstance.dag_id == self.test_dag_id,
             ).order_by(TaskInstance.execution_date.desc()).first()
 
-            if not ti:
-                raise NoResultFound
-
-            state = ti.state
-            terminal_failure_states = [
-                State.FAILED, State.UPSTREAM_FAILED,
-                State.SHUTDOWN, State.REMOVED
-            ]
+            terminal_failure_states = [State.FAILED, State.UPSTREAM_FAILED, State.SHUTDOWN, State.REMOVED]
             terminal_success_states = [State.SUCCESS, State.SKIPPED]
 
+            state = ti.state
             self.log.info(
                 f"{self.test_dag_id}.{self.test_task_id} is in state {ti.state}"
             )
-
-            if state in terminal_failure_states:
-                self.log.error('Test was in a terminal failed state')
-                raise ValueError()
-            if state in terminal_success_states:
+            if state in [*terminal_success_states, *terminal_failure_states]:
+                push_test_status(context[ti], state)
+                self.log.info(context[ti].xcom_pull(key=self.test_task_id))
                 return True
             else:
                 return False
+
+        except e:
+            self.log.error('Some error occured pulling task instance')
+            push_test_status(context['ti'], None)
+            self.log.info(context[ti].xcom_pull(key=self.test_task_id))
+            raise e
