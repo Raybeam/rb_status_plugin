@@ -11,13 +11,7 @@ from flask_appbuilder.fieldwidgets import (
     Select2ManyWidget,
     Select2Widget,
 )
-from wtforms import (
-    StringField,
-    TextAreaField,
-    SelectMultipleField,
-    SelectField,
-    FormField,
-)
+from wtforms import StringField, TextAreaField, SelectMultipleField, SelectField
 from wtforms_components import TimeField
 from plugins.lumen_plugin import test_data
 from plugins.lumen_plugin.report_repo import VariablesReportRepo
@@ -239,7 +233,7 @@ class EditReportFormView(SimpleFormView):
         if requested_report:
             form.title.data = requested_report["title"]
             form.description.data = requested_report["description"]
-            form.schedule.data = requested_report["schedule"]
+            # form.schedule.data = requested_report["schedule"]
             form.subscribers.data = ", ".join(requested_report["subscribers"])
             form.owner_name.data = requested_report["owner_name"]
             form.owner_email.data = requested_report["owner_email"]
