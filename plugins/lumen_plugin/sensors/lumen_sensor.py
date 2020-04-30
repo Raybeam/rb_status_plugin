@@ -33,7 +33,7 @@ class LumenSensor(BaseSensorOperator):
         self.test_task_id = test_task_id
 
     def push_test_status(self, ti, is_passed):
-        if force_status:
+        if is_passed:
             ti.xcom_push(key=self.test_task_id, val=is_passed)
         else:
             ti.xcom_push(key=self.test_task_id, val=is_passed)
