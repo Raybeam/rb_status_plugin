@@ -55,7 +55,7 @@ class LumenSensor(BaseSensorOperator):
                 f"{self.test_dag_id}.{self.test_task_id} is in state {ti.state}"
             )
             if state in [*terminal_success_states, *terminal_failure_states]:
-                push_test_status(context[ti], state)
+                self.push_test_status(context[ti], state)
                 self.log.info(context[ti].xcom_pull(key=self.test_task_id))
                 return True
             else:
@@ -63,6 +63,6 @@ class LumenSensor(BaseSensorOperator):
 
         except e:
             self.log.error('Some error occured pulling task instance')
-            push_test_status(context['ti'], None)
+            self.push_test_status(context['ti'], None)
             self.log.info(context[ti].xcom_pull(key=self.test_task_id))
             raise e
