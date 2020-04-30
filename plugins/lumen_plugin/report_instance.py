@@ -22,16 +22,6 @@ class ReportInstance:
         return self.dag_run.dag_id
 
     @property
-    def passed(self):
-        if self._passed is None:
-            self._passed = (self.errors() == 0)
-        return self._passed
-
-    @property
-    def status(self):
-        return "Passed" if self.passed else "Failed"
-
-    @property
     def updated(self):
         return self.dag_run.execution_date
 

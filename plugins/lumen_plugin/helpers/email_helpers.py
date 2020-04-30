@@ -30,7 +30,7 @@ def report_notify_email(report, email_template_location, **context):
 
     updated_time = ri.updated
     passed = ri.passed
-    status = ri.status
+    status = "Passed" if passed else "Failed"
     details_link = get_details_link()
 
     with open(email_template_location) as file:
