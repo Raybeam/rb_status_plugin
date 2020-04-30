@@ -2,8 +2,8 @@ from airflow.plugins_manager import AirflowPlugin
 
 from flask import Blueprint, flash
 from flask_appbuilder import BaseView as AppBuilderBaseView, expose
-from plugins.lumen_plugin.report_repo import VariablesReportRepo
-from plugins.lumen_plugin.report_instance import ReportInstance
+from lumen_plugin.report_repo import VariablesReportRepo
+from lumen_plugin.report_instance import ReportInstance
 
 
 from lumen_plugin.sensors.lumen_sensor import LumenSensor

@@ -2,10 +2,10 @@ from airflow import DAG
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.python_operator import PythonOperator
 from datetime import datetime, timedelta
-from plugins.lumen_plugin.report_repo import VariablesReportRepo
-from plugins.lumen_plugin.sensors.lumen_sensor import LumenSensor
+from lumen_plugin.report_repo import VariablesReportRepo
+from lumen_plugin.sensors.lumen_sensor import LumenSensor
 from airflow.utils.db import create_session
-from plugins.lumen_plugin.helpers.email_helpers import report_notify_email
+from lumen_plugin.helpers.email_helpers import report_notify_email
 import os
 
 # Default settings applied to all tests

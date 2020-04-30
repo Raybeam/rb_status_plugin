@@ -1,4 +1,4 @@
-from plugins.lumen_plugin.sensors.lumen_sensor import LumenSensor
+from lumen_plugin.sensors.lumen_sensor import LumenSensor
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.models.taskinstance import TaskInstance
 from datetime import datetime, timedelta

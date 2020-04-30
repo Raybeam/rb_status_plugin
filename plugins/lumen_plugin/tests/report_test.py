@@ -1,4 +1,4 @@
-from plugins.lumen_plugin.report import Report
+from lumen_plugin.report import Report
 
 import unittest
 

@@ -1,5 +1,5 @@
-from plugins.lumen_plugin.report_repo import VariablesReportRepo
-from plugins.lumen_plugin.report import Report
+from lumen_plugin.report_repo import VariablesReportRepo
+from lumen_plugin.report import Report
 
 import json
 import unittest

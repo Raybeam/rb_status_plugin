@@ -5,7 +5,7 @@ import abc
 from airflow.utils.db import provide_session
 
 from airflow.models import Variable
-from plugins.lumen_plugin.report import Report
+from lumen_plugin.report import Report
 
 
 class ReportRepo(abc.ABC):
