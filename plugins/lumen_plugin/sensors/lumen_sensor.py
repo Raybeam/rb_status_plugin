@@ -32,11 +32,8 @@ class LumenSensor(BaseSensorOperator):
         self.test_dag_id = test_dag_id
         self.test_task_id = test_task_id
 
-    def push_test_status(self, ti, is_passed):
-        if is_passed:
-            ti.xcom_push(key=self.test_task_id, val=is_passed)
-        else:
-            ti.xcom_push(key=self.test_task_id, val=is_passed)
+    def push_test_status(self, ti, test_status):
+        ti.xcom_push(key=self.test_task_id, value=test_status)
 
     @provide_session
     def poke(self, context, session=None):
@@ -55,13 +52,15 @@ class LumenSensor(BaseSensorOperator):
                 f"{self.test_dag_id}.{self.test_task_id} is in state {ti.state}"
             )
             if state in [*terminal_success_states, *terminal_failure_states]:
-                self.push_test_status(context[ti], state)
-                self.log.info(context[ti].xcom_pull(key=self.test_task_id))
+                self.push_test_status(context['ti'], state)
+                val = context['ti'].xcom_pull(key=self.test_task_id)
+                self.log.info(val)
                 return True
             else:
                 return False
 
         except:
             self.push_test_status(context['ti'], None)
-            self.log.info(context[ti].xcom_pull(key=self.test_task_id))
+            val = context['ti'].xcom_pull(key=self.test_task_id)
+            self.log.info(val)
             raise ValueError('Something went wrong')
