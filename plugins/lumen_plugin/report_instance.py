@@ -24,7 +24,7 @@ class ReportInstance:
     @property
     def passed(self):
         if self._passed is None:
-            self._passed = (self.errors() == 0)
+            self._passed = (len(self.errors()) == 0)
         return self._passed
 
     @property
@@ -45,7 +45,6 @@ class ReportInstance:
             failed.append(
                 {"id": ti.job_id, "name": ti.task_id, "description": ti.log_url}
             )
-
         return failed
 
     @classmethod
