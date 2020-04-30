@@ -233,7 +233,7 @@ class EditReportFormView(SimpleFormView):
         if requested_report:
             form.title.data = requested_report["title"]
             form.description.data = requested_report["description"]
-            # form.schedule.data = requested_report["schedule"]
+            form.schedule.data = requested_report["schedule"]
             form.subscribers.data = ", ".join(requested_report["subscribers"])
             form.owner_name.data = requested_report["owner_name"]
             form.owner_email.data = requested_report["owner_email"]
