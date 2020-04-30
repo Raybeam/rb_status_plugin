@@ -1,17 +1,17 @@
 from airflow.operators.email_operator import EmailOperator
 from airflow import configuration
 from plugins.lumen_plugin.report_instance import ReportInstance
-from plugins.lumen_plugin import LumenBuilderBaseView
+from plugins.lumen_plugin import LumenStatusView
 import logging
 
 
 def get_details_link():
     base_url = configuration.get('webserver', 'BASE_URL')
     # If you don't override route_base, Flask BaseView uses class name
-    if LumenBuilderBaseView.route_base:
-        route_base = LumenBuilderBaseView.route_base
+    if LumenStatusView.route_base:
+        route_base = LumenStatusView.route_base
     else:
-        route_base = LumenBuilderBaseView.__name__.lower()
+        route_base = LumenStatusView.__name__.lower()
     return f"{base_url}/{route_base}/"
 
 
