@@ -149,11 +149,40 @@ class ReportForm(DynamicForm):
     schedule_custom = StringField(("Cron schedule"), widget=BS3TextFieldWidget())
 
 
+form_fieldsets_config = [
+    (
+        "General",
+        {
+            "fields": [
+                "title",
+                "description",
+                "owner_name",
+                "owner_email",
+                "subscribers",
+            ]
+        },
+    ),
+    (
+        "Schedule",
+        {
+            "fields": [
+                "schedule_type",
+                "schedule_week_day",
+                "schedule_time",
+                "schedule_custom",
+            ]
+        },
+    ),
+    ("Tests", {"fields": ["tests"]}),
+]
+
+
 class NewReportFormView(SimpleFormView):
     route_base = "/lumen/report"
     form_template = "report_form.html"
     form = ReportForm
     form_title = "New Report"
+    form_fieldsets = form_fieldsets_config
     message = "My form submitted"
 
     @expose("/new", methods=["GET"])
@@ -179,32 +208,7 @@ class EditReportFormView(SimpleFormView):
     form_template = "report_form.html"
     form = ReportForm
     form_title = "New Report"
-    form_fieldsets = [
-        (
-            "General",
-            {
-                "fields": [
-                    "title",
-                    "description",
-                    "owner_name",
-                    "owner_email",
-                    "subscribers",
-                ]
-            },
-        ),
-        (
-            "Schedule",
-            {
-                "fields": [
-                    "schedule_type",
-                    "schedule_week_day",
-                    "schedule_time",
-                    "schedule_custom",
-                ]
-            },
-        ),
-        ("Tests", {"fields": ["tests"]}),
-    ]
+    form_fieldsets = form_fieldsets_config
     message = "My form submitted"
 
     @expose("/<string:report_id>/edit", methods=["GET"])
