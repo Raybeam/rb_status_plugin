@@ -3,6 +3,7 @@ from airflow.plugins_manager import AirflowPlugin
 from flask import Blueprint, flash
 from flask_appbuilder import SimpleFormView
 from flask_appbuilder import BaseView as AppBuilderBaseView, expose
+
 from flask_appbuilder.forms import DynamicForm
 from flask_appbuilder.fieldwidgets import (
     BS3TextFieldWidget,
@@ -112,7 +113,7 @@ class ReportForm(DynamicForm):
     )
     owner_name = StringField(("Owner Name"), widget=BS3TextFieldWidget())
     owner_email = StringField(("Owner Email"), widget=BS3TextFieldWidget())
-    emails = StringField(
+    subscribers = StringField(
         ("Subscribers"),
         description=(
             "List of comma separeted emails that should receive email notifications"
@@ -129,6 +130,7 @@ class ReportForm(DynamicForm):
 
 class NewReportFormView(SimpleFormView):
     route_base = "/lumen/report"
+    form_template = "report_form.html"
     form = ReportForm
     form_title = "New Report"
     message = "My form submitted"
@@ -152,11 +154,27 @@ v_appbuilder_new_report_form_package = {
 
 
 class EditReportFormView(SimpleFormView):
+    route_base = "/lumen/report"
+    form_template = "report_form.html"
     form = ReportForm
     form_title = "New Report"
+    form_fieldsets = [
+        (
+            "General",
+            {
+                "fields": [
+                    "title",
+                    "description",
+                    "owner_name",
+                    "owner_email",
+                    "subscribers",
+                ]
+            },
+        ),
+        ("Schedule", {"fields": ["schedule"]}),
+        ("Tests", {"fields": ["tests"]}),
+    ]
     message = "My form submitted"
-
-    route_base = "/lumen/report"
 
     @expose("/<string:report_id>/edit", methods=["GET"])
     @has_access
@@ -185,7 +203,7 @@ class EditReportFormView(SimpleFormView):
             form.title.data = requested_report["title"]
             form.description.data = requested_report["description"]
             form.schedule.data = requested_report["schedule"]
-            form.emails.data = ", ".join(requested_report["emails"])
+            form.subscribers.data = ", ".join(requested_report["subscribers"])
             form.owner_name.data = requested_report["owner_name"]
             form.owner_email.data = requested_report["owner_email"]
             form.tests.data = [str(test["id"]) for test in requested_report["tests"]]
@@ -209,7 +227,7 @@ bp = Blueprint(
     __name__,
     template_folder="templates",
     static_folder="static",
-    static_url_path="/lumen/static",
+    static_url_path="/lumen_plugin/static",
 )
 
 
