@@ -32,7 +32,7 @@ class LumenSensor(BaseSensorOperator):
         self.test_dag_id = test_dag_id
         self.test_task_id = test_task_id
 
-    def push_test_status(ti, is_passed):
+    def push_test_status(self, ti, is_passed):
         if force_status:
             ti.xcom_push(key=self.test_task_id, val=is_passed)
         else:
@@ -61,8 +61,7 @@ class LumenSensor(BaseSensorOperator):
             else:
                 return False
 
-        except e:
-            self.log.error('Some error occured pulling task instance')
+        except:
             self.push_test_status(context['ti'], None)
             self.log.info(context[ti].xcom_pull(key=self.test_task_id))
-            raise e
+            raise ValueError('Something went wrong')
