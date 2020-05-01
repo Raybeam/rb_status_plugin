@@ -122,7 +122,7 @@ class LumenSensorTest(unittest.TestCase):
         expected_test_response = None
         state = State.SUCCESS
 
-        sensor = self.__create_invalid_test_sensor(dummy_success, self.lumen_dag)
+        sensor = self.__create_invalid_test_sensor(self.lumen_dag)
         sensor_ti = self.__create_task_instance(sensor)
 
         sensor_xcom_key = f"{sensor_ti.dag_id}.{sensor_ti.task_id}"
