@@ -77,7 +77,10 @@ class LumenSensorTest(unittest.TestCase):
         sensor_ti = self.__create_task_instance(sensor)
 
         op_result = sensor.poke(context=sensor_ti.get_template_context())
-        test_result = sensor_ti.xcom_pull(key=f"{sensor_ti.dag_id}.{sensor_ti.task_id}")
+
+        sensor_xcom_key = f"{sensor_ti.dag_id}.{sensor_ti.task_id}"
+        test_result = sensor_ti.xcom_pull(key=sensor_xcom_key)
+
         self.assertEqual(expected_test_response, test_result)
         self.assertEqual(expected_operational_response, op_result)
 
@@ -96,12 +99,13 @@ class LumenSensorTest(unittest.TestCase):
 
         op_result = sensor.poke(context=sensor_ti.get_template_context())
         test_result = sensor_ti.xcom_pull(key=f"{sensor_ti.dag_id}.{sensor_ti.task_id}")
+
         self.assertEqual(expected_test_response, test_result)
         self.assertEqual(expected_operational_response, op_result)
 
     def test_intermittant_state(self):
-        # tests that LumenSensor processes a test with 
-        # an intermittant state and will continue poking 
+        # tests that LumenSensor processes a test with
+        # an intermittant state and will continue poking
         # until test is terminal
         expected_response = False
         state = State.RUNNING
@@ -113,6 +117,7 @@ class LumenSensorTest(unittest.TestCase):
         sensor_ti = self.__create_task_instance(sensor)
 
         op_result = sensor.poke(context=sensor_ti.get_template_context())
+
         self.assertEqual(expected_response, op_result)
 
     def test_unknown(self):
@@ -127,6 +132,7 @@ class LumenSensorTest(unittest.TestCase):
 
         sensor_xcom_key = f"{sensor_ti.dag_id}.{sensor_ti.task_id}"
         test_result = sensor_ti.xcom_pull(key=sensor_xcom_key)
+
         self.assertRaises(AttributeError, sensor.poke, sensor_ti.get_template_context())
         self.assertEqual(expected_test_response, test_result)
 
