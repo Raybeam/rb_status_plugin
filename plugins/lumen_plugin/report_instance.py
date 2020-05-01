@@ -32,11 +32,18 @@ class ReportInstance:
         return self.dag_run.execution_date
 
     def calculatePassed(self, errs):
+        '''
+        Calculates the overall report status.
+        True indicates all tests pass.
+        False indicates at least one fail. 
+        None indicates an unknown status is present on at least one task.
+
+        :return: returns whether all tasks failed or succeeded
+        :rtype: boolean
+        '''
         if len(errs) == 0:
             return True
 
-        # We now know there's at least one failure so we make sure
-        # that there's no unknown statuses before returning failed
         for err in errs:
             if err["error_type"] is None:
                 return None
