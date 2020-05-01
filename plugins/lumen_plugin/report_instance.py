@@ -58,7 +58,8 @@ class ReportInstance:
         """
         failed = []
         for ti in self.dag_run.get_task_instances():
-            if (ti.operator != 'LumenSensor'):
+            # We want to ignored removed tasks and non-test tasks
+            if (ti.operator != 'LumenSensor') or ti.state == State.REMOVED:
                 continue
 
             xcom_key = f"{ti.dag_id}.{ti.task_id}"
@@ -73,7 +74,7 @@ class ReportInstance:
                     "description": ti.log_url,
                     "error_type": test_status
                 })
-
+        logging.info(failed)
         return failed
 
     @classmethod
