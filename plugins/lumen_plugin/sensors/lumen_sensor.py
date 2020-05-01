@@ -63,6 +63,6 @@ class LumenSensor(BaseSensorOperator):
 
             return False
 
-        except Exception e:
+        except Exception as e:
             self.push_test_status(ti=context['ti'], test_status=None)
             raise e
