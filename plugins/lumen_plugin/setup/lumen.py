@@ -1,9 +1,13 @@
-from airflow import DAG
-from airflow.operators.dummy_operator import DummyOperator
 from datetime import datetime, timedelta
+import os
+
+from airflow import DAG
+from airflow.operators.python_operator import PythonOperator
+from airflow.operators.latest_only_operator import LatestOnlyOperator
 
 from lumen_plugin.report_repo import VariablesReportRepo
 from lumen_plugin.sensors.lumen_sensor import LumenSensor
+from lumen_plugin.helpers.email_helpers import report_notify_email
 
 # Default settings applied to all tests
 default_args = {
@@ -14,7 +18,13 @@ default_args = {
     "retries": 0,
     "start_date": datetime(2019, 1, 1),
     "retry_delay": timedelta(minutes=5),
+    "catchup": False,
 }
+airflow_home = os.environ["AIRFLOW_HOME"]
+
+# Consider moving these constants to an Airflow variable...
+EMAIL_TEMPLATE_LOCATION = f"{airflow_home}/plugins/lumen_plugin/templates/emails"
+SINGLE_EMAIL_TEMPLATE = f"{EMAIL_TEMPLATE_LOCATION}/single_report.html"
 
 
 def create_dag(report, default_args):
@@ -23,16 +33,27 @@ def create_dag(report, default_args):
     )
 
     with dag:
-        start = DummyOperator(task_id="start_dag")
-        send_report = DummyOperator(task_id="send_report")
+        test_prefix = "test_"
 
+        start = LatestOnlyOperator(task_id="start_dag")
+        send_email = PythonOperator(
+            task_id="call_email_function",
+            python_callable=report_notify_email,
+            trigger_rule="all_done",
+            op_kwargs={
+                "emails": report.emails,
+                "email_template_location": SINGLE_EMAIL_TEMPLATE,
+                "test_prefix": test_prefix,
+            },
+            provide_context=True,
+        )
         for test in report.tests:
             t1 = LumenSensor(
-                task_id="test_%s" % test,
+                task_id=test_prefix + test,
                 test_dag_id=test.split(".")[0],
                 test_task_id=test.split(".")[1],
             )
-            start >> t1 >> send_report
+            start >> t1 >> send_email
 
     return dag
 

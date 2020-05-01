@@ -1,12 +1,13 @@
-from airflow import DAG
-from airflow.operators.dummy_operator import DummyOperator
-from airflow.operators.python_operator import PythonOperator
 from datetime import datetime, timedelta
+import os
+
+from airflow import DAG
+from airflow.operators.python_operator import PythonOperator
+from airflow.operators.latest_only_operator import LatestOnlyOperator
+
 from lumen_plugin.report_repo import VariablesReportRepo
 from lumen_plugin.sensors.lumen_sensor import LumenSensor
-from airflow.utils.db import create_session
 from lumen_plugin.helpers.email_helpers import report_notify_email
-import os
 
 # Default settings applied to all tests
 default_args = {
@@ -17,6 +18,7 @@ default_args = {
     "retries": 0,
     "start_date": datetime(2019, 1, 1),
     "retry_delay": timedelta(minutes=5),
+    "catchup": False,
 }
 airflow_home = os.environ["AIRFLOW_HOME"]
 
@@ -33,7 +35,7 @@ def create_dag(report, default_args):
     with dag:
         test_prefix = "test_"
 
-        start = DummyOperator(task_id="start_dag")
+        start = LatestOnlyOperator(task_id="start_dag")
         send_email = PythonOperator(
             task_id="call_email_function",
             python_callable=report_notify_email,
@@ -57,7 +59,5 @@ def create_dag(report, default_args):
 
 
 report = []
-with create_session() as session:
-    repos = VariablesReportRepo()
-    for report in repos.list():
-        globals()[report.name] = create_dag(report, default_args)
+for report in VariablesReportRepo.list():
+    globals()[report.name] = create_dag(report, default_args)
