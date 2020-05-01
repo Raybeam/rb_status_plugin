@@ -24,7 +24,7 @@ class ReportInstance:
     @property
     def passed(self):
         if self._passed is None:
-            self.calculatePassed(self.errors())
+            self._passed = self.calculatePassed(self.errors())
         return self._passed
 
     @property
