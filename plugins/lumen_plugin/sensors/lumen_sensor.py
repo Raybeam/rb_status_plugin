@@ -61,8 +61,6 @@ class LumenSensor(BaseSensorOperator):
 
             return False
 
-        except:
+        except Exception e:
             self.push_test_status(ti=context['ti'], test_status=None)
-            val = context['ti'].xcom_pull(key=self.test_task_id)
-            self.log.info(val)
-            raise ValueError('Status of task is unknown...check Lumen configuration')
+            raise e
