@@ -38,7 +38,7 @@ class ReportInstance:
         False indicates at least one fail. 
         None indicates an unknown status is present on at least one task.
 
-        :return: returns whether all tasks failed or succeeded
+        :return: returns whether all tasks failed or succeeded or unknown
         :rtype: boolean
         '''
         if len(errs) == 0:
