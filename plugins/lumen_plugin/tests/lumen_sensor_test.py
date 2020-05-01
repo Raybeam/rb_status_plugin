@@ -45,9 +45,9 @@ class LumenSensorTest(unittest.TestCase):
         )
         return sensor
 
-    def __create_invalid_test_sensor(self, test, dag):
+    def __create_invalid_test_sensor(self, dag):
         sensor = LumenSensor(
-            task_id=f"test_{test.dag_id}.{test.task_id}",
+            task_id=f"test_does_not_exist.imaginary_task",
             test_dag_id=f"does_not_exist",
             test_task_id=f"imaginary_task",
             dag=dag
