@@ -24,27 +24,51 @@ class ReportInstance:
     @property
     def passed(self):
         if self._passed is None:
-            self._passed = (len(self.errors()) == 0)
+            self.calculatePassed(self.errors())
         return self._passed
 
     @property
     def updated(self):
         return self.dag_run.execution_date
 
+    def calculatePassed(self, errs):
+        if len(errs) == 0:
+            return True
+
+        # We now know there's at least one failure so we make sure
+        # that there's no unknown statuses before returning failed
+        for err in errs:
+            if err["error_type"] is None:
+                return None
+        return False
+
+
     def errors(self):
         """
-        Gets errors that match task_prefix
-        By default it accepts any test name
-        """
+        Gets XCOM test_status from each test task instance and returns
+        a dict with all errors seperated into unknown and failed
 
+        :return: returns a dict with two lists with keys "failed" and "unknown"
+        :rtype: dict
+        """
         failed = []
-        for ti in self.dag_run.get_task_instances(state=State.FAILED):
+        for ti in self.dag_run.get_task_instances():
             if (ti.operator != 'LumenSensor'):
                 continue
-            ti.refresh_from_db()
-            failed.append(
-                {"id": ti.job_id, "name": ti.task_id, "description": ti.log_url}
-            )
+
+            xcom_key = f"{ti.dag_id}.{ti.task_id}"
+            test_status = ti.xcom_pull(key=xcom_key)
+
+            if not test_status:
+                ti.refresh_from_db()
+
+                failed.append({
+                    "id": ti.job_id,
+                    "name": ti.task_id,
+                    "description": ti.log_url,
+                    "error_type": test_status
+                })
+
         return failed
 
     @classmethod

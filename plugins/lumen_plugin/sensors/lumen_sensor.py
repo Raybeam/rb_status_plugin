@@ -33,7 +33,8 @@ class LumenSensor(BaseSensorOperator):
         self.test_task_id = test_task_id
 
     def push_test_status(self, ti, test_status):
-        ti.xcom_push(key=self.test_task_id, value=test_status)
+        xcom_key = f"{ti.dag_id}.{ti.task_id}"
+        ti.xcom_push(key=xcom_key, value=test_status)
 
     @provide_session
     def poke(self, context, session=None):
@@ -51,16 +52,17 @@ class LumenSensor(BaseSensorOperator):
             self.log.info(
                 f"{self.test_dag_id}.{self.test_task_id} is in state {ti.state}"
             )
-            if state in [*terminal_success_states, *terminal_failure_states]:
-                self.push_test_status(context['ti'], state)
-                val = context['ti'].xcom_pull(key=self.test_task_id)
-                self.log.info(val)
+            if state in terminal_success_states:
+                self.push_test_status(ti=context['ti'], test_status=True)
                 return True
-            else:
-                return False
+            if state in terminal_failure_states:
+                self.push_test_status(ti=context['ti'], test_status=False)
+                return True
+
+            return False
 
         except:
-            self.push_test_status(context['ti'], None)
+            self.push_test_status(ti=context['ti'], test_status=None)
             val = context['ti'].xcom_pull(key=self.test_task_id)
             self.log.info(val)
-            raise ValueError('Something went wrong')
+            raise ValueError('Status of task is unknown...check Lumen configuration')
