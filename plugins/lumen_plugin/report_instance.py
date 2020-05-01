@@ -45,18 +45,17 @@ class ReportInstance:
             return True
 
         for err in errs:
-            if err["error_type"] is None:
+            if err["test_status"] is None:
                 return None
         return False
-
 
     def errors(self):
         """
         Gets XCOM test_status from each test task instance and returns
         a list of error dict objects...
 
-        Error type is either failed or unknown. Unknown
-        denotes an operational failure which prevented task instance
+        Error type is the value of the task's test status [True, False, or None]. 
+        A none value denotes an operational failure which prevented task instance
         evaluation.
 
         :return: returns a list containing error dicts with [id, name,
@@ -79,9 +78,8 @@ class ReportInstance:
                     "id": ti.job_id,
                     "name": ti.task_id,
                     "description": ti.log_url,
-                    "error_type": test_status
+                    "test_status": test_status
                 })
-        logging.info(failed)
         return failed
 
     @classmethod
