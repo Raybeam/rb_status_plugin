@@ -38,7 +38,9 @@ class LumenSensor(BaseSensorOperator):
 
     @provide_session
     def poke(self, context, session=None):
-        self.log.info(f"Querying for {self.test_dag_id}.{self.test_task_id}'s result...")
+        self.log.info(
+            f"Querying for {self.test_dag_id}.{self.test_task_id}'s result..."
+        )
         try:
             ti = session.query(TaskInstance).filter(
                 TaskInstance.task_id == self.test_task_id,
@@ -50,7 +52,7 @@ class LumenSensor(BaseSensorOperator):
 
             state = ti.state
             self.log.info(
-                f"{self.test_dag_id}.{self.test_task_id} is in state {ti.state}"
+                f"{self.test_dag_id}.{self.test_task_id}'s state is {ti.state}"
             )
             if state in terminal_success_states:
                 self.push_test_status(ti=context['ti'], test_status=True)
