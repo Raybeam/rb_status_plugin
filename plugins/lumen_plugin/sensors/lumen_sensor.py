@@ -2,7 +2,6 @@ from airflow.sensors.base_sensor_operator import BaseSensorOperator
 from airflow.utils.decorators import apply_defaults
 from airflow.models.taskinstance import TaskInstance
 from airflow.utils.state import State
-from sqlalchemy.orm.exc import NoResultFound
 from airflow.utils.db import provide_session
 
 class LumenSensor(BaseSensorOperator):
@@ -47,7 +46,10 @@ class LumenSensor(BaseSensorOperator):
                 TaskInstance.dag_id == self.test_dag_id,
             ).order_by(TaskInstance.execution_date.desc()).first()
 
-            terminal_failure_states = [State.FAILED, State.UPSTREAM_FAILED, State.SHUTDOWN, State.REMOVED]
+            terminal_failure_states = [
+                State.FAILED, State.UPSTREAM_FAILED,
+                State.SHUTDOWN, State.REMOVED
+            ]
             terminal_success_states = [State.SUCCESS, State.SKIPPED]
 
             state = ti.state

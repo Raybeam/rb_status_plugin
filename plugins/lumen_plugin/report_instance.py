@@ -35,7 +35,7 @@ class ReportInstance:
         '''
         Calculates the overall report status.
         True indicates all tests pass.
-        False indicates at least one fail. 
+        False indicates at least one fail.
         None indicates an unknown status is present on at least one task.
 
         :return: returns whether all tasks failed or succeeded or unknown
@@ -54,7 +54,7 @@ class ReportInstance:
         Gets XCOM test_status from each test task instance and returns
         a list of error dict objects...
 
-        Error type is the value of the task's test status [True, False, or None]. 
+        Error type is the value of the task's test status [True, False, or None].
         A none value denotes an operational failure which prevented task instance
         evaluation.
 

@@ -73,7 +73,7 @@ class LumenSensorTest(unittest.TestCase):
         dummy_success = self.__create_dummy_op(state, self.test_dag)
         sensor = self.__create_sensor(dummy_success, self.lumen_dag)
 
-        dummy_ti = self.__create_task_instance_with_state(dummy_success, state)
+        self.__create_task_instance_with_state(dummy_success, state)
         sensor_ti = self.__create_task_instance(sensor)
 
         op_result = sensor.poke(context=sensor_ti.get_template_context())
@@ -94,7 +94,7 @@ class LumenSensorTest(unittest.TestCase):
         dummy_success = self.__create_dummy_op(state, self.test_dag)
         sensor = self.__create_sensor(dummy_success, self.lumen_dag)
 
-        dummy_ti = self.__create_task_instance_with_state(dummy_success, state)
+        self.__create_task_instance_with_state(dummy_success, state)
         sensor_ti = self.__create_task_instance(sensor)
 
         op_result = sensor.poke(context=sensor_ti.get_template_context())
@@ -113,7 +113,7 @@ class LumenSensorTest(unittest.TestCase):
         dummy_success = self.__create_dummy_op(state, self.test_dag)
         sensor = self.__create_sensor(dummy_success, self.lumen_dag)
 
-        dummy_ti = self.__create_task_instance_with_state(dummy_success, state)
+        self.__create_task_instance_with_state(dummy_success, state)
         sensor_ti = self.__create_task_instance(sensor)
 
         op_result = sensor.poke(context=sensor_ti.get_template_context())
@@ -125,7 +125,6 @@ class LumenSensorTest(unittest.TestCase):
         # test status and an exception from the operator
         # (returning exception for operator and Unknown for test)
         expected_test_response = None
-        state = State.SUCCESS
 
         sensor = self.__create_invalid_test_sensor(self.lumen_dag)
         sensor_ti = self.__create_task_instance(sensor)
