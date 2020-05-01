@@ -5,7 +5,6 @@ from flask_appbuilder import BaseView as AppBuilderBaseView, expose
 from lumen_plugin.report_repo import VariablesReportRepo
 from lumen_plugin.report_instance import ReportInstance
 
-
 from lumen_plugin.sensors.lumen_sensor import LumenSensor
 import logging
 
