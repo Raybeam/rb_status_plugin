@@ -31,7 +31,7 @@ class ReportInstance:
     def updated(self):
         return self.dag_run.execution_date
 
-    def calculatePassed(self, errs):
+    def calculate_passed(self, errs):
         '''
         Calculates the overall report status.
         True indicates all tests pass.
