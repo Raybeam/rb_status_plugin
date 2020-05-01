@@ -74,7 +74,6 @@ class VariablesReportRepo(ReportRepo):
         r.emails = v["emails"]
         r.tests = v["tests"]
         r.schedule = v["schedule"]
-
         return r
 
     @staticmethod

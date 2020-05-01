@@ -1,6 +1,5 @@
 from airflow.utils.db import provide_session
 from airflow.utils.state import State
-
 from airflow import models
 import logging
 
@@ -10,9 +9,9 @@ class ReportInstance:
     An instance of a Lumen report.  This is currently a basic wrapper for a DagRun
     with a few Lumen-specific helpers
     """
-
     def __init__(self, dag_run):
         self.dag_run = dag_run
+        self._passed = None
 
     @property
     def id(self):
@@ -24,20 +23,25 @@ class ReportInstance:
 
     @property
     def passed(self):
-        return self.dag_run.get_state() == State.SUCCESS
+        if self._passed is None:
+            self._passed = (len(self.errors()) == 0)
+        return self._passed
 
     @property
     def updated(self):
         return self.dag_run.execution_date
 
     def errors(self):
-        if self.passed:
-            return []
+        """
+        Gets errors that match task_prefix
+        By default it accepts any test name
+        """
 
         failed = []
         for ti in self.dag_run.get_task_instances(state=State.FAILED):
+            if (ti.operator != 'LumenSensor'):
+                continue
             ti.refresh_from_db()
-
             failed.append(
                 {"id": ti.job_id, "name": ti.task_id, "description": ti.log_url}
             )

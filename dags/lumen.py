@@ -41,9 +41,8 @@ def create_dag(report, default_args):
             python_callable=report_notify_email,
             trigger_rule="all_done",
             op_kwargs={
-                "emails": report.emails,
-                "email_template_location": SINGLE_EMAIL_TEMPLATE,
-                "test_prefix": test_prefix,
+                "report": report,
+                "email_template_location": SINGLE_EMAIL_TEMPLATE
             },
             provide_context=True,
         )
