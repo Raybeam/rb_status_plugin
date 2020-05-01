@@ -46,10 +46,15 @@ class ReportInstance:
     def errors(self):
         """
         Gets XCOM test_status from each test task instance and returns
-        a dict with all errors seperated into unknown and failed
+        a list of error dict objects...
 
-        :return: returns a dict with two lists with keys "failed" and "unknown"
-        :rtype: dict
+        Error type is either failed or unknown. Unknown
+        denotes an operational failure which prevented task instance
+        evaluation.
+
+        :return: returns a list containing error dicts with [id, name,
+            description, error_type]
+        :rtype: list
         """
         failed = []
         for ti in self.dag_run.get_task_instances():
