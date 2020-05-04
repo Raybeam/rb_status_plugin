@@ -36,7 +36,7 @@ class ReportInstance:
         Calculates the overall report status.
         True indicates all tests pass.
         False indicates at least one fail.
-        None indicates an unknown status is present on at least one task.
+        None indicates no failures and one or more unknown
 
         :return: returns whether all tasks failed or succeeded or unknown
         :rtype: boolean
@@ -45,9 +45,9 @@ class ReportInstance:
             return True
 
         for err in errs:
-            if err["test_status"] is None:
-                return None
-        return False
+            if err["test_status"] == False:
+                return False
+        return None
 
     def errors(self):
         """
