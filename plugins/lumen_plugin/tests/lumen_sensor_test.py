@@ -78,8 +78,7 @@ class LumenSensorTest(unittest.TestCase):
 
         op_result = sensor.poke(context=sensor_ti.get_template_context())
 
-        sensor_xcom_key = f"{sensor_ti.dag_id}.{sensor_ti.task_id}"
-        test_result = sensor_ti.xcom_pull(key=sensor_xcom_key)
+        test_result = sensor_ti.xcom_pull(key="lumen_test_task_status")
 
         self.assertEqual(expected_test_response, test_result)
         self.assertEqual(expected_operational_response, op_result)
@@ -98,7 +97,7 @@ class LumenSensorTest(unittest.TestCase):
         sensor_ti = self.__create_task_instance(sensor)
 
         op_result = sensor.poke(context=sensor_ti.get_template_context())
-        test_result = sensor_ti.xcom_pull(key=f"{sensor_ti.dag_id}.{sensor_ti.task_id}")
+        test_result = sensor_ti.xcom_pull(key="lumen_test_task_status")
 
         self.assertEqual(expected_test_response, test_result)
         self.assertEqual(expected_operational_response, op_result)
@@ -129,8 +128,7 @@ class LumenSensorTest(unittest.TestCase):
         sensor = self.__create_invalid_test_sensor(self.lumen_dag)
         sensor_ti = self.__create_task_instance(sensor)
 
-        sensor_xcom_key = f"{sensor_ti.dag_id}.{sensor_ti.task_id}"
-        test_result = sensor_ti.xcom_pull(key=sensor_xcom_key)
+        test_result = sensor_ti.xcom_pull(key="lumen_test_task_status")
 
         self.assertRaises(AttributeError, sensor.poke, sensor_ti.get_template_context())
         self.assertEqual(expected_test_response, test_result)
