@@ -16,19 +16,10 @@ class LumenSensor(BaseSensorOperator):
     :type test_name: str
     """
 
-    template_fields = (
-        "test_dag_id",
-        "test_task_id"
-    )
+    template_fields = ("test_dag_id", "test_task_id")
 
     @apply_defaults
-    def __init__(
-        self,
-        test_dag_id,
-        test_task_id,
-        *args,
-        **kwargs
-    ):
+    def __init__(self, test_dag_id, test_task_id, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.test_dag_id = test_dag_id
         self.test_task_id = test_task_id
@@ -39,18 +30,25 @@ class LumenSensor(BaseSensorOperator):
         )
         # Query metadata and save to test_result
         with create_session() as curr_session:
-            ti = curr_session.query(TaskInstance).filter(
-                TaskInstance.task_id == self.test_task_id,
-                TaskInstance.dag_id == self.test_dag_id,
-            ).order_by(TaskInstance.execution_date.desc()).first()
+            ti = (
+                curr_session.query(TaskInstance)
+                .filter(
+                    TaskInstance.task_id == self.test_task_id,
+                    TaskInstance.dag_id == self.test_dag_id,
+                )
+                .order_by(TaskInstance.execution_date.desc())
+                .first()
+            )
 
             if not ti:
                 raise NoResultFound
 
             state = ti.state
             terminal_failure_states = [
-                State.FAILED, State.UPSTREAM_FAILED,
-                State.SHUTDOWN, State.REMOVED
+                State.FAILED,
+                State.UPSTREAM_FAILED,
+                State.SHUTDOWN,
+                State.REMOVED,
             ]
             terminal_success_states = [State.SUCCESS, State.SKIPPED]
 
@@ -59,7 +57,7 @@ class LumenSensor(BaseSensorOperator):
             )
 
             if state in terminal_failure_states:
-                self.log.error('Test was in a terminal failed state')
+                self.log.error("Test was in a terminal failed state")
                 raise ValueError()
             if state in terminal_success_states:
                 return True

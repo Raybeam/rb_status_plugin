@@ -31,7 +31,7 @@ class VariablesReportRepoTest(unittest.TestCase):
         parsed = VariablesReportRepo.parse_variable_val(self.dummy_test)
         self.assertEqual(
             parsed["tests"],
-            ["example_dag.python_print_date_0", "example_dag.python_random_0"]
+            ["example_dag.python_print_date_0", "example_dag.python_random_0"],
         )
 
     def test_parse_variable_value_no_json(self):

@@ -6,7 +6,7 @@ import logging
 
 
 def get_details_link():
-    base_url = configuration.get('webserver', 'BASE_URL')
+    base_url = configuration.get("webserver", "BASE_URL")
     # If you don't override route_base, Flask BaseView uses class name
     if LumenStatusView.route_base:
         route_base = LumenStatusView.route_base
