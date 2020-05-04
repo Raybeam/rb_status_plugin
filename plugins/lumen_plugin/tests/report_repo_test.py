@@ -8,19 +8,30 @@ import unittest
 class VariablesReportRepoTest(unittest.TestCase):
     dummy_test = """
             {
-            "tests": [
-                "dag_name.operator_1",
-                "dag_name.operator_3"
-            ],
-            "emails": ["bbriski@raybeam.com", "msadler@raybeam.com"],
-            "schedule": "0 7 * * *"
+                "report_title": "my report title",
+                "description": "my report description",
+                "owner_name": "my name",
+                "owner_email": "email_owner@mail.com",
+                "subscribers":
+                [
+                    "email1@mail.com",
+                    "email2@mail.com",
+                    "email3@mail.com"
+                ],
+                "tests":
+                [
+                    "example_dag.python_print_date_0",
+                    "example_dag.python_random_0"
+                ],
+                "schedule": "* * * 1 *"
             }
             """
 
     def test_parse_variable_value(self):
         parsed = VariablesReportRepo.parse_variable_val(self.dummy_test)
         self.assertEqual(
-            parsed["tests"], ["dag_name.operator_1", "dag_name.operator_3"]
+            parsed["tests"],
+            ["example_dag.python_print_date_0", "example_dag.python_random_0"]
         )
 
     def test_parse_variable_value_no_json(self):

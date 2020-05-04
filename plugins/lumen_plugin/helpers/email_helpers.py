@@ -39,7 +39,7 @@ def report_notify_email(report, email_template_location, **context):
     with open(email_template_location) as file:
         send_email = EmailOperator(
             task_id="custom_email_notification",
-            to=report.emails,
+            to=report.subscribers,
             subject="[{{status}}] {{title}}",
             html_content=file.read(),
         )
