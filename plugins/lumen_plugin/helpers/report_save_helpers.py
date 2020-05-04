@@ -2,6 +2,8 @@ from airflow.models import Variable
 import json
 import logging
 import re
+from flask import flash
+
 from plugins.lumen_plugin.report_repo import VariablesReportRepo
 
 def extract_report_data_into_airflow(form):
@@ -57,9 +59,16 @@ def validate_email(email):
     email_format = re.compile(r"^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$")
 
     if not re.search(email_format, email):
-        raise Exception(
-            "Email (%s) is not valid. Please enter a valid email address." % email
-        )
+        log = logging.getLogger(__name__)
+        log.exception(
+            "Email (%s) is not valid. Please enter a valid email address."
+            % email)
+        log.error(
+            "Email (%s) is not valid. Please enter a valid email address."
+            % email)
+        flash(
+            "Email (%s) is not valid. Please enter a valid email address."
+            % email)
 
 
 def convert_schedule_to_cron_expression(report_dict, form):
