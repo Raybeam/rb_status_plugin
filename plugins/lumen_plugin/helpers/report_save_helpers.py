@@ -3,7 +3,6 @@ import json
 import logging
 import re
 
-
 def extract_report_data_into_airflow(form):
     """
     Extract output of report form into a formatted airflow variable.
@@ -19,7 +18,11 @@ def extract_report_data_into_airflow(form):
     report_dict["owner_email"] = form.owner_email.data
     report_dict["subscribers"] = form.subscribers.data
     report_dict["tests"] = form.tests.data
-    report_dict["schedule"] = form.schedule_custom.data
+    report_dict["schedule_type"] = form.schedule_type.data
+    if (report_dict["schedule_type"] == "custom"):
+        report_dict["schedule"] = form.schedule_custom.data
+    else:
+        convert_schedule_to_cron_expression(report_dict, form)
 
     ariflow_variable_name = "lumen_report_%s" % (report_dict["report_title"])
     report_json = json.dumps(report_dict)
@@ -53,3 +56,22 @@ def validate_email(email):
         raise Exception(
             "Email (%s) is not valid. Please enter a valid email address."
             % email)
+
+def convert_schedule_to_cron_expression(report_dict, form):
+    """
+    Convert Weekly and Daily schedules into a cron expression, and saves attributes to report_dict
+    """
+    # add time of day
+    time_of_day = form.schedule_time.data.strftime("%H:%M")
+    report_dict["schedule_time"] = time_of_day
+    hour, minute = time_of_day.split(":")
+    cron_expression = "%s %s * * " % (minute, hour)
+
+    # add day of week if applicable
+    if (form.schedule_type.data == "weekly"):
+        cron_expression += form.schedule_week_day.data
+        report_dict["schedule_week_day"] = form.schedule_week_day.data
+    else:
+        cron_expression += "*"
+
+    report_dict["schedule"] = cron_expression
