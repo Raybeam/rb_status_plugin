@@ -4,6 +4,8 @@ from plugins.lumen_plugin.helpers.report_save_helpers import (
     format_form_for_airflow,
     validate_email,
 )
+import datetime
+
 import unittest
 
 
@@ -38,7 +40,61 @@ class ReportSaveTest(unittest.TestCase):
                     ]
                 }
             ),
+            "schedule_type": AttributeDict({"data": "custom"}),
             "schedule_custom": AttributeDict({"data": "* * * 1 *"}),
+        }
+    )
+
+    report_form_sample_daily = AttributeDict(
+        {
+            "title": AttributeDict({"data": "test report title daily"}),
+            "description": AttributeDict({"data": "test description"}),
+            "owner_name": AttributeDict({"data": "John Doe"}),
+            "owner_email": AttributeDict({"data": "jdoe@raybeam.com"}),
+            "subscribers": AttributeDict(
+                {"data": "email1@raybeam.com,email2@raybeam.com"}
+            ),
+            "tests": AttributeDict(
+                {
+                    "data": [
+                        "example_dag.python_print_date_0",
+                        "example_dag.python_random_0",
+                    ]
+                }
+            ),
+            "schedule_type": AttributeDict({"data": "daily"}),
+            "schedule_time": AttributeDict(
+                {
+                    "data": datetime.datetime(year=2000, month=1, day=1, hour=5, minute=0)
+                }
+            ),
+        }
+    )
+
+    report_form_sample_weekly = AttributeDict(
+        {
+            "title": AttributeDict({"data": "test report title weekly"}),
+            "description": AttributeDict({"data": "test description"}),
+            "owner_name": AttributeDict({"data": "John Doe"}),
+            "owner_email": AttributeDict({"data": "jdoe@raybeam.com"}),
+            "subscribers": AttributeDict(
+                {"data": "email1@raybeam.com,email2@raybeam.com"}
+            ),
+            "tests": AttributeDict(
+                {
+                    "data": [
+                        "example_dag.python_print_date_0",
+                        "example_dag.python_random_0",
+                    ]
+                }
+            ),
+            "schedule_type": AttributeDict({"data": "weekly"}),
+            "schedule_time": AttributeDict(
+                {
+                    "data": datetime.datetime(year=2000, month=1, day=1, hour=3, minute=30)
+                }
+            ),
+            "schedule_week_day": AttributeDict({"data": "0"}),
         }
     )
 
@@ -63,10 +119,12 @@ class ReportSaveTest(unittest.TestCase):
         Test that the report's title attribute is correct
         """
         report_airflow_variable = Variable.get(
-            "lumen_report_" + self.report_form_sample.title.data, deserialize_json=True
+            "lumen_report_" + self.report_form_sample.title.data,
+            deserialize_json=True,
         )
         self.assertEqual(
-            self.report_form_sample.title.data, report_airflow_variable["report_title"]
+            self.report_form_sample.title.data,
+            report_airflow_variable["report_title"]
         )
 
     def test_saved_description(self):
@@ -74,11 +132,12 @@ class ReportSaveTest(unittest.TestCase):
         Test that the report's description attribute is correct
         """
         report_airflow_variable = Variable.get(
-            "lumen_report_" + self.report_form_sample.title.data, deserialize_json=True
+            "lumen_report_" + self.report_form_sample.title.data,
+            deserialize_json=True,
         )
         self.assertEqual(
             self.report_form_sample.description.data,
-            report_airflow_variable["description"],
+            report_airflow_variable["description"]
         )
 
     def test_saved_owner_name(self):
@@ -86,11 +145,12 @@ class ReportSaveTest(unittest.TestCase):
         Test that the report's owner_name attribute is correct
         """
         report_airflow_variable = Variable.get(
-            "lumen_report_" + self.report_form_sample.title.data, deserialize_json=True
+            "lumen_report_" + self.report_form_sample.title.data,
+            deserialize_json=True,
         )
         self.assertEqual(
             self.report_form_sample.owner_name.data,
-            report_airflow_variable["owner_name"],
+            report_airflow_variable["owner_name"]
         )
 
     def test_saved_owner_email(self):
@@ -98,11 +158,12 @@ class ReportSaveTest(unittest.TestCase):
         Test that the report's owner_email attribute is correct
         """
         report_airflow_variable = Variable.get(
-            "lumen_report_" + self.report_form_sample.title.data, deserialize_json=True
+            "lumen_report_" + self.report_form_sample.title.data,
+            deserialize_json=True,
         )
         self.assertEqual(
             self.report_form_sample.owner_email.data,
-            report_airflow_variable["owner_email"],
+            report_airflow_variable["owner_email"]
         )
 
     def test_saved_subscribers(self):
@@ -110,11 +171,12 @@ class ReportSaveTest(unittest.TestCase):
         Test that the report's subscribers attribute is correct
         """
         report_airflow_variable = Variable.get(
-            "lumen_report_" + self.report_form_sample.title.data, deserialize_json=True
+            "lumen_report_" + self.report_form_sample.title.data,
+            deserialize_json=True,
         )
         self.assertEqual(
             self.report_form_sample.subscribers.data,
-            report_airflow_variable["subscribers"],
+            report_airflow_variable["subscribers"]
         )
 
     def test_format_report(self):
@@ -148,6 +210,34 @@ class ReportSaveTest(unittest.TestCase):
             "Email (%s) is not valid. Please enter a valid email address."
             % (invalid_email)
             in str(context.exception)
+        )
+
+    def test_daily_schedule_conversion(self):
+        """
+        Test that daily schedule is converted properly into cron expression.
+        """
+        extract_report_data_into_airflow(self.report_form_sample_daily)
+        report_airflow_variable = Variable.get(
+            "lumen_report_" + self.report_form_sample_daily.title.data,
+            deserialize_json=True,
+        )
+        self.assertEqual(
+            '00 05 * * *',
+            report_airflow_variable["schedule"]
+        )
+
+    def test_weekly_schedule_conversion(self):
+        """
+        Test that weekly schedule is converted properly into cron expression.
+        """
+        extract_report_data_into_airflow(self.report_form_sample_weekly)
+        report_airflow_variable = Variable.get(
+            "lumen_report_" + self.report_form_sample_weekly.title.data,
+            deserialize_json=True,
+        )
+        self.assertEqual(
+            '30 03 * * 0',
+            report_airflow_variable["schedule"]
         )
 
 
