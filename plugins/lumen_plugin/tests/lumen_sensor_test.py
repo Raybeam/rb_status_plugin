@@ -21,11 +21,7 @@ default_args = {
 
 class LumenSensorTest(unittest.TestCase):
 
-    dag = DAG(
-        "adhoc_airflow",
-        schedule_interval=None,
-        default_args=default_args
-    )
+    dag = DAG("adhoc_airflow", schedule_interval=None, default_args=default_args)
 
     def __create_dummy_op(self, state, dag):
         dummy = DummyOperator(task_id=f"dummy_{state}", dag=dag)
@@ -35,7 +31,7 @@ class LumenSensorTest(unittest.TestCase):
         sensor = LumenSensor(
             task_id="test_%s" % state,
             test_dag_id=f"{self.dag.dag_id}",
-            test_task_id=f"dummy_{state}"
+            test_task_id=f"dummy_{state}",
         )
         return sensor
 
