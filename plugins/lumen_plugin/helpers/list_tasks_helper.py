@@ -12,5 +12,4 @@ def get_all_test_choices(session=None):
         TI.state != State.REMOVED
     ).all()
     test_choices = [ {"id": i, "name": ti.task_id} for (i, ti) in enumerate(tis)]
-    logging.info(test_choices)
     return test_choices
