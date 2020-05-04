@@ -45,7 +45,7 @@ class ReportInstance:
             return True
 
         for err in errs:
-            if err["test_status"] == False:
+            if err["test_status"] is False:
                 return False
         return None
 
