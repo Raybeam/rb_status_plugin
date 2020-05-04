@@ -29,7 +29,7 @@ def extract_report_data_into_airflow(form):
     Variable.set(key=report_name, value=report_json)
 
 
-def format_form_for_airflow(form):
+def format_form(form):
     """
     Parse the report form and transform/format the inputted data.
     """

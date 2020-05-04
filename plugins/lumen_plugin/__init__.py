@@ -19,7 +19,7 @@ from plugins.lumen_plugin.report_instance import ReportInstance
 from lumen_plugin.sensors.lumen_sensor import LumenSensor
 from plugins.lumen_plugin.helpers.report_save_helpers import (
     extract_report_data_into_airflow,
-    format_form_for_airflow,
+    format_form,
 )
 
 from flask_appbuilder.security.decorators import has_access
@@ -197,7 +197,7 @@ class NewReportFormView(SimpleFormView):
     def form_post(self):
         form = self.form.refresh()
         log.info("Saving reports...\n\n")
-        form = format_form_for_airflow(form)
+        form = format_form(form)
         extract_report_data_into_airflow(form)
         # post process form
         flash(self.message, "info")

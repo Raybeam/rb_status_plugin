@@ -1,7 +1,7 @@
 from airflow.models import Variable
 from plugins.lumen_plugin.helpers.report_save_helpers import (
     extract_report_data_into_airflow,
-    format_form_for_airflow,
+    format_form,
     validate_email,
 )
 import unittest
@@ -124,7 +124,7 @@ class ReportSaveTest(unittest.TestCase):
         Test that the subscribers was properly formatted.
         This will also update the report_form_sample and airflow varible.
         """
-        self.report_form_sample = format_form_for_airflow(
+        self.report_form_sample = format_form(
             self.report_form_sample)
         self.setUpClass()
         self.assertEqual(
