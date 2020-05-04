@@ -65,7 +65,8 @@ class ReportSaveTest(unittest.TestCase):
             "schedule_type": AttributeDict({"data": "daily"}),
             "schedule_time": AttributeDict(
                 {
-                    "data": datetime.datetime(year=2000, month=1, day=1, hour=5, minute=0)
+                    "data":
+                        datetime.datetime(year=2000, month=1, day=1, hour=5, minute=0)
                 }
             ),
         }
@@ -91,7 +92,8 @@ class ReportSaveTest(unittest.TestCase):
             "schedule_type": AttributeDict({"data": "weekly"}),
             "schedule_time": AttributeDict(
                 {
-                    "data": datetime.datetime(year=2000, month=1, day=1, hour=3, minute=30)
+                    "data":
+                        datetime.datetime(year=2000, month=1, day=1, hour=3, minute=30)
                 }
             ),
             "schedule_week_day": AttributeDict({"data": "0"}),
