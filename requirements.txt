@@ -1,2 +1,1 @@
-apache-airflow~=1.10.10
 inflection~=0.3.1
