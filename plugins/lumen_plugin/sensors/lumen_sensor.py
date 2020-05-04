@@ -32,7 +32,7 @@ class LumenSensor(BaseSensorOperator):
         self.test_task_id = test_task_id
 
     def push_test_status(self, ti, test_status):
-        xcom_key = f"{ti.dag_id}.{ti.task_id}"
+        xcom_key = f"lumen_test_task_status"
         ti.xcom_push(key=xcom_key, value=test_status)
 
     @provide_session
