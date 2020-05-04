@@ -101,7 +101,6 @@ v_appbuilder_reports_package = {
     "view": v_appbuilder_reports_view,
 }
 
-test_choices = get_all_test_choices()
 
 class ReportForm(DynamicForm):
     title = StringField(("Title"), widget=BS3TextFieldWidget())
@@ -118,7 +117,7 @@ class ReportForm(DynamicForm):
     tests = SelectMultipleField(
         ("Tests"),
         description=("List of the tests to include in the report"),
-        choices=test_choices,
+        choices=get_all_test_choices(),
         widget=Select2ManyWidget(),
     )
     schedule_type = SelectField(
