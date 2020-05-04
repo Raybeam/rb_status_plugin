@@ -21,7 +21,10 @@ def extract_report_data_into_airflow(form):
     report_dict["tests"] = form.tests.data
     report_dict["schedule"] = form.schedule_custom.data
 
-    report_name = "%s%s" % (VariablesReportRepo.report_prefix, report_dict["report_title"])
+    report_name = "%s%s" % (
+        VariablesReportRepo.report_prefix,
+        report_dict["report_title"]
+    )
     report_json = json.dumps(report_dict)
     Variable.set(key=report_name, value=report_json)
 
