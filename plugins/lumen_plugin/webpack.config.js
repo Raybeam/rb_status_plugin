@@ -6,6 +6,7 @@ module.exports = (env) => {
     entry: {
       status: ["./src/scss/status.scss"],
       mgmt: ["./src/scss/mgmt.scss"],
+      report_form: ["./src/js/report_form.js"],
     },
     output: {
       filename: "[name].js",
