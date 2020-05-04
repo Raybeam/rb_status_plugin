@@ -2,7 +2,7 @@ from airflow.models import Variable
 import json
 import logging
 import re
-
+from plugins.lumen_plugin.report_repo import VariablesReportRepo
 
 def extract_report_data_into_airflow(form):
     """
@@ -25,12 +25,15 @@ def extract_report_data_into_airflow(form):
     else:
         convert_schedule_to_cron_expression(report_dict, form)
 
-    ariflow_variable_name = "lumen_report_%s" % (report_dict["report_title"])
+    report_name = "%s%s" % (
+        VariablesReportRepo.report_prefix,
+        report_dict["report_title"]
+    )
     report_json = json.dumps(report_dict)
-    Variable.set(key=ariflow_variable_name, value=report_json)
+    Variable.set(key=report_name, value=report_json)
 
 
-def format_form_for_airflow(form):
+def format_form(form):
     """
     Parse the report form and transform/format the inputted data.
     """

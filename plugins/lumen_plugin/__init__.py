@@ -19,7 +19,7 @@ from plugins.lumen_plugin.report_instance import ReportInstance
 from lumen_plugin.sensors.lumen_sensor import LumenSensor
 from plugins.lumen_plugin.helpers.report_save_helpers import (
     extract_report_data_into_airflow,
-    format_form_for_airflow,
+    format_form,
 )
 
 from flask_appbuilder.security.decorators import has_access
@@ -140,18 +140,45 @@ class ReportForm(DynamicForm):
         ("Day of week"),
         description=("Select day of a week you want to schedule the report"),
         choices=[
-            ("0", "Monday"),
-            ("1", "Tuesday"),
-            ("2", "Wednesday"),
-            ("3", "Thursday"),
-            ("4", "Friday"),
-            ("5", "Saturday"),
-            ("6", "Sunday"),
+            ("0", "Sunday"),
+            ("1", "Monday"),
+            ("2", "Tuesday"),
+            ("3", "Wednesday"),
+            ("4", "Thursday"),
+            ("5", "Friday"),
+            ("6", "Saturday"),
         ],
         widget=Select2Widget(),
     )
     schedule_custom = StringField(("Cron schedule"), widget=BS3TextFieldWidget())
 
+
+form_fieldsets_config = [
+    (
+        "General",
+        {
+            "fields": [
+                "title",
+                "description",
+                "owner_name",
+                "owner_email",
+                "subscribers",
+            ]
+        },
+    ),
+    (
+        "Schedule",
+        {
+            "fields": [
+                "schedule_type",
+                "schedule_week_day",
+                "schedule_time",
+                "schedule_custom",
+            ]
+        },
+    ),
+    ("Tests", {"fields": ["tests"]}),
+]
 
 class NewReportFormView(SimpleFormView):
     route_base = "/lumen/report"
@@ -170,7 +197,7 @@ class NewReportFormView(SimpleFormView):
     def form_post(self):
         form = self.form.refresh()
         log.info("Saving reports...\n\n")
-        form = format_form_for_airflow(form)
+        form = format_form(form)
         extract_report_data_into_airflow(form)
         # post process form
         flash(self.message, "info")
@@ -190,32 +217,7 @@ class EditReportFormView(SimpleFormView):
     form_template = "report_form.html"
     form = ReportForm
     form_title = "New Report"
-    form_fieldsets = [
-        (
-            "General",
-            {
-                "fields": [
-                    "title",
-                    "description",
-                    "owner_name",
-                    "owner_email",
-                    "subscribers",
-                ]
-            },
-        ),
-        (
-            "Schedule",
-            {
-                "fields": [
-                    "schedule_type",
-                    "schedule_week_day",
-                    "schedule_time",
-                    "schedule_custom",
-                ]
-            },
-        ),
-        ("Tests", {"fields": ["tests"]}),
-    ]
+    form_fieldsets = form_fieldsets_config
     message = "My form submitted"
 
     @expose("/<string:report_id>/edit", methods=["GET"])
