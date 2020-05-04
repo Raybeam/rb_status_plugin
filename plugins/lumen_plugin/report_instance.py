@@ -68,7 +68,6 @@ class ReportInstance:
             if (ti.operator != 'LumenSensor') or ti.state == State.REMOVED:
                 continue
 
-            xcom_key = f"{ti.dag_id}.{ti.task_id}"
             test_status = ti.xcom_pull(key="lumen_test_task_status")
 
             if not test_status:
