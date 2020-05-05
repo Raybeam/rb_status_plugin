@@ -2,6 +2,7 @@ from airflow import DAG
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.bash_operator import BashOperator
 from airflow.operators.python_operator import PythonOperator
+import airflow.utils.dates as dt
 from datetime import datetime, timedelta
 
 import random
@@ -49,11 +50,11 @@ default_args = {
 
 # Using a DAG context manager, you don't have to specify the dag property of each task
 with DAG(
-    "example_dag",
-    start_date=datetime(2019, 1, 1),
+    "lumen-sample-dag",
+    start_date=dt.days_ago(3),
     max_active_runs=3,
     schedule_interval=timedelta(
-        minutes=30
+        days=1
     ),  # https://airflow.apache.org/docs/stable/scheduler.html#dag-runs
     default_args=default_args,
     # catchup=False # enable if you don't want historical dag runs to run

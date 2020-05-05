@@ -1,0 +1,8 @@
+{
+    "tests": [
+      "lumen-sample-dag.bash_print_date1", 
+      "lumen-sample-dag.python_failing_0"
+    ],
+    "emails": ["info@example.com"],
+    "schedule": "0 7 * * *"
+  }

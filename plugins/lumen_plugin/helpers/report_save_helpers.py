@@ -4,7 +4,8 @@ import logging
 import re
 from flask import flash
 
-from plugins.lumen_plugin.report_repo import VariablesReportRepo
+from lumen_plugin.report_repo import VariablesReportRepo
+
 
 def extract_report_data_into_airflow(form):
     """
@@ -29,7 +30,7 @@ def extract_report_data_into_airflow(form):
 
     report_name = "%s%s" % (
         VariablesReportRepo.report_prefix,
-        report_dict["report_title"]
+        report_dict["report_title"],
     )
     report_json = json.dumps(report_dict)
     Variable.set(key=report_name, value=report_json)
@@ -61,14 +62,12 @@ def validate_email(email):
     if not re.search(email_format, email):
         log = logging.getLogger(__name__)
         log.exception(
-            "Email (%s) is not valid. Please enter a valid email address."
-            % email)
+            "Email (%s) is not valid. Please enter a valid email address." % email
+        )
         log.error(
-            "Email (%s) is not valid. Please enter a valid email address."
-            % email)
-        flash(
-            "Email (%s) is not valid. Please enter a valid email address."
-            % email)
+            "Email (%s) is not valid. Please enter a valid email address." % email
+        )
+        flash("Email (%s) is not valid. Please enter a valid email address." % email)
 
 
 def convert_schedule_to_cron_expression(report_dict, form):
