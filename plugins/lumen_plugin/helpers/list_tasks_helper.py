@@ -2,7 +2,6 @@ from airflow.utils.db import provide_session
 from airflow.models.taskinstance import TaskInstance
 from plugins.lumen_plugin.report_repo import VariablesReportRepo
 from airflow.utils.state import State
-import logging
 
 
 @provide_session
