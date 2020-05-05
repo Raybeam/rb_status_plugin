@@ -200,11 +200,11 @@ class ReportSaveTest(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             validate_email(invalid_email)
 
-        self.assertTrue(
-            "Email (%s) is not valid. Please enter a valid email address."
-            % (invalid_email)
-            in str(context.exception)
-        )
+            self.assertTrue(
+                "Email (%s) is not valid. Please enter a valid email address."
+                % (invalid_email)
+                in str(context.exception)
+            )
 
     def test_daily_schedule_conversion(self):
         """
