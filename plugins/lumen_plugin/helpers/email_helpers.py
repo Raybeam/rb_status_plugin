@@ -15,6 +15,13 @@ def get_details_link():
     return f"{base_url}/{route_base}/"
 
 
+def get_status(passed):
+    if passed is None:
+        return "Unknown"
+
+    return "Success" if passed else "Failed"
+
+
 def report_notify_email(report, email_template_location, **context):
     """
     For the given report, sends a notification email in the format given
@@ -33,13 +40,13 @@ def report_notify_email(report, email_template_location, **context):
 
     updated_time = ri.updated
     passed = ri.passed
-    status = "Passed" if passed else "Failed"
+    status = get_status(passed)
     details_link = get_details_link()
 
     with open(email_template_location) as file:
         send_email = EmailOperator(
             task_id="custom_email_notification",
-            to=report.emails,
+            to=report.subscribers,
             subject="[{{status}}] {{title}}",
             html_content=file.read(),
         )

@@ -1,9 +1,14 @@
 from airflow.plugins_manager import AirflowPlugin
 from flask import Blueprint
 
-from lumen_plugin.views import LumenStatusView
+from lumen_plugin.views import (
+    LumenStatusView,
+    LumenReportsView,
+    NewReportFormView,
+    EditReportFormView,
+)
+from plugins.lumen_plugin import test_data
 from lumen_plugin.sensors.lumen_sensor import LumenSensor
-
 
 v_appbuilder_status_view = LumenStatusView()
 v_appbuilder_status_package = {
@@ -12,13 +17,66 @@ v_appbuilder_status_package = {
     "view": v_appbuilder_status_view,
 }
 
+v_appbuilder_reports_view = LumenReportsView()
+v_appbuilder_reports_package = {
+    "name": "Reports",
+    "category": "Lumen",
+    "view": v_appbuilder_reports_view,
+}
+
+test_choices = []
+for test in test_data.dummy_tests:
+    test_choices.append((test["id"], test["name"]))
+
+form_fieldsets_config = [
+    (
+        "General",
+        {
+            "fields": [
+                "title",
+                "description",
+                "owner_name",
+                "owner_email",
+                "subscribers",
+            ]
+        },
+    ),
+    (
+        "Schedule",
+        {
+            "fields": [
+                "schedule_type",
+                "schedule_week_day",
+                "schedule_time",
+                "schedule_custom",
+            ]
+        },
+    ),
+    ("Tests", {"fields": ["tests"]}),
+]
+
+v_appbuilder_new_report_form_view = NewReportFormView()
+v_appbuilder_new_report_form_package = {
+    "name": None,
+    "category": None,
+    "view": v_appbuilder_new_report_form_view,
+}
+
+v_appbuilder_edit_report_form_view = EditReportFormView()
+v_appbuilder_edit_report_form_package = {
+    "name": None,
+    "category": None,
+    "view": v_appbuilder_edit_report_form_view,
+}
+
+
 # Creating a flask blueprint to intergrate the templates and static folder
 bp = Blueprint(
     "lumen",
     __name__,
     template_folder="templates",
     static_folder="static",
-    static_url_path="/lumen/static",
+    static_url_path="/static",
 )
 
 
@@ -32,5 +90,10 @@ class LumenPlugin(AirflowPlugin):
     macros = []
     admin_views = []
     menu_links = []
-    appbuilder_views = [v_appbuilder_status_package]
+    appbuilder_views = [
+        v_appbuilder_status_package,
+        v_appbuilder_reports_package,
+        v_appbuilder_new_report_form_package,
+        v_appbuilder_edit_report_form_package,
+    ]
     appbuilder_menu_items = []
