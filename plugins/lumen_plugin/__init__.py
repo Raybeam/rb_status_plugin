@@ -176,7 +176,6 @@ form_fieldsets_config = [
     ("Tests", {"fields": ["tests"]}),
 ]
 
-
 class NewReportFormView(SimpleFormView):
     route_base = "/lumen/report"
     form_template = "report_form.html"
