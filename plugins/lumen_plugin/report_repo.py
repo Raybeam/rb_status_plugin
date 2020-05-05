@@ -71,9 +71,15 @@ class VariablesReportRepo(ReportRepo):
     def to_report(name, v):
         """ Generates report objects from variable data """
         r = Report(name)
+        r.report_title = v["report_title"]
+        r.description = v["description"]
+        r.owner_name = v["owner_name"]
         r.owner_email = v["owner_email"]
         r.subscribers = v["subscribers"]
         r.tests = v["tests"]
+        r.schedule_type = v["schedule_type"]
+        r.schedule_time = v["schedule_time"]
+        r.schedule_week_day = v["schedule_week_day"]
         r.schedule = v["schedule"]
         return r
 
