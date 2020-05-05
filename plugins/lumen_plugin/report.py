@@ -9,9 +9,19 @@ class Report:
 
     def __init__(self, name):
         self.name = name
+        self.__owner_email = None
         self.__subscribers = None
         self.__tests = None
         self.__schedule = None
+
+    @property
+    def owner_email(self):
+        """ Email address of the report owner """
+        return self.__owner_email
+
+    @owner_email.setter
+    def owner_email(self, val):
+        self.__owner_email = val
 
     @property
     def subscribers(self):
