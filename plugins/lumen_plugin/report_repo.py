@@ -78,8 +78,6 @@ class VariablesReportRepo(ReportRepo):
         r.subscribers = v["subscribers"]
         r.tests = v["tests"]
         r.schedule_type = v["schedule_type"]
-        r.schedule_time = v["schedule_time"]
-        r.schedule_week_day = v["schedule_week_day"]
         r.schedule = v["schedule"]
         return r
 

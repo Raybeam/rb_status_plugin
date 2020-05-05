@@ -16,8 +16,6 @@ class Report:
         self.__subscribers = None
         self.__tests = None
         self.__schedule_type = None
-        self.__schedule_time = None
-        self.__schedule_week_day = None
         self.__schedule = None
 
     @property
@@ -73,24 +71,6 @@ class Report:
     @schedule_type.setter
     def schedule_type(self, val):
         self.__schedule_type = val
-
-    @property
-    def schedule_time(self):
-        """ Hour:Min of the schedule (for daily and weekly) """
-        return self.__schedule_time
-
-    @schedule_time.setter
-    def schedule_time(self, val):
-        self.__schedule_time = val
-
-    @property
-    def schedule_week_day(self):
-        """ Day of week (0-6) for weekly schedule """
-        return self.__schedule_week_day
-
-    @schedule_week_day.setter
-    def schedule_week_day(self, val):
-        self.__schedule_week_day = val
 
     @property
     def schedule(self):
