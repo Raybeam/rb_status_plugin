@@ -12,7 +12,5 @@ def get_all_test_choices(session=None):
         ~TI.dag_id.like(f"lumen_%"),
         TI.state != State.REMOVED
     ).all()
-    logging.info(tis)
-    logging.info(f"{VariablesReportRepo.report_prefix}%")
     test_choices = [(i, ti.task_id) for (i, ti) in enumerate(tis)]
     return test_choices
