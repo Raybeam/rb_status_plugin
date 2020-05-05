@@ -22,7 +22,9 @@ from plugins.lumen_plugin.helpers.report_save_helpers import (
     extract_report_data_into_airflow,
     format_form,
 )
+
 from flask_appbuilder.security.decorators import has_access
+
 import logging
 log = logging.getLogger(__name__)
 
