@@ -96,15 +96,16 @@
             <!-- Column 7: Links -->
             <td class="text-center" >
                 <!-- Trigger Report -->
-                <a href="#">
-                  <span 
-                    class="glyphicon glyphicon-play-circle" 
-                    aria-hidden="true" 
-                    data-original-title="Trigger Report"
-                  >
-                  </span>
-                </a>
-
+                <form action="reports/example_dag/trigger/" method="post">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    <button style="border:none;background:none;"
+                      class="glyphicon glyphicon-play-circle" 
+                      aria-hidden="true" 
+                      data-original-title="Trigger Report"
+                      type="submit"
+                    >
+                    </button>
+                </form>
                 <!-- Delete Report -->
                 <a href="#">
                   <span 
