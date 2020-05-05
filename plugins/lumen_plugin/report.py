@@ -9,18 +9,18 @@ class Report:
 
     def __init__(self, name):
         self.name = name
-        self.__emails = None
+        self.__subscribers = None
         self.__tests = None
         self.__schedule = None
 
     @property
-    def emails(self):
+    def subscribers(self):
         """ Emails that the report will go to """
-        return self.__emails
+        return self.__subscribers
 
-    @emails.setter
-    def emails(self, val):
-        self.__emails = val
+    @subscribers.setter
+    def subscribers(self, val):
+        self.__subscribers = val
 
     @property
     def schedule(self):
