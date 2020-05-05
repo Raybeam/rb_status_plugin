@@ -18,6 +18,11 @@ from plugins.lumen_plugin.report_repo import VariablesReportRepo
 from plugins.lumen_plugin.report_instance import ReportInstance
 from plugins.lumen_plugin.helpers.list_tasks_helper import get_all_test_choices
 from lumen_plugin.sensors.lumen_sensor import LumenSensor
+from plugins.lumen_plugin.helpers.report_save_helpers import (
+    extract_report_data_into_airflow,
+    format_form,
+)
+
 from flask_appbuilder.security.decorators import has_access
 import logging
 log = logging.getLogger(__name__)
@@ -56,7 +61,7 @@ class LumenStatusView(AppBuilderBaseView):
                     "passed": ri.passed,
                     "updated": ri.updated,
                     "title": report.name,
-                    "owner_email": report.emails,
+                    "owner_email": report.owner_email,
                 }
 
                 r["errors"] = ri.errors()
@@ -91,7 +96,7 @@ class LumenReportsView(AppBuilderBaseView):
 
     @expose("/reports")
     def list(self):
-        return self.render_template('reports.html', content=test_data.dummy_reports)
+        return self.render_template("reports.html", content=test_data.dummy_reports)
 
 
 v_appbuilder_reports_view = LumenReportsView()
@@ -100,7 +105,6 @@ v_appbuilder_reports_package = {
     "category": "Lumen",
     "view": v_appbuilder_reports_view,
 }
-
 
 class ReportForm(DynamicForm):
     title = StringField(("Title"), widget=BS3TextFieldWidget())
@@ -131,13 +135,13 @@ class ReportForm(DynamicForm):
         ("Day of week"),
         description=("Select day of a week you want to schedule the report"),
         choices=[
-            ("0", "Monday"),
-            ("1", "Tuesday"),
-            ("2", "Wednesday"),
-            ("3", "Thursday"),
-            ("4", "Friday"),
-            ("5", "Saturday"),
-            ("6", "Sunday"),
+            ("0", "Sunday"),
+            ("1", "Monday"),
+            ("2", "Tuesday"),
+            ("3", "Wednesday"),
+            ("4", "Thursday"),
+            ("5", "Friday"),
+            ("6", "Saturday"),
         ],
         widget=Select2Widget(),
     )
@@ -177,7 +181,6 @@ class NewReportFormView(SimpleFormView):
     form_template = "report_form.html"
     form = ReportForm
     form_title = "New Report"
-    form_fieldsets = form_fieldsets_config
     message = "My form submitted"
 
     @expose("/new", methods=["GET"])
@@ -185,9 +188,16 @@ class NewReportFormView(SimpleFormView):
     def this_form_get(self):
         return super().this_form_get()
 
-    def form_post(self, form):
+    @expose("/new", methods=["POST"])
+    @has_access
+    def form_post(self):
+        form = self.form.refresh()
+        log.info("Saving reports...\n\n")
+        form = format_form(form)
+        extract_report_data_into_airflow(form)
         # post process form
         flash(self.message, "info")
+        return super().this_form_get()
 
 
 v_appbuilder_new_report_form_view = NewReportFormView()
@@ -232,10 +242,11 @@ class EditReportFormView(SimpleFormView):
         if requested_report:
             form.title.data = requested_report["title"]
             form.description.data = requested_report["description"]
+            form.schedule.data = requested_report["schedule"]
             form.subscribers.data = ", ".join(requested_report["subscribers"])
             form.owner_name.data = requested_report["owner_name"]
             form.owner_email.data = requested_report["owner_email"]
-            form.tests.data = [str(test["id"]) for test in requested_report["tests"]]
+            form.tests.data = [str(test["ids"]) for test in requested_report["tests"]]
 
     def form_post(self, form):
         # post process form
@@ -256,7 +267,7 @@ bp = Blueprint(
     __name__,
     template_folder="templates",
     static_folder="static",
-    static_url_path="/lumen_plugin/static",
+    static_url_path="/static",
 )
 
 

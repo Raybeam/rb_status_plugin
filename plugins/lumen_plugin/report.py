@@ -9,18 +9,68 @@ class Report:
 
     def __init__(self, name):
         self.name = name
-        self.__emails = None
+        self.__report_title = None
+        self.__description = None
+        self.__owner_name = None
+        self.__owner_email = None
+        self.__subscribers = None
         self.__tests = None
+        self.__schedule_type = None
         self.__schedule = None
 
     @property
-    def emails(self):
-        """ Emails that the report will go to """
-        return self.__emails
+    def report_title(self):
+        """ Title of the report """
+        return self.__report_title
 
-    @emails.setter
-    def emails(self, val):
-        self.__emails = val
+    @report_title.setter
+    def report_title(self, val):
+        self.__report_title = val
+
+    @property
+    def description(self):
+        """ Description of the report """
+        return self.__description
+
+    @description.setter
+    def description(self, val):
+        self.__description = val
+
+    @property
+    def owner_name(self):
+        """ Name of the report owner """
+        return self.__owner_name
+
+    @owner_name.setter
+    def owner_name(self, val):
+        self.__owner_name = val
+
+    @property
+    def owner_email(self):
+        """ Email address of the report owner """
+        return self.__owner_email
+
+    @owner_email.setter
+    def owner_email(self, val):
+        self.__owner_email = val
+
+    @property
+    def subscribers(self):
+        """ Emails that the report will go to """
+        return self.__subscribers
+
+    @subscribers.setter
+    def subscribers(self, val):
+        self.__subscribers = val
+
+    @property
+    def schedule_type(self):
+        """ Type of schedule (daily, weekly, custom) """
+        return self.__schedule_type
+
+    @schedule_type.setter
+    def schedule_type(self, val):
+        self.__schedule_type = val
 
     @property
     def schedule(self):
