@@ -26,6 +26,7 @@ from plugins.lumen_plugin.helpers.report_save_helpers import (
 from flask_appbuilder.security.decorators import has_access
 
 import logging
+
 log = logging.getLogger(__name__)
 
 # Creating a flask appbuilder BaseView
