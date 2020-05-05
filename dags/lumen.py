@@ -40,7 +40,7 @@ def create_dag(report, default_args):
             trigger_rule="all_done",
             op_kwargs={
                 "report": report,
-                "email_template_location": SINGLE_EMAIL_TEMPLATE
+                "email_template_location": SINGLE_EMAIL_TEMPLATE,
             },
             provide_context=True,
         )
