@@ -20,7 +20,7 @@ from lumen_plugin.helpers.report_save_helpers import (
     format_form,
 )
 from lumen_plugin import test_data
-from plugins.lumen_plugin.helpers.list_tasks_helper import get_all_test_choices
+from lumen_plugin.helpers.list_tasks_helper import get_all_test_choices
 import logging
 
 test_choices = []
