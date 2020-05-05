@@ -40,7 +40,7 @@ Lumen - Airflow
 
   {% for report in content.reports %}
   <div class="report-base report {% if report.passed %}passed{% else %}failed{% endif %}">
-    <div id="report-{{ report.id }}-heading" class="report-header" role="tab">
+    <div id="report-{{ report.report_title }}-heading" class="report-header" role="tab">
       <div class="report-highlights">
         <div class="report-indicator"></div>
         <div class="report-meta">
@@ -57,15 +57,15 @@ Lumen - Airflow
       </div>
       <div>
         <button type="button" class="btn btn-link report-details-trigger collapsed" data-toggle="collapse"
-          data-target="#report-{{ report.id }}-details" aria-expanded="false"
-          aria-controls="report-{{ report.id }}-details">
+          data-target="#report-{{ report.report_title }}-details" aria-expanded="false"
+          aria-controls="report-{{ report.report_title }}-details">
           Details
           <i class="fa fa-angle-down" aria-hidden="true"></i>
         </button>
       </div>
     </div>
-    <div id="report-{{ report.id }}-details" class="collapse" role="tabpanel"
-      aria-labelledby="report-{{ report.id }}-heading">
+    <div id="report-{{ report.report_title }}-details" class="collapse" role="tabpanel"
+      aria-labelledby="report-{{ report.report_title }}-heading">
       <div class="report-details">
         <p>
           <strong>Report Owner:</strong>

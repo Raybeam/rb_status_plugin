@@ -48,19 +48,19 @@
           <tr>
             <!-- Column 1: View Report -->
             <td class="text-center" style="width:10px;">
-              <a href="{{ url_for('EditReportFormView.this_form_get', report_id=report.id) }}" title="Edit">
+              <a href="{{ url_for('EditReportFormView.this_form_get', report_title=report.report_title) }}" title="Edit">
                 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
               </a>
             </td>
 
             <!-- Column 2: Turn report on/off -->
             <td>
-              <input id="toggle-{{ report.id }}"  type="checkbox"  data-toggle="toggle" data-size="mini" method="post">
+              <input id="toggle-{{ report.report_title }}"  type="checkbox"  data-toggle="toggle" data-size="mini" method="post">
             </td>
 
             <!-- Column 2: Name -->
             <td>
-              {{ report.title }}
+              {{ report.report_title }}
             </td>
 
             <!-- Column 3: Report Schedule -->
@@ -71,7 +71,7 @@
             <!-- Column 4: Report Tests -->
             <td>
               {% for test in report.tests %}
-                {{ test.name }}{% if not loop.last %}, <br>{% endif %}
+                {{ test }}{% if not loop.last %}, <br>{% endif %}
               {% endfor %}
             </td>
 
@@ -88,7 +88,7 @@
 
             <!-- Column 6: Report Subscribers -->
             <td>
-              {% for subscriber in report.emails %}
+              {% for subscriber in report.subscribers %}
                 {{ subscriber }}{% if not loop.last %},{% endif %}
               {% endfor %}
             </td>
