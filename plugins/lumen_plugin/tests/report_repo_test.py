@@ -23,7 +23,8 @@ class VariablesReportRepoTest(unittest.TestCase):
                     "example_dag.python_print_date_0",
                     "example_dag.python_random_0"
                 ],
-                "schedule": "* * * 1 *"
+                "schedule": "* * * 1 *",
+                "schedule_type": ""
             }
             """
 

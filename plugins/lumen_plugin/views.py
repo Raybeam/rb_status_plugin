@@ -1,6 +1,5 @@
 from flask_appbuilder import BaseView as AppBuilderBaseView, expose
 from flask import flash
-
 from flask_appbuilder import SimpleFormView
 from flask_appbuilder.forms import DynamicForm
 from flask_appbuilder.fieldwidgets import (
@@ -9,6 +8,8 @@ from flask_appbuilder.fieldwidgets import (
     Select2ManyWidget,
     Select2Widget,
 )
+from flask_appbuilder.security.decorators import has_access
+
 from wtforms import StringField, TextAreaField, SelectMultipleField, SelectField
 from wtforms_components import TimeField
 
@@ -18,9 +19,40 @@ from lumen_plugin.helpers.report_save_helpers import (
     extract_report_data_into_airflow,
     format_form,
 )
+from lumen_plugin import test_data
 
-from flask_appbuilder.security.decorators import has_access
 import logging
+
+test_choices = []
+for test in test_data.dummy_tests:
+    test_choices.append((test["id"], test["name"]))
+
+form_fieldsets_config = [
+    (
+        "General",
+        {
+            "fields": [
+                "title",
+                "description",
+                "owner_name",
+                "owner_email",
+                "subscribers",
+            ]
+        },
+    ),
+    (
+        "Schedule",
+        {
+            "fields": [
+                "schedule_type",
+                "schedule_week_day",
+                "schedule_time",
+                "schedule_custom",
+            ]
+        },
+    ),
+    ("Tests", {"fields": ["tests"]}),
+]
 
 # Creating a flask appbuilder BaseView
 class LumenStatusView(AppBuilderBaseView):

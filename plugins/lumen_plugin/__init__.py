@@ -7,7 +7,6 @@ from lumen_plugin.views import (
     NewReportFormView,
     EditReportFormView,
 )
-from plugins.lumen_plugin import test_data
 from lumen_plugin.sensors.lumen_sensor import LumenSensor
 
 v_appbuilder_status_view = LumenStatusView()
@@ -24,36 +23,6 @@ v_appbuilder_reports_package = {
     "view": v_appbuilder_reports_view,
 }
 
-test_choices = []
-for test in test_data.dummy_tests:
-    test_choices.append((test["id"], test["name"]))
-
-form_fieldsets_config = [
-    (
-        "General",
-        {
-            "fields": [
-                "title",
-                "description",
-                "owner_name",
-                "owner_email",
-                "subscribers",
-            ]
-        },
-    ),
-    (
-        "Schedule",
-        {
-            "fields": [
-                "schedule_type",
-                "schedule_week_day",
-                "schedule_time",
-                "schedule_custom",
-            ]
-        },
-    ),
-    ("Tests", {"fields": ["tests"]}),
-]
 
 v_appbuilder_new_report_form_view = NewReportFormView()
 v_appbuilder_new_report_form_package = {
