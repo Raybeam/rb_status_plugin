@@ -22,12 +22,8 @@ from lumen_plugin.helpers.report_save_helpers import (
     format_form,
 )
 from lumen_plugin import test_data
-
+from lumen_plugin.helpers.list_tasks_helper import get_all_test_choices
 import logging
-
-test_choices = []
-for test in test_data.dummy_tests:
-    test_choices.append((test["id"], test["name"]))
 
 form_fieldsets_config = [
     (
@@ -134,7 +130,7 @@ class ReportForm(DynamicForm):
     tests = SelectMultipleField(
         ("Tests"),
         description=("List of the tests to include in the report"),
-        choices=test_choices,
+        choices=get_all_test_choices(),
         widget=Select2ManyWidget(),
     )
     schedule_type = SelectField(
