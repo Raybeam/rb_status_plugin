@@ -25,28 +25,61 @@ class ReportInstance:
     @property
     def passed(self):
         if self._passed is None:
-            self._passed = len(self.errors()) == 0
+            self._passed = self.calculate_passed(self.errors())
         return self._passed
 
     @property
     def updated(self):
         return self.dag_run.execution_date
 
+    def calculate_passed(self, errs):
+        '''
+        Calculates the overall report status.
+        True indicates all tests pass.
+        False indicates at least one fail.
+        None indicates no failures and one or more unknown
+
+        :return: returns whether all tasks failed or succeeded or unknown
+        :rtype: boolean
+        '''
+        if len(errs) == 0:
+            return True
+
+        for err in errs:
+            if err["test_status"] is False:
+                return False
+        return None
+
     def errors(self):
         """
-        Gets errors that match task_prefix
-        By default it accepts any test name
+        Gets XCOM test_status from each test task instance and returns
+        a list of error dict objects...
+
+        Error type is the value of the task's test status [True, False, or None].
+        A none value denotes an operational failure which prevented task instance
+        evaluation.
+
+        :return: returns a list containing error dicts with [id, name,
+            description, error_type]
+        :rtype: list
         """
-
         failed = []
-        for ti in self.dag_run.get_task_instances(state=State.FAILED):
-            if ti.operator != "LumenSensor":
+        for ti in self.dag_run.get_task_instances():
+            # We want to ignored removed tasks and non-test tasks
+            if (ti.operator != 'LumenSensor') or ti.state == State.REMOVED:
                 continue
-            ti.refresh_from_db()
-            failed.append(
-                {"id": ti.job_id, "name": ti.task_id, "description": ti.log_url}
-            )
 
+            test_status = ti.xcom_pull(key="lumen_test_task_status")
+
+            if not test_status:
+                ti.refresh_from_db()
+
+                failed.append({
+                    "id": ti.job_id,
+                    "name": ti.task_id,
+                    "description": ti.log_url,
+                    "test_status": test_status
+                })
         return failed
 
     @classmethod
