@@ -1,7 +1,7 @@
 from airflow.operators.email_operator import EmailOperator
 from airflow import configuration
-from plugins.lumen_plugin.report_instance import ReportInstance
-from plugins.lumen_plugin import LumenStatusView
+from lumen_plugin.report_instance import ReportInstance
+from lumen_plugin.views import LumenStatusView
 import logging
 
 

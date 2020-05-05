@@ -1,5 +1,5 @@
 from airflow.models import Variable
-from plugins.lumen_plugin.helpers.report_save_helpers import (
+from lumen_plugin.helpers.report_save_helpers import (
     extract_report_data_into_airflow,
     format_form,
     validate_email,
@@ -64,10 +64,7 @@ class ReportSaveTest(unittest.TestCase):
             ),
             "schedule_type": AttributeDict({"data": "daily"}),
             "schedule_time": AttributeDict(
-                {
-                    "data":
-                        datetime.datetime(year=2000, month=1, day=1, hour=5, minute=0)
-                }
+                {"data": datetime.datetime(year=2000, month=1, day=1, hour=5, minute=0)}
             ),
         }
     )
@@ -92,8 +89,9 @@ class ReportSaveTest(unittest.TestCase):
             "schedule_type": AttributeDict({"data": "weekly"}),
             "schedule_time": AttributeDict(
                 {
-                    "data":
-                        datetime.datetime(year=2000, month=1, day=1, hour=3, minute=30)
+                    "data": datetime.datetime(
+                        year=2000, month=1, day=1, hour=3, minute=30
+                    )
                 }
             ),
             "schedule_week_day": AttributeDict({"data": "0"}),
@@ -121,12 +119,10 @@ class ReportSaveTest(unittest.TestCase):
         Test that the report's title attribute is correct
         """
         report_airflow_variable = Variable.get(
-            "lumen_report_" + self.report_form_sample.title.data,
-            deserialize_json=True,
+            "lumen_report_" + self.report_form_sample.title.data, deserialize_json=True,
         )
         self.assertEqual(
-            self.report_form_sample.title.data,
-            report_airflow_variable["report_title"]
+            self.report_form_sample.title.data, report_airflow_variable["report_title"]
         )
 
     def test_saved_description(self):
@@ -134,12 +130,11 @@ class ReportSaveTest(unittest.TestCase):
         Test that the report's description attribute is correct
         """
         report_airflow_variable = Variable.get(
-            "lumen_report_" + self.report_form_sample.title.data,
-            deserialize_json=True,
+            "lumen_report_" + self.report_form_sample.title.data, deserialize_json=True,
         )
         self.assertEqual(
             self.report_form_sample.description.data,
-            report_airflow_variable["description"]
+            report_airflow_variable["description"],
         )
 
     def test_saved_owner_name(self):
@@ -147,12 +142,11 @@ class ReportSaveTest(unittest.TestCase):
         Test that the report's owner_name attribute is correct
         """
         report_airflow_variable = Variable.get(
-            "lumen_report_" + self.report_form_sample.title.data,
-            deserialize_json=True,
+            "lumen_report_" + self.report_form_sample.title.data, deserialize_json=True,
         )
         self.assertEqual(
             self.report_form_sample.owner_name.data,
-            report_airflow_variable["owner_name"]
+            report_airflow_variable["owner_name"],
         )
 
     def test_saved_owner_email(self):
@@ -160,12 +154,11 @@ class ReportSaveTest(unittest.TestCase):
         Test that the report's owner_email attribute is correct
         """
         report_airflow_variable = Variable.get(
-            "lumen_report_" + self.report_form_sample.title.data,
-            deserialize_json=True,
+            "lumen_report_" + self.report_form_sample.title.data, deserialize_json=True,
         )
         self.assertEqual(
             self.report_form_sample.owner_email.data,
-            report_airflow_variable["owner_email"]
+            report_airflow_variable["owner_email"],
         )
 
     def test_saved_subscribers(self):
@@ -173,12 +166,11 @@ class ReportSaveTest(unittest.TestCase):
         Test that the report's subscribers attribute is correct
         """
         report_airflow_variable = Variable.get(
-            "lumen_report_" + self.report_form_sample.title.data,
-            deserialize_json=True,
+            "lumen_report_" + self.report_form_sample.title.data, deserialize_json=True,
         )
         self.assertEqual(
             self.report_form_sample.subscribers.data,
-            report_airflow_variable["subscribers"]
+            report_airflow_variable["subscribers"],
         )
 
     def test_format_report(self):
@@ -186,8 +178,7 @@ class ReportSaveTest(unittest.TestCase):
         Test that the subscribers was properly formatted.
         This will also update the report_form_sample and airflow varible.
         """
-        self.report_form_sample = format_form(
-            self.report_form_sample)
+        self.report_form_sample = format_form(self.report_form_sample)
         self.setUpClass()
         self.assertEqual(
             self.report_form_sample.subscribers.data,
@@ -224,10 +215,7 @@ class ReportSaveTest(unittest.TestCase):
             "lumen_report_" + self.report_form_sample_daily.title.data,
             deserialize_json=True,
         )
-        self.assertEqual(
-            '00 05 * * *',
-            report_airflow_variable["schedule"]
-        )
+        self.assertEqual("00 05 * * *", report_airflow_variable["schedule"])
 
     def test_weekly_schedule_conversion(self):
         """
@@ -238,10 +226,7 @@ class ReportSaveTest(unittest.TestCase):
             "lumen_report_" + self.report_form_sample_weekly.title.data,
             deserialize_json=True,
         )
-        self.assertEqual(
-            '30 03 * * 0',
-            report_airflow_variable["schedule"]
-        )
+        self.assertEqual("30 03 * * 0", report_airflow_variable["schedule"])
 
 
 if __name__ == "__main__":

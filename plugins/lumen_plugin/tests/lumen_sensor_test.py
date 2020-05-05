@@ -1,4 +1,4 @@
-from plugins.lumen_plugin.sensors.lumen_sensor import LumenSensor
+from lumen_plugin.sensors.lumen_sensor import LumenSensor
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.models.taskinstance import TaskInstance
 from datetime import datetime, timedelta
@@ -20,16 +20,8 @@ default_args = {
 
 
 class LumenSensorTest(unittest.TestCase):
-    lumen_dag = DAG(
-        "lumen_dag",
-        schedule_interval=None,
-        default_args=default_args
-    )
-    test_dag = DAG(
-        "test_dag",
-        schedule_interval=None,
-        default_args=default_args
-    )
+    lumen_dag = DAG("lumen_dag", schedule_interval=None, default_args=default_args)
+    test_dag = DAG("test_dag", schedule_interval=None, default_args=default_args)
 
     def __create_dummy_op(self, state, dag):
         dummy = DummyOperator(task_id=f"dummy_{state}", dag=dag)
@@ -40,7 +32,7 @@ class LumenSensorTest(unittest.TestCase):
             task_id=f"test_{test.dag_id}.{test.task_id}",
             test_dag_id=f"{test.dag_id}",
             test_task_id=f"{test.task_id}",
-            dag=dag
+            dag=dag,
         )
         return sensor
 
@@ -49,7 +41,7 @@ class LumenSensorTest(unittest.TestCase):
             task_id=f"test_does_not_exist.imaginary_task",
             test_dag_id=f"does_not_exist",
             test_task_id=f"imaginary_task",
-            dag=dag
+            dag=dag,
         )
         return sensor
 

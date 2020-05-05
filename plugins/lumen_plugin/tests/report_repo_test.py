@@ -1,5 +1,5 @@
-from plugins.lumen_plugin.report_repo import VariablesReportRepo
-from plugins.lumen_plugin.report import Report
+from lumen_plugin.report_repo import VariablesReportRepo
+from lumen_plugin.report import Report
 
 import json
 import unittest
@@ -23,7 +23,8 @@ class VariablesReportRepoTest(unittest.TestCase):
                     "example_dag.python_print_date_0",
                     "example_dag.python_random_0"
                 ],
-                "schedule": "* * * 1 *"
+                "schedule": "* * * 1 *",
+                "schedule_type": ""
             }
             """
 
