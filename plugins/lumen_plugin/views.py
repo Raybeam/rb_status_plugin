@@ -23,10 +23,6 @@ from lumen_plugin import test_data
 from lumen_plugin.helpers.list_tasks_helper import get_all_test_choices
 import logging
 
-test_choices = []
-for test in test_data.dummy_tests:
-    test_choices.append((test["id"], test["name"]))
-
 form_fieldsets_config = [
     (
         "General",
