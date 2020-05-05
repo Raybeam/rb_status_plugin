@@ -21,7 +21,6 @@ from lumen_plugin.helpers.report_save_helpers import (
     extract_report_data_into_airflow,
     format_form,
 )
-from lumen_plugin import test_data
 from lumen_plugin.helpers.list_tasks_helper import get_all_test_choices
 import logging
 
@@ -223,9 +222,11 @@ class EditReportFormView(SimpleFormView):
             if (form.schedule_type.data == "custom"):
                 form.schedule_custom.data = requested_report.schedule
             if (form.schedule_type.data == "daily"):
-                form.schedule_time.data = datetime.datetime.strptime(requested_report.schedule_time, "%H:%M")
+                form.schedule_time.data =datetime.datetime.strptime(
+                    requested_report.schedule_time, "%H:%M")
             if (form.schedule_type.data == "weekly"):
-                form.schedule_time.data = datetime.datetime.strptime(requested_report.schedule_time, "%H:%M")
+                form.schedule_time.data = datetime.datetime.strptime(
+                    requested_report.schedule_time, "%H:%M")
                 form.schedule_week_day.data = requested_report.schedule_week_day
             form.tests.data = requested_report.tests
 
