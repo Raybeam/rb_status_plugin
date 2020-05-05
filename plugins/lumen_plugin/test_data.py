@@ -1,5 +1,19 @@
 import datetime
 
+dummy_tests = [
+    {"id": "example_dag.python_random_0", "name": "example_dag.python_random_0"},
+    {
+        "id": "example_dag.python_print_date_0",
+        "name": "example_dag.python_print_date_0",
+    },
+    {"id": "example_dag.python_failing_1", "name": "example_dag.python_failing_1"},
+    {
+        "id": "example_dag.python_print_date_1",
+        "name": "example_dag.python_print_date_1",
+    },
+    {"id": "example_dag.python_random_1", "name": "example_dag.python_random_1"},
+]
+
 dummy_reports = [
     {
         "id": 1,

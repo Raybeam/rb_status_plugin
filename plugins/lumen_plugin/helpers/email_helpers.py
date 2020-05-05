@@ -6,7 +6,7 @@ import logging
 
 
 def get_details_link():
-    base_url = configuration.get('webserver', 'BASE_URL')
+    base_url = configuration.get("webserver", "BASE_URL")
     # If you don't override route_base, Flask BaseView uses class name
     if LumenStatusView.route_base:
         route_base = LumenStatusView.route_base
@@ -46,7 +46,7 @@ def report_notify_email(report, email_template_location, **context):
     with open(email_template_location) as file:
         send_email = EmailOperator(
             task_id="custom_email_notification",
-            to=report.emails,
+            to=report.subscribers,
             subject="[{{status}}] {{title}}",
             html_content=file.read(),
         )

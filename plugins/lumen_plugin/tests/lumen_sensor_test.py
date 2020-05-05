@@ -20,7 +20,6 @@ default_args = {
 
 
 class LumenSensorTest(unittest.TestCase):
-
     lumen_dag = DAG(
         "lumen_dag",
         schedule_interval=None,

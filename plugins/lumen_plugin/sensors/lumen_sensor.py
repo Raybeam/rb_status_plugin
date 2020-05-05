@@ -14,19 +14,10 @@ class LumenSensor(BaseSensorOperator):
     :type test_name: str
     """
 
-    template_fields = (
-        "test_dag_id",
-        "test_task_id"
-    )
+    template_fields = ("test_dag_id", "test_task_id")
 
     @apply_defaults
-    def __init__(
-        self,
-        test_dag_id,
-        test_task_id,
-        *args,
-        **kwargs
-    ):
+    def __init__(self, test_dag_id, test_task_id, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.test_dag_id = test_dag_id
         self.test_task_id = test_task_id
@@ -47,8 +38,10 @@ class LumenSensor(BaseSensorOperator):
             ).order_by(TaskInstance.execution_date.desc()).first()
 
             terminal_failure_states = [
-                State.FAILED, State.UPSTREAM_FAILED,
-                State.SHUTDOWN, State.REMOVED
+                State.FAILED,
+                State.UPSTREAM_FAILED,
+                State.SHUTDOWN,
+                State.REMOVED,
             ]
             terminal_success_states = [State.SUCCESS, State.SKIPPED]
 

@@ -9,6 +9,7 @@ class ReportInstance:
     An instance of a Lumen report.  This is currently a basic wrapper for a DagRun
     with a few Lumen-specific helpers
     """
+
     def __init__(self, dag_run):
         self.dag_run = dag_run
         self._passed = None
