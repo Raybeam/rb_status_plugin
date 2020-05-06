@@ -117,6 +117,10 @@ class LumenReportsView(AppBuilderBaseView):
         trigger_dag(dag_id)
         return redirect(url_for('LumenReportsView.list'))
 
+    @expose("/reports/<string:dag_id>/delete/", methods=['POST'])
+    def trigger(self, dag_id):
+        return redirect(url_for('LumenReportsView.list'))
+
 
 class ReportForm(DynamicForm):
     title = StringField(("Title"), widget=BS3TextFieldWidget())

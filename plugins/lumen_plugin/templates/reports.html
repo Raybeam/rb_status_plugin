@@ -96,7 +96,7 @@
             <!-- Column 7: Links -->
             <td class="text-center" >
                 <!-- Trigger Report -->
-              <form style="display:inline-block;" action="reports/example_dag2/trigger/" method="post">
+              <form style="display:inline-block;" action=url_for(LumenReportsView.trigger) method="post">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 <button name="submit_button" value="update" style="border:none;background:none;outline:none;" type="submit">
                   <span
@@ -107,7 +107,7 @@
                 </button>
                 <!-- Delete Report -->
               </form>
-              <form style="display:inline-block;" action="reports/example_dag2/delete/" method="post">
+              <form style="display:inline-block;" action=url_for(LumenReportsView.delete) method="post">
                 <button name="submit_button" value="delete" style="border:none;background:none;outline:none;" type="submit">
                   <span 
                     class="glyphicon glyphicon-remove-circle" 
