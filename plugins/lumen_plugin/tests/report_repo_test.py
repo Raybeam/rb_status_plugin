@@ -9,6 +9,7 @@ class VariablesReportRepoTest(unittest.TestCase):
     dummy_test = """
             {
                 "report_title": "my report title",
+                "report_title_url": "change me sadler!",
                 "description": "my report description",
                 "owner_name": "my name",
                 "owner_email": "email_owner@mail.com",
