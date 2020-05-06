@@ -35,7 +35,7 @@ jobs:
           cd /home/circleci/lumen-test-airflow
           export AIRFLOW_HOME=$PWD
           airflow initdb
-          mkdir ./plugins/lumen_plugin
+          mkdir -p ./plugins/lumen_plugin
           ln -s /home/circleci/project/ ./plugins/lumen_plugin/
           airflow create_user -r Admin -u admin -e admin@example.com -f admin -l user -p admin
           python -m unittest discover -s plugins/lumen_plugin/tests/ -p '*_test.py'
