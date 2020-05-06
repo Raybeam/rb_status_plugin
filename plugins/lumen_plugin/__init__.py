@@ -23,7 +23,6 @@ v_appbuilder_reports_package = {
     "view": v_appbuilder_reports_view,
 }
 
-
 v_appbuilder_new_report_form_view = NewReportFormView()
 v_appbuilder_new_report_form_package = {
     "name": None,
