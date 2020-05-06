@@ -187,7 +187,7 @@ class EditReportFormView(SimpleFormView):
     route_base = "/lumen/report"
     form_template = "report_form.html"
     form = ReportForm
-    form_title = "New Report"
+    form_title = "Edit Report"
     form_fieldsets = form_fieldsets_config
     message = "Report submitted"
 
