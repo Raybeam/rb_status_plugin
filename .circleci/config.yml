@@ -25,7 +25,7 @@ jobs:
         command: |-
           . ~/.venv/bin/activate
           flake8
-        name: Run linter
+        name: Run flake8 linter
     - run:
         command: git clone https://github.com/Raybeam/lumen-test-airflow /home/circleci/lumen-test-airflow
         name: Set up Airflow
