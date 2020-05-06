@@ -121,13 +121,15 @@ class ReportForm(DynamicForm):
     subscribers = StringField(
         ("Subscribers"),
         description=(
-            "List of comma separeted emails that should receive email notifications"
+            "List of comma separeted emails that should receive email\
+             notifications. Includes owner email in list."
         ),
         widget=BS3TextFieldWidget(),
     )
     tests = SelectMultipleField(
         ("Tests"),
-        description=("List of the tests to include in the report"),
+        description=("List of the tests to include in the report. Only includes\
+         tasks that have ran in airflow."),
         choices=get_all_test_choices(),
         widget=Select2ManyWidget(),
     )

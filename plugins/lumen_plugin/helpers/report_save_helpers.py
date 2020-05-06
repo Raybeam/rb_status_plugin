@@ -37,7 +37,7 @@ def extract_report_data_into_airflow(form):
     # verify input for each field (except subscribers)
     form_completed = True
     for field_name in report_dict.keys():
-        if field_name != "subscribers":
+        if field_name != "subscribers" and field_name != "tests":
             form_completed = form_completed and check_empty(report_dict, field_name)
 
     if form_completed:
@@ -68,8 +68,13 @@ def format_emails(form):
     """
 
     # Add owner's email to subscribers; dedupe, order, & format subscribers
-    emails = form.subscribers.data.split(",")
-    emails += form.owner_email.data.split(",")
+    emails = form.owner_email.data.split(",")
+    if len(emails) != 1:
+        logging.exception("Error: Exactly one email is required for Owner Email field.")
+        logging.error("Error: Exactly one email is required for Owner Email field.")
+        flash("Error: Exactly one email is required for Owner Email field.")
+
+    emails += form.subscribers.data.split(",")
     emails = list(set([email.replace(" ", "") for email in emails]))
     emails = [email for email in emails if email]
     emails.sort()
