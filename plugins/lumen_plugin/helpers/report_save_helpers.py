@@ -69,6 +69,7 @@ def format_emails(form):
     emails = form.subscribers.data.split(",")
     emails += form.owner_email.data.split(",")
     emails = list(set([email.replace(" ", "") for email in emails]))
+    emails = [email for email in emails if email]
     emails.sort()
     [validate_email(email) for email in emails]
     form.subscribers.data = emails
