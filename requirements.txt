@@ -1,1 +1,3 @@
+WTForms-Components
+flake8
 inflection~=0.3.1

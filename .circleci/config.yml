@@ -39,6 +39,7 @@ jobs:
           mkdir ./plugins/
           ln -s $CIRCLE_WORKING_DIRECTORY ./plugins/
           airflow create_user -r Admin -u admin -e admin@example.com -f admin -l user -p admin
+          find .
           python -m unittest discover -s plugins/lumen_plugin/tests/ -p '*_test.py'
     - run:
         command: |-
