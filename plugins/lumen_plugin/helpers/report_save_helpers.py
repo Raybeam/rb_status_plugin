@@ -3,6 +3,7 @@ import json
 import logging
 import re
 from flask import flash
+from inflection import parameterize
 
 from lumen_plugin.report_repo import VariablesReportRepo
 
@@ -10,13 +11,18 @@ from lumen_plugin.report_repo import VariablesReportRepo
 def extract_report_data_into_airflow(form):
     """
     Extract output of report form into a formatted airflow variable.
+    Return whether form submitted.
     """
 
-    log = logging.getLogger(__name__)
-    log.info("saving output to airflow variable...")
+    # format email list
+    form = format_emails(form)
 
+    logging.info("saving output to airflow variable...")
+
+    # save form's fields to python dictionary
     report_dict = {}
     report_dict["report_title"] = form.title.data
+    report_dict["report_title_url"] = parameterize(form.title.data)
     report_dict["description"] = form.description.data
     report_dict["owner_name"] = form.owner_name.data
     report_dict["owner_email"] = form.owner_email.data
@@ -26,25 +32,52 @@ def extract_report_data_into_airflow(form):
     if report_dict["schedule_type"] == "custom":
         report_dict["schedule"] = form.schedule_custom.data
     else:
+        report_dict["schedule_time"] = None
         convert_schedule_to_cron_expression(report_dict, form)
 
-    report_name = "%s%s" % (
-        VariablesReportRepo.report_prefix,
-        report_dict["report_title"],
-    )
-    report_json = json.dumps(report_dict)
-    Variable.set(key=report_name, value=report_json)
+    # verify input for each field (except subscribers)
+    form_completed = True
+    for field_name in report_dict.keys():
+        if field_name != "subscribers":
+            form_completed = form_completed and check_empty(report_dict, field_name)
 
+    if form_completed:
+        report_name = "%s%s" % (
+            VariablesReportRepo.report_prefix,
+            report_dict["report_title"],
+        )
+        report_json = json.dumps(report_dict)
+        Variable.set(key=report_name, value=report_json)
+    return form_completed
 
-def format_form(form):
+def check_empty(report_dict, field_name):
     """
-    Parse the report form and transform/format the inputted data.
+    Check for empty data in field
+    Return boolean on whether field is empty
+    """
+    if report_dict[field_name]:
+        return True
+    else:
+        logging.exception("Error: %s can not be empty." % (field_name))
+        logging.error("Error: %s can not be empty." % (field_name))
+        flash("Error: %s can not be empty." % (field_name))
+        return False
+
+def format_emails(form):
+    """
+    Parse, transform, and vaildate emails.
     """
 
     # Add owner's email to subscribers; dedupe, order, & format subscribers
-    emails = form.subscribers.data.split(",")
-    emails += form.owner_email.data.split(",")
+    emails = form.owner_email.data.split(",")
+    if len(emails) != 1:
+        logging.exception("Error: Exactly one email is required for Owner Email field.")
+        logging.error("Error: Exactly one email is required for Owner Email field.")
+        flash("Error: Exactly one email is required for Owner Email field.")
+
+    emails += form.subscribers.data.split(",")
     emails = list(set([email.replace(" ", "") for email in emails]))
+    emails = [email for email in emails if email]
     emails.sort()
     [validate_email(email) for email in emails]
     form.subscribers.data = emails
@@ -60,11 +93,10 @@ def validate_email(email):
     email_format = re.compile(r"^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$")
 
     if not re.search(email_format, email):
-        log = logging.getLogger(__name__)
-        log.exception(
+        logging.exception(
             "Email (%s) is not valid. Please enter a valid email address." % email
         )
-        log.error(
+        logging.error(
             "Email (%s) is not valid. Please enter a valid email address." % email
         )
         flash("Email (%s) is not valid. Please enter a valid email address." % email)
@@ -76,16 +108,21 @@ def convert_schedule_to_cron_expression(report_dict, form):
     saves attributes to report_dict
     """
     # add time of day
-    time_of_day = form.schedule_time.data.strftime("%H:%M")
-    report_dict["schedule_time"] = time_of_day
-    hour, minute = time_of_day.split(":")
-    cron_expression = "%s %s * * " % (minute, hour)
+    try:
+        time_of_day = form.schedule_time.data.strftime("%H:%M")
+        report_dict["schedule_time"] = time_of_day
+        hour, minute = time_of_day.split(":")
+        cron_expression = "%s %s * * " % (minute, hour)
 
-    # add day of week if applicable
-    if form.schedule_type.data == "weekly":
-        cron_expression += form.schedule_week_day.data
-        report_dict["schedule_week_day"] = form.schedule_week_day.data
-    else:
-        cron_expression += "*"
+        # add day of week if applicable
+        if form.schedule_type.data == "weekly":
+            cron_expression += form.schedule_week_day.data
+            report_dict["schedule_week_day"] = form.schedule_week_day.data
+        else:
+            cron_expression += "*"
 
-    report_dict["schedule"] = cron_expression
+        report_dict["schedule"] = cron_expression
+    except AttributeError:
+        logging.exception("Error: Schedule's time is invalid.")
+        logging.error("Error: Schedule's time is invalid.")
+        flash("Error: Schedule's time is invalid.")

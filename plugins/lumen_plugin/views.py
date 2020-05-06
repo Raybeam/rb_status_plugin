@@ -1,5 +1,5 @@
 from flask_appbuilder import BaseView as AppBuilderBaseView, expose
-from flask import flash
+from flask import flash, redirect, url_for
 from flask_appbuilder import SimpleFormView
 from flask_appbuilder.forms import DynamicForm
 from flask_appbuilder.fieldwidgets import (
@@ -10,6 +10,8 @@ from flask_appbuilder.fieldwidgets import (
 )
 from flask_appbuilder.security.decorators import has_access
 
+import datetime
+
 from wtforms import StringField, TextAreaField, SelectMultipleField, SelectField
 from wtforms_components import TimeField
 
@@ -17,9 +19,7 @@ from lumen_plugin.report_repo import VariablesReportRepo
 from lumen_plugin.report_instance import ReportInstance
 from lumen_plugin.helpers.report_save_helpers import (
     extract_report_data_into_airflow,
-    format_form,
 )
-from lumen_plugin import test_data
 from lumen_plugin.helpers.list_tasks_helper import get_all_test_choices
 import logging
 
@@ -110,7 +110,7 @@ class LumenReportsView(AppBuilderBaseView):
 
     @expose("/reports")
     def list(self):
-        return self.render_template("reports.html", content=test_data.dummy_reports)
+        return self.render_template("reports.html", content=VariablesReportRepo.list())
 
 
 class ReportForm(DynamicForm):
@@ -121,13 +121,15 @@ class ReportForm(DynamicForm):
     subscribers = StringField(
         ("Subscribers"),
         description=(
-            "List of comma separeted emails that should receive email notifications"
+            "List of comma separeted emails that should receive email\
+             notifications. Automatically adds owner email to this list."
         ),
         widget=BS3TextFieldWidget(),
     )
     tests = SelectMultipleField(
         ("Tests"),
-        description=("List of the tests to include in the report"),
+        description=("List of the tests to include in the report. Only includes\
+         tasks that have ran in airflow."),
         choices=get_all_test_choices(),
         widget=Select2ManyWidget(),
     )
@@ -172,29 +174,30 @@ class NewReportFormView(SimpleFormView):
     @has_access
     def form_post(self):
         form = self.form.refresh()
-        logging.info("Saving reports...\n\n")
-        form = format_form(form)
-        extract_report_data_into_airflow(form)
+        form_submitted = extract_report_data_into_airflow(form)
         # post process form
-        flash(self.message, "info")
-        return super().this_form_get()
+        if form_submitted:
+            flash(self.message, "info")
+            return redirect(url_for('LumenReportsView.list', filename='reports'))
+        else:
+            return self.this_form_get()
 
 
 class EditReportFormView(SimpleFormView):
     route_base = "/lumen/report"
     form_template = "report_form.html"
     form = ReportForm
-    form_title = "New Report"
+    form_title = "Edit Report"
     form_fieldsets = form_fieldsets_config
     message = "Report submitted"
 
-    @expose("/<string:report_id>/edit", methods=["GET"])
+    @expose("/<string:report_title>/edit", methods=["GET"])
     @has_access
-    def this_form_get(self, report_id):
+    def this_form_get(self, report_title):
         self._init_vars()
         form = self.form.refresh()
 
-        self.form_get(form, report_id)
+        form = self.form_get(form, report_title)
         widgets = self._get_edit_widget(form=form)
         self.update_redirect()
         return self.render_template(
@@ -204,22 +207,40 @@ class EditReportFormView(SimpleFormView):
             appbuilder=self.appbuilder,
         )
 
-    def form_get(self, form, report_id):
-        # !get report by report_id and prefill form with its values
+    def form_get(self, form, report_title):
+        # !get report by report_title and prefill form with its values
         requested_report = {}
-        for report in test_data.dummy_reports:
-            if str(report["id"]) == report_id:
+        for report in VariablesReportRepo.list():
+            if str(report.report_title_url) == report_title:
                 requested_report = report
 
         if requested_report:
-            form.title.data = requested_report["title"]
-            form.description.data = requested_report["description"]
-            form.schedule.data = requested_report["schedule"]
-            form.subscribers.data = ", ".join(requested_report["subscribers"])
-            form.owner_name.data = requested_report["owner_name"]
-            form.owner_email.data = requested_report["owner_email"]
-            form.tests.data = [str(test["ids"]) for test in requested_report["tests"]]
+            form.title.data = requested_report.report_title
+            form.description.data = requested_report.description
+            form.owner_name.data = requested_report.owner_name
+            form.owner_email.data = requested_report.owner_email
+            form.subscribers.data = ", ".join(requested_report.subscribers)
+            form.schedule_type.data = requested_report.schedule_type
+            if (form.schedule_type.data == "custom"):
+                form.schedule_custom.data = requested_report.schedule
+            if (form.schedule_type.data == "daily"):
+                form.schedule_time.data = datetime.datetime.strptime(
+                    requested_report.schedule_time, "%H:%M")
+            if (form.schedule_type.data == "weekly"):
+                form.schedule_time.data = datetime.datetime.strptime(
+                    requested_report.schedule_time, "%H:%M")
+                form.schedule_week_day.data = requested_report.schedule_week_day
+            form.tests.data = requested_report.tests
+        return form
 
-    def form_post(self, form):
+    @expose("/<string:report_title>/edit", methods=["POST"])
+    @has_access
+    def form_post(self, report_title):
+        form = self.form.refresh()
+        form_submitted = extract_report_data_into_airflow(form)
         # post process form
-        flash(self.message, "info")
+        if form_submitted:
+            flash(self.message, "info")
+            return redirect(url_for('LumenReportsView.list', filename='reports'))
+        else:
+            return self.this_form_get(report_title)
