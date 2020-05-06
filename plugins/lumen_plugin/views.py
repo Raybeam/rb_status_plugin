@@ -1,5 +1,5 @@
 from flask_appbuilder import BaseView as AppBuilderBaseView, expose
-from flask import flash
+from flask import flash, redirect, url_for
 from flask_appbuilder import SimpleFormView
 from flask_appbuilder.forms import DynamicForm
 from flask_appbuilder.fieldwidgets import (
@@ -172,10 +172,13 @@ class NewReportFormView(SimpleFormView):
     @has_access
     def form_post(self):
         form = self.form.refresh()
-        extract_report_data_into_airflow(form)
+        form_submitted = extract_report_data_into_airflow(form)
         # post process form
-        flash(self.message, "info")
-        return super().this_form_get()
+        if form_submitted:
+            flash(self.message, "info")
+            return redirect(url_for('LumenReportsView.list', filename='reports'))
+        else:
+            return self.this_form_get()
 
 
 class EditReportFormView(SimpleFormView):
@@ -231,7 +234,10 @@ class EditReportFormView(SimpleFormView):
     @has_access
     def form_post(self, report_title):
         form = self.form.refresh()
-        extract_report_data_into_airflow(form)
+        form_submitted = extract_report_data_into_airflow(form)
         # post process form
-        flash(self.message, "info")
-        return self.this_form_get(report_title)
+        if form_submitted:
+            flash(self.message, "info")
+            return redirect(url_for('LumenReportsView.list', filename='reports'))
+        else:
+            return self.this_form_get(report_title)

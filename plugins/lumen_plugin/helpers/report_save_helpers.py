@@ -12,6 +12,7 @@ log = logging.getLogger(__name__)
 def extract_report_data_into_airflow(form):
     """
     Extract output of report form into a formatted airflow variable.
+    Return whether form submitted.
     """
 
     # format email list
@@ -46,6 +47,7 @@ def extract_report_data_into_airflow(form):
         )
         report_json = json.dumps(report_dict)
         Variable.set(key=report_name, value=report_json)
+    return form_completed
 
 def check_empty(report_dict, field_name):
     """
