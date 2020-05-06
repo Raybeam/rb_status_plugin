@@ -118,7 +118,7 @@ class LumenReportsView(AppBuilderBaseView):
         return redirect(url_for('LumenReportsView.list'))
 
     @expose("/reports/<string:dag_id>/delete/", methods=['POST'])
-    def trigger(self, dag_id):
+    def delete(self, dag_id):
         return redirect(url_for('LumenReportsView.list'))
 
 
