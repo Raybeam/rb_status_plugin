@@ -102,16 +102,21 @@ def convert_schedule_to_cron_expression(report_dict, form):
     saves attributes to report_dict
     """
     # add time of day
-    time_of_day = form.schedule_time.data.strftime("%H:%M")
-    report_dict["schedule_time"] = time_of_day
-    hour, minute = time_of_day.split(":")
-    cron_expression = "%s %s * * " % (minute, hour)
+    try:
+        time_of_day = form.schedule_time.data.strftime("%H:%M")
+        report_dict["schedule_time"] = time_of_day
+        hour, minute = time_of_day.split(":")
+        cron_expression = "%s %s * * " % (minute, hour)
 
-    # add day of week if applicable
-    if form.schedule_type.data == "weekly":
-        cron_expression += form.schedule_week_day.data
-        report_dict["schedule_week_day"] = form.schedule_week_day.data
-    else:
-        cron_expression += "*"
+        # add day of week if applicable
+        if form.schedule_type.data == "weekly":
+            cron_expression += form.schedule_week_day.data
+            report_dict["schedule_week_day"] = form.schedule_week_day.data
+        else:
+            cron_expression += "*"
 
-    report_dict["schedule"] = cron_expression
+        report_dict["schedule"] = cron_expression
+    except:
+        log.exception("Error: Schedule's time is invalid.")
+        log.error("Error: Schedule's time is invalid.")
+        flash("Error: Schedule's time is invalid.")
