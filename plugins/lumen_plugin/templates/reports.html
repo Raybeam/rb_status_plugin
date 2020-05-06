@@ -48,14 +48,14 @@
           <tr>
             <!-- Column 1: View Report -->
             <td class="text-center" style="width:10px;">
-              <a href="{{ url_for('EditReportFormView.this_form_get', report_title=report.report_title) }}" title="Edit">
+              <a href="{{ url_for('EditReportFormView.this_form_get', report_title=report.report_title_url) }}" title="Edit">
                 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
               </a>
             </td>
 
             <!-- Column 2: Turn report on/off -->
             <td>
-              <input id="toggle-{{ report.report_title }}"  type="checkbox"  data-toggle="toggle" data-size="mini" method="post">
+              <input id="toggle-{{ report.report_title_url }}"  type="checkbox"  data-toggle="toggle" data-size="mini" method="post">
             </td>
 
             <!-- Column 2: Name -->

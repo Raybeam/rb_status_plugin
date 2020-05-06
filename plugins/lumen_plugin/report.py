@@ -10,6 +10,7 @@ class Report:
     def __init__(self, name):
         self.name = name
         self.__report_title = None
+        self.__report_title_url = None
         self.__description = None
         self.__owner_name = None
         self.__owner_email = None
@@ -28,6 +29,15 @@ class Report:
     @report_title.setter
     def report_title(self, val):
         self.__report_title = val
+
+    @property
+    def report_title_url(self):
+        """ Formatted title of the report for url path """
+        return self.__report_title_url
+
+    @report_title_url.setter
+    def report_title_url(self, val):
+        self.__report_title_url = val
 
     @property
     def description(self):
