@@ -102,7 +102,7 @@
                 method="post"
               >
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                <button name="submit_button" value="update" style="border:none;background:none;outline:none;" type="submit">
+                <button style="border:none;background:none;outline:none;" type="submit">
                   <span
                     class="glyphicon glyphicon-play-circle" 
                     aria-hidden="true" 
@@ -116,7 +116,7 @@
                 action="{{url_for('LumenReportsView.delete', dag_id=report.dag_id)}}"
                 method="post"
               >
-                <button name="submit_button" value="delete" style="border:none;background:none;outline:none;" type="submit">
+                <button style="border:none;background:none;outline:none;" type="submit">
                   <span 
                     class="glyphicon glyphicon-remove-circle" 
                     style="color:red" 
