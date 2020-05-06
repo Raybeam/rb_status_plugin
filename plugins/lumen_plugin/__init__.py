@@ -25,14 +25,14 @@ v_appbuilder_reports_package = {
 
 v_appbuilder_new_report_form_view = NewReportFormView()
 v_appbuilder_new_report_form_package = {
-    "name": None,
+    "name": "New Report Form",
     "category": None,
     "view": v_appbuilder_new_report_form_view,
 }
 
 v_appbuilder_edit_report_form_view = EditReportFormView()
 v_appbuilder_edit_report_form_package = {
-    "name": None,
+    "name": "Edit Report Form",
     "category": None,
     "view": v_appbuilder_edit_report_form_view,
 }
