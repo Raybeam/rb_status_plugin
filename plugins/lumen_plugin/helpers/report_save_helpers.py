@@ -32,6 +32,7 @@ def extract_report_data_into_airflow(form):
     if report_dict["schedule_type"] == "custom":
         report_dict["schedule"] = form.schedule_custom.data
     else:
+        report_dict["schedule_time"] = None
         convert_schedule_to_cron_expression(report_dict, form)
 
     # verify input for each field (except subscribers)
