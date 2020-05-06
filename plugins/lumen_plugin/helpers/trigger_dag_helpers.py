@@ -26,7 +26,11 @@ from airflow.utils import timezone
 from airflow.utils.state import State
 
 
-def _trigger_dag(dag_id: str, dag_bag: DagBag, dag_run: DagRun) -> DagRun:
+def _trigger_dag(
+    dag_id: str,
+    dag_bag: DagBag,
+    dag_run: DagRun
+):
     """
     Triggers DAG run.
     :param dag_id: DAG ID
@@ -53,10 +57,8 @@ def _trigger_dag(dag_id: str, dag_bag: DagBag, dag_run: DagRun) -> DagRun:
         state=State.RUNNING,
         external_trigger=True,
     )
-    return trigger
 
-
-def trigger_dag(dag_id: str) -> Optional[DagRun]:
+def trigger_dag(dag_id: str):
     """Triggers execution of DAG specified by dag_id
     :param dag_id: DAG ID
     :return: dag run triggered
@@ -75,5 +77,3 @@ def trigger_dag(dag_id: str) -> Optional[DagRun]:
         dag_bag=dagbag,
         dag_run=dag_run
     )
-
-    return triggered_dag
