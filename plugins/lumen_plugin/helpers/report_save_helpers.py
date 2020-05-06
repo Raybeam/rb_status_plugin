@@ -65,7 +65,7 @@ def check_empty(report_dict, field_name):
 
 def format_emails(form):
     """
-    Parse the report form and transform/format the inputted data.
+    Parse, transform, and vaildate emails.
     """
 
     # Add owner's email to subscribers; dedupe, order, & format subscribers
