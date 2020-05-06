@@ -197,7 +197,7 @@ class EditReportFormView(SimpleFormView):
         self._init_vars()
         form = self.form.refresh()
 
-        self.form_get(form, report_title)
+        form = self.form_get(form, report_title)
         widgets = self._get_edit_widget(form=form)
         self.update_redirect()
         return self.render_template(
@@ -211,7 +211,7 @@ class EditReportFormView(SimpleFormView):
         # !get report by report_title and prefill form with its values
         requested_report = {}
         for report in VariablesReportRepo.list():
-            if str(report.report_title) == report_title:
+            if str(report.report_title_url) == report_title:
                 requested_report = report
 
         if requested_report:
@@ -231,6 +231,7 @@ class EditReportFormView(SimpleFormView):
                     requested_report.schedule_time, "%H:%M")
                 form.schedule_week_day.data = requested_report.schedule_week_day
             form.tests.data = requested_report.tests
+        return form
 
     @expose("/<string:report_title>/edit", methods=["POST"])
     @has_access
