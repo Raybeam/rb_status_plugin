@@ -56,7 +56,7 @@ dummy_reports = [
     },
     {
         "id": 3,
-        "passed": True,
+        "passed": None,
         "updated": datetime.datetime.now(),
         "title": "Sweet Mud (Adama Meshuga'at)",
         "description": (
