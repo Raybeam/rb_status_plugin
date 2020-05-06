@@ -115,7 +115,7 @@ class LumenReportsView(AppBuilderBaseView):
     @expose("/reports/<string:dag_id>/trigger/", methods=['POST'])
     def trigger(self, dag_id):
         trigger_dag(dag_id)
-        return redirect(url_for('list'))
+        return redirect(url_for('LumenReportsView.list'))
 
 
 class ReportForm(DynamicForm):
