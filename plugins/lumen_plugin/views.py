@@ -1,5 +1,5 @@
 from flask_appbuilder import BaseView as AppBuilderBaseView, expose
-from flask import flash
+from flask import flash, redirect, url_for
 from flask_appbuilder import SimpleFormView
 from flask_appbuilder.forms import DynamicForm
 from flask_appbuilder.fieldwidgets import (
@@ -9,7 +9,6 @@ from flask_appbuilder.fieldwidgets import (
     Select2Widget,
 )
 from flask_appbuilder.security.decorators import has_access
-
 from wtforms import StringField, TextAreaField, SelectMultipleField, SelectField
 from wtforms_components import TimeField
 
@@ -116,7 +115,7 @@ class LumenReportsView(AppBuilderBaseView):
     @expose("/reports/<string:dag_id>/trigger/", methods=['POST'])
     def trigger(self, dag_id):
         trigger_dag(dag_id)
-        return self.render_template("reports.html", content=test_data.dummy_reports)
+        return redirect(url_for('list'))
 
 
 class ReportForm(DynamicForm):
