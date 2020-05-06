@@ -122,7 +122,7 @@ class ReportForm(DynamicForm):
         ("Subscribers"),
         description=(
             "List of comma separeted emails that should receive email\
-             notifications. Includes owner email in list."
+             notifications. Automatically adds owner email to this list."
         ),
         widget=BS3TextFieldWidget(),
     )
