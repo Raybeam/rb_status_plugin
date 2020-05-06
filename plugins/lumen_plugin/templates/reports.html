@@ -96,26 +96,27 @@
             <!-- Column 7: Links -->
             <td class="text-center" >
                 <!-- Trigger Report -->
-                <form action="reports/example_dag/trigger/" method="post">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                    <button style="border:none;background:none;"
+                <form action="reports/example_dag2/trigger/" method="post">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                  <button style="border:none;background:none;outline:none;" type="submit">
+                    <span
                       class="glyphicon glyphicon-play-circle" 
                       aria-hidden="true" 
                       data-original-title="Trigger Report"
-                      type="submit"
                     >
-                    </button>
+                    </span>
+                  </button>
+                  <!-- Delete Report -->
+                  <a href="#">
+                    <span 
+                      class="glyphicon glyphicon-remove-circle" 
+                      style="color:red" 
+                      aria-hidden="true" 
+                      data-original-title="Delete Report"
+                    >
+                    </span>
+                  </a>
                 </form>
-                <!-- Delete Report -->
-                <a href="#">
-                  <span 
-                    class="glyphicon glyphicon-remove-circle" 
-                    style="color:red" 
-                    aria-hidden="true" 
-                    data-original-title="Delete Report"
-                  >
-                  </span>
-                </a>
             </td>
           </tr>
         {% endfor %}

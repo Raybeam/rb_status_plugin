@@ -21,7 +21,7 @@ from lumen_plugin.helpers.report_save_helpers import (
 )
 from lumen_plugin import test_data
 from lumen_plugin.helpers.list_tasks_helper import get_all_test_choices
-from lumen_plugin.helpers.trigger_dag_helpers import trigger_dag_id
+from lumen_plugin.helpers.trigger_dag_helpers import trigger_dag
 import logging
 
 form_fieldsets_config = [
@@ -115,7 +115,7 @@ class LumenReportsView(AppBuilderBaseView):
 
     @expose("/reports/<string:dag_id>/trigger/", methods=['POST'])
     def trigger(self, dag_id):
-        trigger_dag_id(dag_id)
+        trigger_dag(dag_id)
         return self.render_template("reports.html", content=test_data.dummy_reports)
 
 
