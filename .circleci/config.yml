@@ -1,7 +1,6 @@
 version: 2
 jobs:
   build:
-    working_directory: ~/lumen_plugin
     docker:
     - image: circleci/python:3.7.7
     steps:
@@ -37,9 +36,8 @@ jobs:
           export AIRFLOW_HOME=$PWD
           airflow initdb
           mkdir ./plugins/
-          ln -s $CIRCLE_WORKING_DIRECTORY ./plugins/
+          ln -s /home/circleci/project ./plugins/lumen_plugin
           airflow create_user -r Admin -u admin -e admin@example.com -f admin -l user -p admin
-          find .
           python -m unittest discover -s plugins/lumen_plugin/tests/ -p '*_test.py'
     - run:
         command: |-
