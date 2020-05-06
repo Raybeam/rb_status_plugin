@@ -116,7 +116,7 @@ def convert_schedule_to_cron_expression(report_dict, form):
             cron_expression += "*"
 
         report_dict["schedule"] = cron_expression
-    except:
+    except AttributeError:
         log.exception("Error: Schedule's time is invalid.")
         log.error("Error: Schedule's time is invalid.")
         flash("Error: Schedule's time is invalid.")
