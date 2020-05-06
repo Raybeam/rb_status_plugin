@@ -4,6 +4,11 @@ from airflow.models import DagBag, DagModel, DagRun
 from airflow.utils import timezone
 from airflow.utils.state import State
 
+"""
+These functions use this experimental airflow api function as a template:
+https://github.com/apache/airflow/blob/master/airflow/api/common/experimental/trigger_dag.py
+"""
+
 
 def _trigger_dag(
     dag_id: str,
@@ -14,6 +19,7 @@ def _trigger_dag(
     Triggers DAG run.
     :param dag_id: DAG ID
     :param dagbag: dagbag
+    :param dagrun: empty dag run to be created
     :return: triggered dag
     """
     dag = dag_bag.get_dag(dag_id)  # prefetch dag if it is stored serialized
