@@ -7,8 +7,6 @@ from flask import flash
 from lumen_plugin.report_repo import VariablesReportRepo
 
 
-log = logging.getLogger(__name__)
-
 def extract_report_data_into_airflow(form):
     """
     Extract output of report form into a formatted airflow variable.
@@ -18,7 +16,7 @@ def extract_report_data_into_airflow(form):
     # format email list
     form = format_emails(form)
 
-    log.info("saving output to airflow variable...")
+    logging.info("saving output to airflow variable...")
 
     # save form's fields to python dictionary
     report_dict = {}
@@ -57,8 +55,8 @@ def check_empty(report_dict, field_name):
     if report_dict[field_name]:
         return True
     else:
-        log.exception("Error: %s can not be empty." % (field_name))
-        log.error("Error: %s can not be empty." % (field_name))
+        logging.exception("Error: %s can not be empty." % (field_name))
+        logging.error("Error: %s can not be empty." % (field_name))
         flash("Error: %s can not be empty." % (field_name))
         return False
 
@@ -87,10 +85,10 @@ def validate_email(email):
     email_format = re.compile(r"^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$")
 
     if not re.search(email_format, email):
-        log.exception(
+        logging.exception(
             "Email (%s) is not valid. Please enter a valid email address." % email
         )
-        log.error(
+        logging.error(
             "Email (%s) is not valid. Please enter a valid email address." % email
         )
         flash("Email (%s) is not valid. Please enter a valid email address." % email)
@@ -117,6 +115,6 @@ def convert_schedule_to_cron_expression(report_dict, form):
 
         report_dict["schedule"] = cron_expression
     except AttributeError:
-        log.exception("Error: Schedule's time is invalid.")
-        log.error("Error: Schedule's time is invalid.")
+        logging.exception("Error: Schedule's time is invalid.")
+        logging.error("Error: Schedule's time is invalid.")
         flash("Error: Schedule's time is invalid.")
