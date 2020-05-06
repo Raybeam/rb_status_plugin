@@ -1,4 +1,4 @@
-import json
+from airflow.configuration import conf
 from airflow.exceptions import DagNotFound, DagRunAlreadyExists
 from airflow.models import DagBag, DagModel, DagRun
 from airflow.utils import timezone
@@ -30,7 +30,7 @@ def _trigger_dag(
             f"Run id {run_id} already exists for dag id {dag_id}"
         )
 
-    trigger = dag.create_dagrun(
+    dag.create_dagrun(
         run_id=run_id,
         execution_date=execution_date,
         state=State.RUNNING,
@@ -51,7 +51,7 @@ def trigger_dag(dag_id: str):
         store_serialized_dags=conf.getboolean('core', 'store_serialized_dags')
     )
     dag_run = DagRun()
-    triggered_dag = _trigger_dag(
+    _trigger_dag(
         dag_id=dag_id,
         dag_bag=dagbag,
         dag_run=dag_run
