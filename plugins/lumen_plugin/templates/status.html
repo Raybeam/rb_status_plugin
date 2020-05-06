@@ -39,61 +39,80 @@ Lumen - Airflow
   <h2>Reports</h2>
 
   {% for report in content.reports %}
-  <div class="report-base report {% if report.passed %}passed{% else %}failed{% endif %}">
-    <div id="report-{{ report.id }}-heading" class="report-header" role="tab">
-      <div class="report-highlights">
-        <div class="report-indicator"></div>
-        <div class="report-meta">
-          <span class="report-status">
-            {% if report.passed %}
-            Passed
-            {% else %}
-            Failed
-            {% endif %}
-          </span> /
-          Updated {{ report.updated.strftime('%b %d at %H:%M') }}
-          <h3>{{ report.title }}</h3>
-        </div>
-      </div>
-      <div>
-        <button type="button" class="btn btn-link report-details-trigger collapsed" data-toggle="collapse"
-          data-target="#report-{{ report.id }}-details" aria-expanded="false"
-          aria-controls="report-{{ report.id }}-details">
-          Details
-          <i class="fa fa-angle-down" aria-hidden="true"></i>
-        </button>
-      </div>
-    </div>
-    <div id="report-{{ report.id }}-details" class="collapse" role="tabpanel"
-      aria-labelledby="report-{{ report.id }}-heading">
-      <div class="report-details">
-        <p>
-          <strong>Report Owner:</strong>
-          {% if report.owner_name %}
-          {{ report.owner_name }}
-          {% endif %}
-          {% if report.owner_email %}
-            <a href="mailto:{{ report.owner_email}}">{{ report.owner_email }}</a>
-          {% endif %}
-        </p>
-        {% if report.description %}
-        <p>{{ report.description }}</p>
-        {% endif %}
-        {% if not report.passed %}
-        <div class="report-errors-list">
-          {% for error in report.errors %}
-          <div class="report-error">
-            <h5>
-              <strong>Test Failed:</strong> {{ error.title }}
-            </h5>
-            {{ error.description }}
+    <div class="report-base report 
+      {% if report.passed == True %}
+        passed
+      {% elif report.passed == False %}
+        failed
+      {% else %}
+        unknown
+      {% endif %}">
+      <div id="report-{{ report.id }}-heading" class="report-header" role="tab">
+        <div class="report-highlights">
+          <div class="report-indicator"></div>
+          <div class="report-meta">
+            <span class="report-status">
+              {% if report.passed == True %}
+                Passed
+              {% elif report.passed == False %}
+                Failed
+              {% else %}
+                Unknown
+              {% endif %}
+            </span> /
+            Updated {{ report.updated.strftime('%b %d at %H:%M') }}
+            <h3>{{ report.title }}</h3>
           </div>
-          {% endfor %}
         </div>
-        {% endif %}
+        <div>
+          <button type="button" class="btn btn-link report-details-trigger collapsed" data-toggle="collapse"
+            data-target="#report-{{ report.id }}-details" aria-expanded="false"
+            aria-controls="report-{{ report.id }}-details">
+            Details
+            <i class="fa fa-angle-down" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+      <div id="report-{{ report.id }}-details" class="collapse" role="tabpanel"
+        aria-labelledby="report-{{ report.id }}-heading">
+        <div class="report-details">
+          <p>
+            <strong>Report Owner:</strong>
+            {% if report.owner_name %}
+              {{ report.owner_name }}
+            {% endif %}
+            {% if report.owner_email %}
+              / <a href="mailto:{{ report.owner_email}}">{{ report.owner_email }}</a>
+            {% endif %}
+          </p>
+          {% if report.description %}
+            <p>{{ report.description }}</p>
+          {% endif %}
+          {% if report.passed == False %}
+            <div class="report-errors-list">
+              {% for error in report.errors %}
+              <div class="report-error">
+                <h5>
+                  <strong>Test Failed:</strong> {{ error.title }}
+                </h5>
+                {{ error.description }}
+              </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+          {% if report.passed == None %}
+            <div class="report-warnings-list">
+              <div class="report-warning">
+                <h5>
+                  <strong>Warning:</strong> Report Failed to Run
+                </h5>
+                Report status is unknown because it failed to run
+              </div>
+            </div>
+          {% endif %}
+        </div>
       </div>
     </div>
-  </div>
   {% endfor %}
 </div>
 {% endblock %}
