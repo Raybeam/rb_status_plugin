@@ -1,7 +1,6 @@
 from airflow.models import Variable
 from lumen_plugin.helpers.report_save_helpers import (
     extract_report_data_into_airflow,
-    format_form,
     validate_email,
 )
 import datetime
@@ -178,8 +177,6 @@ class ReportSaveTest(unittest.TestCase):
         Test that the subscribers was properly formatted.
         This will also update the report_form_sample and airflow varible.
         """
-        self.report_form_sample = format_form(self.report_form_sample)
-        self.setUpClass()
         self.assertEqual(
             self.report_form_sample.subscribers.data,
             ["email1@raybeam.com", "email2@raybeam.com", "jdoe@raybeam.com"],
@@ -199,7 +196,6 @@ class ReportSaveTest(unittest.TestCase):
         invalid_email = "not an email"
         with self.assertRaises(Exception) as context:
             validate_email(invalid_email)
-
             self.assertTrue(
                 "Email (%s) is not valid. Please enter a valid email address."
                 % (invalid_email)

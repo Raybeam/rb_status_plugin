@@ -73,12 +73,18 @@ class VariablesReportRepo(ReportRepo):
         """ Generates report objects from variable data """
         r = Report(name)
         r.report_title = v["report_title"]
+        r.report_title_url = v["report_title_url"]
         r.description = v["description"]
         r.owner_name = v["owner_name"]
         r.owner_email = v["owner_email"]
         r.subscribers = v["subscribers"]
         r.tests = v["tests"]
         r.schedule_type = v["schedule_type"]
+        if ("daily" in r.schedule_type):
+            r.schedule_time = v["schedule_time"]
+        if ("weekly" in r.schedule_type):
+            r.schedule_time = v["schedule_time"]
+            r.schedule_week_day = v["schedule_week_day"]
         r.schedule = v["schedule"]
         return r
 

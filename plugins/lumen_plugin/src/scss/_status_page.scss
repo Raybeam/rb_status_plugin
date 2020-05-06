@@ -76,6 +76,14 @@
       darken($error, 30)
     );
   }
+
+  .unknown & {
+    background-image: radial-gradient(
+      lighten($warning, 10) 40%,
+      $warning 70%,
+      darken($warning, 30)
+    );
+  }
 }
 
 .report-status {
@@ -85,6 +93,10 @@
 
   .failed & {
     color: $error;
+  }
+
+  .unknown & {
+    color: $warning;
   }
 }
 
@@ -117,6 +129,7 @@ button.btn.report-details-trigger {
 .report-details {
   padding: 15px 20px;
   position: relative;
+  overflow-wrap: break-word;
 
   &:before {
     content: "";
@@ -130,22 +143,32 @@ button.btn.report-details-trigger {
   }
 }
 
+.report-warnings-list,
 .report-errors-list {
   border-top: 1px solid $borderColor;
   margin-top: 15px;
   padding-top: 15px;
 }
 
+.report-warning,
 .report-error {
   h5 {
     margin: 0;
-
-    strong {
-      color: $error;
-    }
   }
 
   + .report-error {
     margin-top: 10px;
+  }
+}
+
+.report-error {
+  strong {
+    color: $error;
+  }
+}
+
+.report-warning {
+  strong {
+    color: $warning;
   }
 }
