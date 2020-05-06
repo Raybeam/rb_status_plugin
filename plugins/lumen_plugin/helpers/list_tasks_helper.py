@@ -9,6 +9,7 @@ def get_all_test_choices(session=None):
     tis = session.query(TI).filter(
         ~TI.dag_id.like(f"lumen_%"),
         TI.state != State.REMOVED
-    ).all()
-    test_choices = [(i, ti.task_id) for (i, ti) in enumerate(tis)]
+    ).with_entities(TI.dag_id, TI.task_id).distinct().all()
+    test_choices = [(f"{ti.dag_id}.{ti.task_id}", f"{ti.dag_id}.{ti.task_id}")
+                    for (i, ti) in enumerate(tis)]
     return test_choices
