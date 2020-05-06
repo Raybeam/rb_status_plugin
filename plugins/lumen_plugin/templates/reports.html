@@ -111,7 +111,11 @@
                 </button>
                 <!-- Delete Report -->
               </form>
-              <form style="display:inline-block;" action="{{url_for('LumenReportsView.delete')}}" method="post">
+              <form 
+                style="display:inline-block;" 
+                action="{{url_for('LumenReportsView.delete', dag_id=report.dag_id)}}"
+                method="post"
+              >
                 <button name="submit_button" value="delete" style="border:none;background:none;outline:none;" type="submit">
                   <span 
                     class="glyphicon glyphicon-remove-circle" 
