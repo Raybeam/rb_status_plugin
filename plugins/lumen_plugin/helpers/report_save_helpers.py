@@ -3,7 +3,7 @@ import json
 import logging
 import re
 from flask import flash
-import stringcase
+from inflection import parameterize
 
 from lumen_plugin.report_repo import VariablesReportRepo
 
@@ -22,7 +22,7 @@ def extract_report_data_into_airflow(form):
     # save form's fields to python dictionary
     report_dict = {}
     report_dict["report_title"] = form.title.data
-    report_dict["report_title_url"] = stringcase.spinalcase(form.title.data)
+    report_dict["report_title_url"] = parameterize(form.title.data)
     report_dict["description"] = form.description.data
     report_dict["owner_name"] = form.owner_name.data
     report_dict["owner_email"] = form.owner_email.data
