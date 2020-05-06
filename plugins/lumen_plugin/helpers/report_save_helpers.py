@@ -37,7 +37,7 @@ def extract_report_data_into_airflow(form):
     # verify input for each field (except subscribers)
     form_completed = True
     for field_name in report_dict.keys():
-        if field_name != "subscribers" and field_name != "tests":
+        if field_name != "subscribers":
             form_completed = form_completed and check_empty(report_dict, field_name)
 
     if form_completed:

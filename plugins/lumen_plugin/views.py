@@ -163,7 +163,7 @@ class NewReportFormView(SimpleFormView):
     form = ReportForm
     form_title = "New Report"
     form_fieldsets = form_fieldsets_config
-    message = "My form submitted"
+    message = "Report submitted"
 
     @expose("/new", methods=["GET"])
     @has_access
@@ -189,7 +189,7 @@ class EditReportFormView(SimpleFormView):
     form = ReportForm
     form_title = "New Report"
     form_fieldsets = form_fieldsets_config
-    message = "My form submitted"
+    message = "Report submitted"
 
     @expose("/<string:report_title>/edit", methods=["GET"])
     @has_access
