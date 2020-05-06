@@ -19,7 +19,6 @@ from lumen_plugin.report_repo import VariablesReportRepo
 from lumen_plugin.report_instance import ReportInstance
 from lumen_plugin.helpers.report_save_helpers import (
     extract_report_data_into_airflow,
-    format_form,
 )
 from lumen_plugin.helpers.list_tasks_helper import get_all_test_choices
 import logging
@@ -173,8 +172,6 @@ class NewReportFormView(SimpleFormView):
     @has_access
     def form_post(self):
         form = self.form.refresh()
-        logging.info("Saving reports...\n\n")
-        form = format_form(form)
         extract_report_data_into_airflow(form)
         # post process form
         flash(self.message, "info")
@@ -234,8 +231,6 @@ class EditReportFormView(SimpleFormView):
     @has_access
     def form_post(self, report_title):
         form = self.form.refresh()
-        logging.info("Saving reports...\n\n")
-        form = format_form(form)
         extract_report_data_into_airflow(form)
         # post process form
         flash(self.message, "info")

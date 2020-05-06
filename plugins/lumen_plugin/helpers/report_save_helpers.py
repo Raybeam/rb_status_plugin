@@ -7,14 +7,19 @@ from flask import flash
 from lumen_plugin.report_repo import VariablesReportRepo
 
 
+log = logging.getLogger(__name__)
+
 def extract_report_data_into_airflow(form):
     """
     Extract output of report form into a formatted airflow variable.
     """
 
-    log = logging.getLogger(__name__)
+    # format email list
+    form = format_emails(form)
+
     log.info("saving output to airflow variable...")
 
+    # save form's fields to python dictionary
     report_dict = {}
     report_dict["report_title"] = form.title.data
     report_dict["description"] = form.description.data
@@ -28,15 +33,34 @@ def extract_report_data_into_airflow(form):
     else:
         convert_schedule_to_cron_expression(report_dict, form)
 
-    report_name = "%s%s" % (
-        VariablesReportRepo.report_prefix,
-        report_dict["report_title"],
-    )
-    report_json = json.dumps(report_dict)
-    Variable.set(key=report_name, value=report_json)
+    # verify input for each field (except subscribers)
+    form_completed = True
+    for field_name in report_dict.keys():
+        if field_name != "subscribers":
+            form_completed = form_completed and check_empty(report_dict, field_name)
 
+    if form_completed:
+        report_name = "%s%s" % (
+            VariablesReportRepo.report_prefix,
+            report_dict["report_title"],
+        )
+        report_json = json.dumps(report_dict)
+        Variable.set(key=report_name, value=report_json)
 
-def format_form(form):
+def check_empty(report_dict, field_name):
+    """
+    Check for empty data in field
+    Return boolean on whether field is empty
+    """
+    if report_dict[field_name]:
+        return True
+    else:
+        log.exception("Error: %s can not be empty." % (field_name))
+        log.error("Error: %s can not be empty." % (field_name))
+        flash("Error: %s can not be empty." % (field_name))
+        return False
+
+def format_emails(form):
     """
     Parse the report form and transform/format the inputted data.
     """
@@ -60,7 +84,6 @@ def validate_email(email):
     email_format = re.compile(r"^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$")
 
     if not re.search(email_format, email):
-        log = logging.getLogger(__name__)
         log.exception(
             "Email (%s) is not valid. Please enter a valid email address." % email
         )
