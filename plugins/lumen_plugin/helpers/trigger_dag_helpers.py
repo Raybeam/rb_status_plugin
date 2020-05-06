@@ -40,17 +40,6 @@ def _trigger_dag(dag_id: str, dag_bag: DagBag, dag_run: DagRun) -> DagRun:
 
     execution_date = timezone.utcnow()
 
-    if not timezone.is_localized(execution_date):
-        raise ValueError("The execution_date should be localized")
-
-    if dag.default_args and 'start_date' in dag.default_args:
-        min_dag_start_date = dag.default_args["start_date"]
-        if min_dag_start_date and execution_date < min_dag_start_date:
-            raise ValueError(
-                "The execution_date [{0}] should be >= start_date [{1}] from DAG's default_args".format(
-                    execution_date.isoformat(),
-                    min_dag_start_date.isoformat()))
-
     run_id = f"manual__{execution_date.isoformat()}"
     dag_run_id = dag_run.find(dag_id=dag_id, run_id=run_id)
     if dag_run_id:
@@ -59,14 +48,10 @@ def _trigger_dag(dag_id: str, dag_bag: DagBag, dag_run: DagRun) -> DagRun:
             dag_id
         ))
 
-    run_conf = None
-
-    dags_to_trigger = dag
     trigger = dag.create_dagrun(
         run_id=run_id,
         execution_date=execution_date,
         state=State.RUNNING,
-        conf=run_conf,
         external_trigger=True,
     )
     return trigger
