@@ -33,14 +33,23 @@ def find_dags_folder():
     if dags_folder and os.path.isdir(dags_folder):
         logging.info(f"Assuming DAGs folder at {dags_folder}")
         return dags_folder
-    logging.warn(f"Could not find DAGs folder at {dags_folder}, trying $AIRFLOW_HOME.")
+    logging.warning(
+        f"Could not find DAGs folder at {dags_folder}, trying $AIRFLOW_HOME."
+    )
 
-    airflow_home = os.environ["AIRFLOW_HOME"]
-    dags_folder = os.path.join(airflow_home, "dags")
+    airflow_home = os.environ.get("AIRFLOW_HOME")
+    if airflow_home:
+        dags_folder = os.path.join(airflow_home, "dags")
+        if dags_folder and os.path.isdir(dags_folder):
+            logging.info(f"Assuming DAGs folder at {dags_folder}")
+            return dags_folder
+        logging.warning(f"Could not find DAGs folder at {dags_folder}, trying $PWD.")
+
+    dags_folder = os.path.join(os.environ["PWD"], "dags")
     if dags_folder and os.path.isdir(dags_folder):
         logging.info(f"Assuming DAGs folder at {dags_folder}")
         return dags_folder
-    logging.warn(f"Could not find DAGs folder at {dags_folder}, out of options.")
+    logging.warning(f"Could not find DAGs folder at {dags_folder}, out of options.")
 
     raise OSError(f"Could not find DAGs folder path")
 
@@ -51,16 +60,29 @@ def find_lumen_setup_path():
     if lumen_setup_path and os.path.isdir(lumen_setup_path):
         logging.info(f"Assuming Lumen setup path at {lumen_setup_path}")
         return lumen_setup_path
-    logging.warn(
+    logging.warning(
         f"Could not find Lumen setup path at {lumen_setup_path}, trying $AIRFLOW_HOME."
     )
 
-    airflow_home = os.environ["AIRFLOW_HOME"]
-    lumen_setup_path = os.path.join(airflow_home, "plugins", "lumen_plugin", "setup")
+    airflow_home = os.environ.get("AIRFLOW_HOME")
+    if airflow_home:
+        lumen_setup_path = os.path.join(
+            airflow_home, "plugins", "lumen_plugin", "setup"
+        )
+        if lumen_setup_path and os.path.isdir(lumen_setup_path):
+            logging.info(f"Assuming Lumen setup path at {lumen_setup_path}")
+            return lumen_setup_path
+        logging.warning(
+            f"Could not find Lumen setup path at {lumen_setup_path}, trying $PWD"
+        )
+
+    lumen_setup_path = os.path.join(
+        os.environ["PWD"], "plugins", "lumen_plugin", "setup"
+    )
     if lumen_setup_path and os.path.isdir(lumen_setup_path):
         logging.info(f"Assuming Lumen setup path at {lumen_setup_path}")
         return lumen_setup_path
-    logging.warn(f"Could not find Lumen setup path at {lumen_setup_path}.")
+    logging.warning(f"Could not find Lumen setup path at {lumen_setup_path}.")
 
     raise OSError(f"Could not find Lumen setup path")
 
