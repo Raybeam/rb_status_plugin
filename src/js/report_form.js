@@ -1,12 +1,11 @@
 (function reportFormSetUp() {
   const scheduleTypeInput = document.getElementById("schedule_type");
-  const scheduleWeekDayRow = document
-    .getElementById("schedule_week_day")
-    .closest("tr");
-  const scheduleTime = document.getElementById("schedule_time").closest("tr");
-  const scheduleCustomRow = document
-    .getElementById("schedule_custom")
-    .closest("tr");
+  const scheduleWeekDayInput = document.getElementById("schedule_week_day");
+  const scheduleWeekDayRow = scheduleWeekDayInput.closest("tr");
+  const scheduleTimeInput = document.getElementById("schedule_time");
+  const scheduleTime = scheduleTimeInput.closest("tr");
+  const scheduleCustomInput = document.getElementById("schedule_custom");
+  const scheduleCustomRow = scheduleCustomInput.closest("tr");
 
   // detect currently selected schedule type and
   // display appropriate fields
@@ -30,7 +29,9 @@
         break;
       case "custom":
         enableCustomSchedule();
+        break;
       default:
+        enableManualSchedule();
         break;
     }
   }
@@ -42,6 +43,10 @@
     scheduleTime.hidden = false;
     scheduleWeekDayRow.hidden = true;
     scheduleCustomRow.hidden = true;
+
+    scheduleTimeInput.required = true;
+    scheduleWeekDayInput.required = false;
+    scheduleCustomInput.required = false;
   }
 
   /**
@@ -51,6 +56,10 @@
     scheduleTime.hidden = false;
     scheduleWeekDayRow.hidden = false;
     scheduleCustomRow.hidden = true;
+
+    scheduleTimeInput.required = true;
+    scheduleWeekDayInput.required = true;
+    scheduleCustomInput.required = false;
   }
 
   /**
@@ -60,5 +69,22 @@
     scheduleTime.hidden = true;
     scheduleWeekDayRow.hidden = true;
     scheduleCustomRow.hidden = false;
+
+    scheduleTimeInput.required = false;
+    scheduleWeekDayInput.required = false;
+    scheduleCustomInput.required = true;
+  }
+
+  /**
+   * Hide all schedule fields (manual triggering option)
+   */
+  function enableManualSchedule() {
+    scheduleTime.hidden = true;
+    scheduleWeekDayRow.hidden = true;
+    scheduleCustomRow.hidden = true;
+
+    scheduleTimeInput.required = false;
+    scheduleWeekDayInput.required = false;
+    scheduleCustomInput.required = false;
   }
 })();
