@@ -9,6 +9,7 @@ class VariablesReportRepoTest(unittest.TestCase):
     dummy_test = """
             {
                 "report_title": "my report title",
+                "report_title_url": "change me sadler!",
                 "description": "my report description",
                 "owner_name": "my name",
                 "owner_email": "email_owner@mail.com",
@@ -23,8 +24,8 @@ class VariablesReportRepoTest(unittest.TestCase):
                     "example_dag.python_print_date_0",
                     "example_dag.python_random_0"
                 ],
-                "schedule": "* * * 1 *",
-                "schedule_type": ""
+                "schedule_type": "custom",
+                "schedule": "* * * 1 *"
             }
             """
 

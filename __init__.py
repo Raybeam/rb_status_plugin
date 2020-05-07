@@ -49,7 +49,7 @@ bp = Blueprint(
 
 
 class LumenPlugin(AirflowPlugin):
-    name = "lumen"
+    name = "lumen_plugin"
     operators = []
     sensors = [LumenSensor]
     flask_blueprints = [bp]

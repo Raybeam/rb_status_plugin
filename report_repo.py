@@ -38,25 +38,26 @@ class VariablesReportRepo(ReportRepo):
     report_prefix = "lumen_report_"
 
     @classmethod
-    def list(cls):
+    @provide_session
+    def list(cls, session=None):
         """ Return a list of all matching reports in variables """
         reports = []
-        for (name, val) in cls.each_from_db():
+        for (name, val) in cls.each_from_db(session):
             r = cls.to_report(name, val)
             reports.append(r)
 
         return reports
 
     @classmethod
-    def get(cls, name):
+    @provide_session
+    def get(cls, name, session=None):
         """ Get a single report from variables """
-        for (n, val) in cls.each_from_db():
+        for (n, val) in cls.each_from_db(session):
             if n == name:
                 return cls.to_report(n, val)
 
     @classmethod
-    @provide_session
-    def each_from_db(cls, session=None):
+    def each_from_db(cls, session):
         """ Iterator for Airflow variables """
         variables = session.query(Variable).all()
         for var in variables:
@@ -72,12 +73,18 @@ class VariablesReportRepo(ReportRepo):
         """ Generates report objects from variable data """
         r = Report(name)
         r.report_title = v["report_title"]
+        r.report_title_url = v["report_title_url"]
         r.description = v["description"]
         r.owner_name = v["owner_name"]
         r.owner_email = v["owner_email"]
         r.subscribers = v["subscribers"]
         r.tests = v["tests"]
         r.schedule_type = v["schedule_type"]
+        if ("daily" in r.schedule_type):
+            r.schedule_time = v["schedule_time"]
+        if ("weekly" in r.schedule_type):
+            r.schedule_time = v["schedule_time"]
+            r.schedule_week_day = v["schedule_week_day"]
         r.schedule = v["schedule"]
         return r
 
