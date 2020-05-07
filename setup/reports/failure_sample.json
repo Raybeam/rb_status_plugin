@@ -1,8 +1,19 @@
 {
-    "tests": [
-      "lumen-sample-dag.bash_print_date1", 
-      "lumen-sample-dag.python_failing_0"
-    ],
-    "emails": ["info@example.com"],
-    "schedule": "0 7 * * *"
-  }
+  "report_title": "failure_sample",
+  "report_title_url": "failure_sample",
+  "description": "A sample report which should fail.",
+  "owner_name": "John Doe",
+  "owner_email": "jdoe@raybeam.com",
+  "subscribers": [
+    "jdoe@raybeam.com",
+    "person2@raybeam.com",
+    "person3@raybeam.com"
+  ],
+  "tests": [
+    "example_dag.bash_print_date1",
+    "lumen-sample-dag.python_failing_0"
+  ],
+  "schedule_type": "daily",
+  "schedule_time": "07:00",
+  "schedule": "00 07 * * *"
+}
