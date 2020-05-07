@@ -7,7 +7,7 @@ from airflow.utils.state import State
 def get_all_test_choices(session=None):
     TI = TaskInstance
     tis = session.query(TI).filter(
-        ~TI.dag_id.like(f"lumen %"),
+        ~TI.dag_id.like(f"lumen\_%"),
         TI.state != State.REMOVED
     ).with_entities(TI.dag_id, TI.task_id).distinct().all()
     test_choices = [(f"{ti.dag_id}.{ti.task_id}", f"{ti.dag_id}.{ti.task_id}")
