@@ -31,6 +31,8 @@ def extract_report_data_into_airflow(form):
     report_dict["schedule_type"] = form.schedule_type.data
     if report_dict["schedule_type"] == "custom":
         report_dict["schedule"] = form.schedule_custom.data
+    elif report_dict["schedule_type"] == "manual":
+        report_dict["schedule"] = None
     else:
         report_dict["schedule_time"] = None
         convert_schedule_to_cron_expression(report_dict, form)
@@ -55,7 +57,7 @@ def check_empty(report_dict, field_name):
     Check for empty data in field
     Return boolean on whether field is empty
     """
-    if report_dict[field_name]:
+    if report_dict[field_name] or (field_name == "schedule" and report_dict["schedule_type"] == "manual"):
         return True
     else:
         logging.exception("Error: %s can not be empty." % (field_name))
