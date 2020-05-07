@@ -8,9 +8,16 @@ from inflection import parameterize
 from lumen_plugin.report_repo import VariablesReportRepo
 
 
-def extract_report_data_into_airflow(form):
+def extract_report_data_into_airflow(form, report_exists):
     """
     Extract output of report form into a formatted airflow variable.
+
+    :param form: report being parsed and saved
+    :type form: ReportForm
+
+    :param report_exists: whether the report exists
+    :type report_exists: Boolean
+
     Return whether form submitted.
     """
 
@@ -44,12 +51,29 @@ def extract_report_data_into_airflow(form):
             form_completed = form_completed and check_empty(report_dict, field_name)
 
     if form_completed:
-        report_name = "%s%s" % (
-            VariablesReportRepo.report_prefix,
-            report_dict["report_title"],
-        )
+        if report_exists:
+            report_dict["report_id"] = form.report_id.data
+        else:
+            report_dict["report_id"] = "%s%s" % (
+                VariablesReportRepo.report_prefix,
+                report_dict["report_title"],
+            )
+            if Variable.get(report_dict["report_id"]):
+                logging.exception(
+                    "Error: Report name (%s) already taken."
+                    % (report_dict["report_id"])
+                )
+                logging.error(
+                    "Error: Report name (%s) already taken."
+                    % (report_dict["report_id"])
+                )
+                flash(
+                    "Error: Report name (%s) already taken."
+                    % (report_dict["report_id"])
+                )
+                return False
         report_json = json.dumps(report_dict)
-        Variable.set(key=report_name, value=report_json)
+        Variable.set(key=report_dict["report_id"], value=report_json)
     return form_completed
 
 

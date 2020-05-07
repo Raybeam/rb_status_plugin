@@ -12,7 +12,7 @@ from flask_appbuilder.security.decorators import has_access
 
 import datetime
 
-from wtforms import StringField, TextAreaField, SelectMultipleField, SelectField
+from wtforms import StringField, TextAreaField, SelectMultipleField, SelectField, HiddenField
 from wtforms.validators import DataRequired, Email
 from wtforms_components import TimeField
 
@@ -115,6 +115,7 @@ class LumenReportsView(AppBuilderBaseView):
 
 
 class ReportForm(DynamicForm):
+    report_id = HiddenField()
     title = StringField(
         ("Title"),
         description="Title will be used as report's DAG name",
@@ -210,7 +211,7 @@ class NewReportFormView(SimpleFormView):
     @has_access
     def form_post(self):
         form = self.form.refresh()
-        form_submitted = extract_report_data_into_airflow(form)
+        form_submitted = extract_report_data_into_airflow(form, report_exists=False)
         # post process form
         if form_submitted:
             flash(self.message, "info")
@@ -251,6 +252,7 @@ class EditReportFormView(SimpleFormView):
                 requested_report = report
 
         if requested_report:
+            form.report_id.data = requested_report.report_id
             form.title.data = requested_report.report_title
             form.description.data = requested_report.description
             form.owner_name.data = requested_report.owner_name
@@ -273,7 +275,7 @@ class EditReportFormView(SimpleFormView):
     @has_access
     def form_post(self, report_title):
         form = self.form.refresh()
-        form_submitted = extract_report_data_into_airflow(form)
+        form_submitted = extract_report_data_into_airflow(form, report_exists=True)
         # post process form
         if form_submitted:
             flash(self.message, "info")

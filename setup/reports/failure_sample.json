@@ -15,5 +15,6 @@
   ],
   "schedule_type": "daily",
   "schedule_time": "07:00",
-  "schedule": "00 07 * * *"
+  "schedule": "00 07 * * *",
+  "report_id": "lumen_report_failure_sample"
 }
