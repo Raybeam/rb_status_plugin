@@ -149,7 +149,7 @@
       var report_id = $input.attr('report_id');
 
       $input.change(function() {
-        var url = 'report_id=' + encodeURIComponent(report_id);
+        var url = 'paused?report_id=' + encodeURIComponent(report_id);
         $.post(url).fail(function() {
           if (is_paused === 'true') {
             $input.data('bs.toggle').off(true);

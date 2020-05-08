@@ -20,7 +20,6 @@ from lumen_plugin.report_repo import VariablesReportRepo
 from lumen_plugin.report_instance import ReportInstance
 from lumen_plugin.helpers.report_save_helpers import extract_report_data_into_airflow
 from lumen_plugin.helpers.list_tasks_helper import get_all_test_choices
-import inflection
 import logging
 
 form_fieldsets_config = [
