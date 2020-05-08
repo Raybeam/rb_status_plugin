@@ -12,15 +12,19 @@ from flask_appbuilder.security.decorators import has_access
 
 import datetime
 
-from wtforms import StringField, TextAreaField, SelectMultipleField, SelectField, HiddenField
+from wtforms import (
+    StringField,
+    TextAreaField,
+    SelectMultipleField,
+    SelectField,
+    HiddenField,
+)
 from wtforms.validators import DataRequired, Email
 from wtforms_components import TimeField
 
 from lumen_plugin.report_repo import VariablesReportRepo
 from lumen_plugin.report_instance import ReportInstance
-from lumen_plugin.helpers.report_save_helpers import (
-    extract_report_data_into_airflow,
-)
+from lumen_plugin.helpers.report_save_helpers import extract_report_data_into_airflow
 from lumen_plugin.helpers.list_tasks_helper import get_all_test_choices
 import logging
 
@@ -120,23 +124,19 @@ class ReportForm(DynamicForm):
         ("Title"),
         description="Title will be used as report's DAG name",
         widget=BS3TextFieldWidget(),
-        validators=[DataRequired()]
+        validators=[DataRequired()],
     )
     description = TextAreaField(
-        ("Description"),
-        widget=BS3TextAreaFieldWidget(),
-        validators=[DataRequired()]
+        ("Description"), widget=BS3TextAreaFieldWidget(), validators=[DataRequired()]
     )
     owner_name = StringField(
-        ("Owner Name"),
-        widget=BS3TextFieldWidget(),
-        validators=[DataRequired()]
+        ("Owner Name"), widget=BS3TextFieldWidget(), validators=[DataRequired()]
     )
     owner_email = StringField(
         ("Owner Email"),
         description="Owner email will be added to the subscribers list",
         widget=BS3TextFieldWidget(),
-        validators=[DataRequired(), Email()]
+        validators=[DataRequired(), Email()],
     )
     subscribers = StringField(
         ("Subscribers"),
@@ -148,28 +148,28 @@ class ReportForm(DynamicForm):
     )
     tests = SelectMultipleField(
         ("Tests"),
-        description=("List of the tests to include in the report. Only includes\
-         tasks that have ran in airflow."),
+        description=(
+            "List of the tests to include in the report. Only includes\
+         tasks that have ran in airflow."
+        ),
         choices=get_all_test_choices(),
         widget=Select2ManyWidget(),
-        validators=[DataRequired()]
+        validators=[DataRequired()],
     )
     schedule_type = SelectField(
         ("Schedule"),
         description=("Select how you want to schedule the report"),
         choices=[
-            ('manual', 'None (Manual triggering)'),
+            ("manual", "None (Manual triggering)"),
             ("daily", "Daily"),
             ("weekly", "Weekly"),
-            ("custom", "Custom (Cron)")
+            ("custom", "Custom (Cron)"),
         ],
         widget=Select2Widget(),
-        validators=[DataRequired()]
+        validators=[DataRequired()],
     )
     schedule_time = TimeField(
-        "Time",
-        render_kw={"class": "form-control"},
-        validators=[DataRequired()]
+        "Time", render_kw={"class": "form-control"}, validators=[DataRequired()]
     )
     schedule_week_day = SelectField(
         ("Day of week"),
@@ -184,13 +184,13 @@ class ReportForm(DynamicForm):
             ("6", "Saturday"),
         ],
         widget=Select2Widget(),
-        validators=[DataRequired()]
+        validators=[DataRequired()],
     )
     schedule_custom = StringField(
         ("Cron schedule"),
-        description="Enter cron schedule (e.g. \"0 0 * * *\")",
+        description='Enter cron schedule (e.g. "0 0 * * *")',
         widget=BS3TextFieldWidget(),
-        validators=[DataRequired()]
+        validators=[DataRequired()],
     )
 
 
@@ -215,7 +215,7 @@ class NewReportFormView(SimpleFormView):
         # post process form
         if form_submitted:
             flash(self.message, "info")
-            return redirect(url_for('LumenReportsView.list', filename='reports'))
+            return redirect(url_for("LumenReportsView.list", filename="reports"))
         else:
             return self.this_form_get()
 
@@ -259,14 +259,16 @@ class EditReportFormView(SimpleFormView):
             form.owner_email.data = requested_report.owner_email
             form.subscribers.data = ", ".join(requested_report.subscribers)
             form.schedule_type.data = requested_report.schedule_type
-            if (form.schedule_type.data == "custom"):
+            if form.schedule_type.data == "custom":
                 form.schedule_custom.data = requested_report.schedule
-            if (form.schedule_type.data == "daily"):
+            if form.schedule_type.data == "daily":
                 form.schedule_time.data = datetime.datetime.strptime(
-                    requested_report.schedule_time, "%H:%M")
-            if (form.schedule_type.data == "weekly"):
+                    requested_report.schedule_time, "%H:%M"
+                )
+            if form.schedule_type.data == "weekly":
                 form.schedule_time.data = datetime.datetime.strptime(
-                    requested_report.schedule_time, "%H:%M")
+                    requested_report.schedule_time, "%H:%M"
+                )
                 form.schedule_week_day.data = requested_report.schedule_week_day
             form.tests.data = requested_report.tests
         return form
@@ -279,6 +281,6 @@ class EditReportFormView(SimpleFormView):
         # post process form
         if form_submitted:
             flash(self.message, "info")
-            return redirect(url_for('LumenReportsView.list', filename='reports'))
+            return redirect(url_for("LumenReportsView.list", filename="reports"))
         else:
             return self.this_form_get(report_title)
