@@ -125,7 +125,7 @@ class LumenReportsView(AppBuilderBaseView):
         return redirect(url_for("LumenReportsView.list"))
 
     @expose("/reports/paused?report_id=<string:report_id>")
-    def pause(self, is_paused, report_id):
+    def pause(self, report_id):
         r = Report(report_id)
         r.pause_dag()
         return redirect(url_for("LumenReportsView.list"))
