@@ -58,10 +58,13 @@ def check_empty(report_dict, field_name):
     Check for empty data in field
     Return boolean on whether field is empty
     """
-    if report_dict[field_name] or (
-        field_name == "schedule" and report_dict["schedule_type"] == "manual"
-    ):
+    if report_dict[field_name]:
         return True
+
+    # manual schedules will store a null schedule field
+    if field_name == "schedule":
+        if report_dict["schedule_type"] == "manual":
+            return True
     else:
         logging.exception("Error: %s can not be empty." % (field_name))
         logging.error("Error: %s can not be empty." % (field_name))
