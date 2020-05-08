@@ -18,7 +18,7 @@ def extract_report_data_into_airflow(form, report_exists):
     :param report_exists: whether the report exists
     :type report_exists: Boolean
 
-    Return whether form submitted.
+    Return boolean on whether form submitted.
     """
 
     # format email list
@@ -27,6 +27,25 @@ def extract_report_data_into_airflow(form, report_exists):
     logging.info("saving output to airflow variable...")
 
     # save form's fields to python dictionary
+    report_dict = parse_form(form)
+
+    # if report looks good, save it
+    if validate_unique_report(report_dict, form, report_exists):
+        report_json = json.dumps(report_dict)
+        Variable.set(key=report_dict["report_id"], value=report_json)
+        return True
+    return False
+
+
+def parse_form(form):
+    """
+    Extract each of the fields in the form.
+
+    :param report_dict: a mapping of form attributes to inputted values
+    :type report_dict: Dict
+
+    Return report_dict .
+    """
     report_dict = {}
     report_dict["report_title"] = form.title.data
     report_dict["report_title_url"] = parameterize(form.title.data)
@@ -43,14 +62,26 @@ def extract_report_data_into_airflow(form, report_exists):
     else:
         report_dict["schedule_time"] = None
         convert_schedule_to_cron_expression(report_dict, form)
+    return report_dict
 
-    # verify input for each field (except subscribers)
-    form_completed = True
-    for field_name in report_dict.keys():
-        if field_name != "subscribers":
-            form_completed = form_completed and check_empty(report_dict, field_name)
 
-    if form_completed:
+def validate_unique_report(report_dict, form, report_exists):
+    """
+    Check that report has unique name/key.
+
+    :param report_dict: a mapping of form attributes to inputted values
+    :type report_dict: Dict
+
+    :param form: report being parsed and saved
+    :type form: ReportForm
+
+    :param report_exists: whether the report exists
+    :type report_exists: Boolean
+
+    Return boolean on whether report is unique.
+    """
+
+    if check_empty_fields(report_dict):
         if report_exists:
             report_dict["report_id"] = form.report_id.data
         else:
@@ -61,15 +92,13 @@ def extract_report_data_into_airflow(form, report_exists):
             if not check_unique_field(report_exists, "report_id", report_dict):
                 return False
         if check_unique_field(report_exists, "report_title_url", report_dict):
-            report_json = json.dumps(report_dict)
-            Variable.set(key=report_dict["report_id"], value=report_json)
             return True
     return False
 
 
 def check_unique_field(report_exists, field_name, report_dict):
     """
-    Chack if field is already exists
+    Chack if field is already exists.
 
     :param report_exists: whether the report exists
     :type report_exists: Boolean
@@ -80,33 +109,36 @@ def check_unique_field(report_exists, field_name, report_dict):
     :param report_dict: a mapping of form attributes to inputted values
     :type report_dict: Dict
 
-    Return boolean on whether entry is unique
+    Return boolean on whether entry is unique.
     """
 
     for report in VariablesReportRepo.list():
-        if report_exists and getattr(report, "report_id") == report_dict["report_id"]:
-            continue
-        else:
-            if str(getattr(report, field_name)) == report_dict[field_name]:
-                logging.exception(
-                    "Error: %s (%s) already taken."
-                    % (field_name, report_dict[field_name])
-                )
-                logging.error(
-                    "Error: %s (%s) already taken."
-                    % (field_name, report_dict[field_name])
-                )
-                flash(
-                    "Error: %s (%s) already taken."
-                    % (field_name, report_dict[field_name])
-                )
-                return False
+        # dont check against the report being editted
+        if report_exists:
+            if getattr(report, "report_id") == report_dict["report_id"]:
+                continue
+
+        # alert user that field_name is being used by another report
+        if str(getattr(report, field_name)) == report_dict[field_name]:
+            logging.exception(
+                "Error: %s (%s) already taken."
+                % (field_name, report_dict[field_name])
+            )
+            logging.error(
+                "Error: %s (%s) already taken."
+                % (field_name, report_dict[field_name])
+            )
+            flash(
+                "Error: %s (%s) already taken."
+                % (field_name, report_dict[field_name])
+            )
+            return False
     return True
 
 
-def check_empty(report_dict, field_name):
+def check_empty_field(report_dict, field_name):
     """
-    Check for empty data in field
+    Check for empty data in field.
 
     :param report_dict: a mapping of form attributes to inputted values
     :type report_dict: Dict
@@ -114,7 +146,7 @@ def check_empty(report_dict, field_name):
     :param field_name: name of report attribute
     :type field_name: String
 
-    Return boolean on whether field is filled
+    Return boolean on whether field is filled.
     """
 
     if report_dict[field_name]:
@@ -129,6 +161,23 @@ def check_empty(report_dict, field_name):
     logging.error("Error: %s can not be empty." % (field_name))
     flash("Error: %s can not be empty." % (field_name))
     return False
+
+
+def check_empty_fields(report_dict):
+    """
+    Check for input in each field (except subscribers).
+
+    :param report_dict: a mapping of form attributes to inputted values
+    :type report_dict: Dict
+
+    Return boolean on whether fields are filled out.
+    """
+
+    form_completed = True
+    for field_name in report_dict.keys():
+        if field_name != "subscribers":
+            form_completed = form_completed and check_empty_field(report_dict, field_name)
+    return form_completed
 
 
 def format_emails(form):
