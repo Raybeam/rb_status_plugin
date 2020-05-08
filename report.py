@@ -135,7 +135,7 @@ class Report:
         self.__tests = val
 
     @property
-    def is_paused():
+    def is_paused(self):
         return models.DagModel.get_dagmodel(self.dag_id).is_paused
 
     def _trigger_dag(
