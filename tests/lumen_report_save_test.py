@@ -103,7 +103,7 @@ class ReportSaveTest(unittest.TestCase):
         Extract report_form_sample into airflow variable.
         """
         print("Creating airflow variable...")
-        extract_report_data_into_airflow(self.report_form_sample)
+        extract_report_data_into_airflow(self.report_form_sample, report_exists=False)
 
     @classmethod
     def tearDownClass(self):
@@ -206,22 +206,28 @@ class ReportSaveTest(unittest.TestCase):
         """
         Test that daily schedule is converted properly into cron expression.
         """
-        extract_report_data_into_airflow(self.report_form_sample_daily)
+        extract_report_data_into_airflow(
+            self.report_form_sample_daily, report_exists=False
+        )
         report_airflow_variable = Variable.get(
             "lumen_report_" + self.report_form_sample_daily.title.data,
             deserialize_json=True,
         )
+        Variable.delete("lumen_report_" + self.report_form_sample_daily.title.data)
         self.assertEqual("00 05 * * *", report_airflow_variable["schedule"])
 
     def test_weekly_schedule_conversion(self):
         """
         Test that weekly schedule is converted properly into cron expression.
         """
-        extract_report_data_into_airflow(self.report_form_sample_weekly)
+        extract_report_data_into_airflow(
+            self.report_form_sample_weekly, report_exists=False
+        )
         report_airflow_variable = Variable.get(
             "lumen_report_" + self.report_form_sample_weekly.title.data,
             deserialize_json=True,
         )
+        Variable.delete("lumen_report_" + self.report_form_sample_weekly.title.data)
         self.assertEqual("30 03 * * 0", report_airflow_variable["schedule"])
 
 
