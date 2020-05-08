@@ -4,6 +4,7 @@ from lumen_plugin.helpers.report_save_helpers import (
     validate_email,
 )
 import datetime
+import copy
 
 import unittest
 
@@ -15,6 +16,9 @@ class AttributeDict(dict):
 
     __getattr__ = dict.__getitem__
     __setattr__ = dict.__setitem__
+
+    def __deepcopy__(self, memo):
+        return AttributeDict(copy.deepcopy(dict(self)))
 
 
 class ReportSaveTest(unittest.TestCase):
@@ -41,6 +45,29 @@ class ReportSaveTest(unittest.TestCase):
             ),
             "schedule_type": AttributeDict({"data": "custom"}),
             "schedule_custom": AttributeDict({"data": "* * * 1 *"}),
+        }
+    )
+
+    report_form_sample_duplicate = AttributeDict(
+        {
+            "title": AttributeDict({"data": "new test report title"}),
+            "description": AttributeDict({"data": "new test description"}),
+            "owner_name": AttributeDict({"data": "Jake Doe"}),
+            "owner_email": AttributeDict({"data": "jakedoe@raybeam.com"}),
+            "subscribers": AttributeDict(
+                {"data": "email1@raybeam.com,email2@raybeam.com"}
+            ),
+            "tests": AttributeDict(
+                {
+                    "data": [
+                        "example_dag.python_print_date_0",
+                        "example_dag.python_random_0",
+                    ]
+                }
+            ),
+            "schedule_type": AttributeDict({"data": "custom"}),
+            "schedule_custom": AttributeDict({"data": "* * * 1 1"}),
+            "report_id": AttributeDict({"data": "lumen_report_new test report title"}),
         }
     )
 
@@ -229,6 +256,32 @@ class ReportSaveTest(unittest.TestCase):
         )
         Variable.delete("lumen_report_" + self.report_form_sample_weekly.title.data)
         self.assertEqual("30 03 * * 0", report_airflow_variable["schedule"])
+
+    def test_duplicate_report(self):
+        """
+        Test that two reports can't be created with same name.
+        """
+        duplicate_report = copy.deepcopy(self.report_form_sample_duplicate)
+        with self.assertRaises(Exception) as context:
+            extract_report_data_into_airflow(duplicate_report, report_exists=False)
+            self.assertTrue(
+                "Error: report_id (lumen_report_test report title) already taken."
+                in str(context.exception)
+            )
+
+    def test_editing_report(self):
+        """
+        Test that report can be editted.
+        """
+        updated_report = copy.deepcopy(self.report_form_sample_duplicate)
+        report_airflow_variable = Variable.get(
+            "lumen_report_" + self.report_form_sample_duplicate.title.data,
+            deserialize_json=True,
+        )
+        extract_report_data_into_airflow(updated_report, report_exists=True)
+        self.assertEqual(
+            updated_report.schedule_custom.data, report_airflow_variable["schedule"]
+        )
 
 
 if __name__ == "__main__":
