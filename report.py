@@ -28,7 +28,7 @@ class Report:
         self.__schedule_type = None
         self.__schedule_time = None
         self.__schedule_week_day = None
-        self.__schedule = Nonexs
+        self.__schedule = None
 
     @property
     def report_title(self):
