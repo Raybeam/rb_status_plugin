@@ -171,7 +171,6 @@ class Report:
             external_trigger=True,
         )
 
-    @staticmethod
     def trigger_dag():
         """Triggers execution of DAG specified by dag_id
         :param report_id: report_id
@@ -192,7 +191,6 @@ class Report:
             dag_run=dag_run
         )
 
-    @provide_session
     def pause_dag():
         is_paused = True if self.is_paused == 'false' else False
         models.DagModel.get_dagmodel(self.dag_id).set_is_paused(
