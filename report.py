@@ -28,7 +28,7 @@ class Report:
         self.__schedule_type = None
         self.__schedule_time = None
         self.__schedule_week_day = None
-        self.__schedule = None
+        self.__schedule = Nonexs
 
     @property
     def report_title(self):
@@ -134,6 +134,10 @@ class Report:
     def tests(self, val):
         self.__tests = val
 
+    @property
+    def is_paused():
+        return models.DagModel.get_dagmodel(self.dag_id).is_paused
+
     def _trigger_dag(
         dag_id: str,
         dag_bag: DagBag,
@@ -187,10 +191,6 @@ class Report:
             dag_bag=dagbag,
             dag_run=dag_run
         )
-
-    @staticmethod
-    def is_paused(dag_id):
-        return models.DagModel.get_dagmodel(dag_id).is_paused
 
     @staticmethod
     @provide_session

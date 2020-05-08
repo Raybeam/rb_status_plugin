@@ -124,6 +124,7 @@ class LumenReportsView(AppBuilderBaseView):
 
     @expose("/reports/paused?is_paused=<int:is_paused>&dag_id=<string:dag_id>")
     def pause(self, is_paused, dag_id):
+        Report.pause_dag(dag_id=dag_id, is_paused=is_paused)
         return redirect(url_for("LumenReportsView.list"))
 
 class ReportForm(DynamicForm):

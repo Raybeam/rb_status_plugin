@@ -119,13 +119,6 @@ class VariablesReportRepo(ReportRepo):
         variables = session.query(Variable).filter(
             Variable.key == (VariablesReportRepo.report_prefix + report_id)
         ).delete(synchronize_session='fetch')
-        print(
-            inflection.underscore(
-                inflection.parameterize("lumen %s" % report_id)
-            )
-        )
-        Report.delete_dag(
-            inflection.underscore(
-                inflection.parameterize("lumen %s" % report_id)
-            )
-        )
+        Report.delete_dag(inflection.underscore(
+            inflection.parameterize("lumen %s" % report_id)
+        ))
