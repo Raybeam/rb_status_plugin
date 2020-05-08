@@ -1,5 +1,5 @@
 from flask_appbuilder import BaseView as AppBuilderBaseView, expose
-from flask import flash, redirect, url_for
+from flask import flash, redirect, url_for, request
 from flask_appbuilder import SimpleFormView
 from flask_appbuilder.forms import DynamicForm
 from flask_appbuilder.fieldwidgets import (
@@ -124,11 +124,15 @@ class LumenReportsView(AppBuilderBaseView):
         r.delete_dag()
         return redirect(url_for("LumenReportsView.list"))
 
-    @expose("/reports/paused?report_id=<string:report_id>")
-    def pause(self, report_id):
+    @expose("/reports/paused", methods=["POST"])
+    def pause(self):
+        r_args = request.args
+        report_id = r_args.get('report_id')
+        paused = True if r_args.get('is_paused') == 'false' else False
+
         r = Report(report_id)
-        r.pause_dag()
-        return redirect(url_for("LumenReportsView.list"))
+        r.is_paused = paused
+        return "OK"
 
 class ReportForm(DynamicForm):
     title = StringField(("Title"), widget=BS3TextFieldWidget())

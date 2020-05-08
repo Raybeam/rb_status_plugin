@@ -138,6 +138,10 @@ class Report:
     def is_paused(self):
         return models.DagModel.get_dagmodel(self.dag_id).is_paused
 
+    @is_paused.setter
+    def is_paused(self, val):
+        return models.DagModel.get_dagmodel(self.dag_id).set_is_paused(val)
+
     def _trigger_dag(
         dag_id: str,
         dag_bag: DagBag,
