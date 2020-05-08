@@ -58,29 +58,54 @@ def extract_report_data_into_airflow(form, report_exists):
                 VariablesReportRepo.report_prefix,
                 report_dict["report_title"],
             )
-            if Variable.get(report_dict["report_id"]):
+            if not check_unique_field(report_exists, "report_id", report_dict):
+                return False
+        if check_unique_field(report_exists, "report_title_url", report_dict):
+            report_json = json.dumps(report_dict)
+            Variable.set(key=report_dict["report_id"], value=report_json)
+            return True
+    return False
+
+def check_unique_field(report_exists, field_name, report_dict):
+    """
+    Chack if field is already exists
+
+    :param report_exists: whether the report exists
+    :type report_exists: Boolean
+
+    :param field_name: name of report attribute
+    :type field_name: String
+
+    :param report_dict: a mapping of form attributes to inputted values
+    :type report_dict: Dict
+
+    Return boolean on whether entry is unique
+    """
+
+    for report in VariablesReportRepo.list():
+        if report_exists and getattr(report, "report_id") == report_dict["report_id"]:
+            continue
+        else:
+            if str(getattr(report, field_name)) == report_dict[field_name]:
                 logging.exception(
-                    "Error: Report name (%s) already taken."
-                    % (report_dict["report_id"])
+                    "Error: %s (%s) already taken."
+                    % (field_name, report_dict[field_name])
                 )
                 logging.error(
-                    "Error: Report name (%s) already taken."
-                    % (report_dict["report_id"])
+                    "Error: %s (%s) already taken."
+                    % (field_name, report_dict[field_name])
                 )
                 flash(
-                    "Error: Report name (%s) already taken."
-                    % (report_dict["report_id"])
+                    "Error: %s (%s) already taken."
+                    % (field_name, report_dict[field_name])
                 )
                 return False
-        report_json = json.dumps(report_dict)
-        Variable.set(key=report_dict["report_id"], value=report_json)
-    return form_completed
-
+    return True
 
 def check_empty(report_dict, field_name):
     """
     Check for empty data in field
-    Return boolean on whether field is empty
+    Return boolean on whether field is filled
     """
     if report_dict[field_name] or (
         field_name == "schedule" and report_dict["schedule_type"] == "manual"
