@@ -62,6 +62,7 @@
                 data-toggle="toggle"
                 data-size="mini"
                 method="post"
+                {{ "checked" if not report.is_paused else "" }} 
               />
             </td>
 
@@ -147,7 +148,11 @@
     $.each($("[id^=toggle]"), function(i, v) {
       var $input = $(v);
       var report_id = $input.attr('report_id');
-
+      if ($input.prop('checked')) {
+        is_paused = 'true'
+      } else {
+        is_paused = 'false'
+      }
       $input.change(function() {
         var url = 'reports/paused?report_id=' + encodeURIComponent(report_id);
         $.post(url).fail(function() {
