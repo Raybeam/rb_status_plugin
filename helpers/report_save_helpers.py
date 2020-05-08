@@ -66,6 +66,7 @@ def extract_report_data_into_airflow(form, report_exists):
             return True
     return False
 
+
 def check_unique_field(report_exists, field_name, report_dict):
     """
     Chack if field is already exists
@@ -102,34 +103,52 @@ def check_unique_field(report_exists, field_name, report_dict):
                 return False
     return True
 
+
 def check_empty(report_dict, field_name):
     """
     Check for empty data in field
+
+    :param report_dict: a mapping of form attributes to inputted values
+    :type report_dict: Dict
+
+    :param field_name: name of report attribute
+    :type field_name: String
+
     Return boolean on whether field is filled
     """
-    if report_dict[field_name] or (
-        field_name == "schedule" and report_dict["schedule_type"] == "manual"
-    ):
+
+    if report_dict[field_name]:
         return True
-    else:
-        logging.exception("Error: %s can not be empty." % (field_name))
-        logging.error("Error: %s can not be empty." % (field_name))
-        flash("Error: %s can not be empty." % (field_name))
-        return False
+
+    # manual schedules will store a null schedule field
+    if report_dict["schedule_type"] == "manual":
+        if field_name == "schedule":
+            return True
+
+    logging.exception("Error: %s can not be empty." % (field_name))
+    logging.error("Error: %s can not be empty." % (field_name))
+    flash("Error: %s can not be empty." % (field_name))
+    return False
 
 
 def format_emails(form):
     """
     Parse, transform, and vaildate emails.
+
+    :param form: report being parsed and saved
+    :type form: ReportForm
+
+    return form
     """
 
-    # Add owner's email to subscribers; dedupe, order, & format subscribers
+    # owner_email should be a single email
     emails = form.owner_email.data.split(",")
     if len(emails) != 1:
         logging.exception("Error: Exactly one email is required for Owner Email field.")
         logging.error("Error: Exactly one email is required for Owner Email field.")
         flash("Error: Exactly one email is required for Owner Email field.")
 
+    # Add owner's email to subscribers; dedupe, order, & format subscribers
     emails += form.subscribers.data.split(",")
     emails = list(set([email.replace(" ", "") for email in emails]))
     emails = [email for email in emails if email]
@@ -143,6 +162,9 @@ def format_emails(form):
 def validate_email(email):
     """
     Check that an email is properly formatted.
+
+    :param email: an email address
+    :type email: String
     """
 
     email_format = re.compile(r"^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$")
@@ -161,9 +183,16 @@ def convert_schedule_to_cron_expression(report_dict, form):
     """
     Convert Weekly and Daily schedules into a cron expression, and
     saves attributes to report_dict
+
+    :param report_dict: a mapping of form attributes to inputted values
+    :type report_dict: Dict
+
+    :param form: report being parsed and saved
+    :type form: ReportForm
     """
-    # add time of day
+
     try:
+        # add time of day
         time_of_day = form.schedule_time.data.strftime("%H:%M")
         report_dict["schedule_time"] = time_of_day
         hour, minute = time_of_day.split(":")
