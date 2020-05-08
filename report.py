@@ -172,14 +172,14 @@ class Report:
         )
 
     @staticmethod
-    def trigger_dag(dag_id: str):
+    def trigger_dag():
         """Triggers execution of DAG specified by dag_id
         :param report_id: report_id
         :return: dag run triggered
         """
         dag_model = DagModel.get_current(dag_id)
         if dag_model is None:
-            raise DagNotFound("Dag id {} not found in DagModel".format(dag_id))
+            raise DagNotFound("Dag id {} not found in DagModel".format(self.dag_id))
 
         dagbag = DagBag(
             dag_folder=dag_model.fileloc,
@@ -187,40 +187,34 @@ class Report:
         )
         dag_run = DagRun()
         _trigger_dag(
-            dag_id=dag_id,
+            dag_id=self.dag_id,
             dag_bag=dagbag,
             dag_run=dag_run
         )
 
-    @staticmethod
     @provide_session
-    def pause_dag(
-        dag_id: str,
-        is_paused: bool
-    ):
-        is_paused = True if is_paused == 'false' else False
-        models.DagModel.get_dagmodel(dag_id).set_is_paused(
+    def pause_dag():
+        is_paused = True if self.is_paused == 'false' else False
+        models.DagModel.get_dagmodel(self.dag_id).set_is_paused(
             is_paused=is_paused)
         return "OK"
 
-    @staticmethod
     @provide_session
     def delete_dag(
-        dag_id: str,
         keep_records_in_log: bool = True,
         session=None
     ):
-        dag = session.query(DagModel).filter(DagModel.dag_id == dag_id).first()
+        dag = session.query(DagModel).filter(DagModel.dag_id == self.dag_id).first()
         if dag is None:
-            raise DagNotFound("Dag id {} not found".format(dag_id))
+            raise DagNotFound("Dag id {} not found".format(self.dag_id))
 
         # Scheduler removes DAGs without files from serialized_dag table
         # every dag_dir_list_interval. There may be a lag,
         # so explicitly removes serialized DAG here.
         if STORE_SERIALIZED_DAGS and SerializedDagModel.has_dag(
-            dag_id=dag_id, session=session
+            dag_id=self.dag_id, session=session
         ):
-            SerializedDagModel.remove_dag(dag_id=dag_id, session=session)
+            SerializedDagModel.remove_dag(dag_id=self.dag_id, session=session)
 
 
         # This iterates through the class registry and looks
@@ -233,11 +227,26 @@ class Report:
                     print(model.__name__)
                 if keep_records_in_log and model.__name__ == 'Log':
                     continue
-                cond = or_(model.dag_id == dag_id, model.dag_id.like(dag_id + ".%"))
-                session.query(model).filter(cond).delete(synchronize_session='fetch')
+                cond = or_(
+                    model.dag_id == self.dag_id,
+                    model.dag_id.like(self.dag_id + ".%")
+                )
+                session.query(model).filter(cond).delete(
+                    synchronize_session='fetch'
+                )
 
         # Delete entries in Import Errors table for a deleted DAG
         # This handles the case when the dag_id is changed in the file
         session.query(models.ImportError).filter(
             models.ImportError.filename == dag.fileloc
+        ).delete(synchronize_session='fetch')
+
+    @provide_session
+    def delete_report_variable(session=None):
+        """
+        Deletes dag with specific dag id 
+        :param report_id: dag_id
+        """
+        variables = session.query(Variable).filter(
+            Variable.key == (VariablesReportRepo.report_prefix + self.name)
         ).delete(synchronize_session='fetch')

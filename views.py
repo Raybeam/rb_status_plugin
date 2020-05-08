@@ -20,7 +20,7 @@ from lumen_plugin.report_repo import VariablesReportRepo
 from lumen_plugin.report_instance import ReportInstance
 from lumen_plugin.helpers.report_save_helpers import extract_report_data_into_airflow
 from lumen_plugin.helpers.list_tasks_helper import get_all_test_choices
-from lumen_plugin.helpers.trigger_dag_helpers import trigger_dag
+import inflection
 import logging
 
 form_fieldsets_config = [
@@ -112,19 +112,23 @@ class LumenReportsView(AppBuilderBaseView):
     def list(self):
         return self.render_template("reports.html", content=VariablesReportRepo.list())
 
-    @expose("/reports/<string:dag_id>/trigger/", methods=["POST"])
-    def trigger(self, dag_id):
-        trigger_dag(dag_id)
+    @expose("/reports/<string:report_id>/trigger/", methods=["POST"])
+    def trigger(self, report_id):
+        r = Report(report_id)
+        r.trigger_dag()
         return redirect(url_for("LumenReportsView.list"))
 
     @expose("/reports/<string:report_id>/delete/", methods=["POST"])
     def delete(self, report_id):
-        VariablesReportRepo.delete_report(report_id)
+        r = Report(report_id)
+        r.delete_report_variable()
+        r.delete_dag()
         return redirect(url_for("LumenReportsView.list"))
 
-    @expose("/reports/paused?is_paused=<int:is_paused>&dag_id=<string:dag_id>")
-    def pause(self, is_paused, dag_id):
-        Report.pause_dag(dag_id=dag_id, is_paused=is_paused)
+    @expose("/reports/paused?report_id=<string:report_id>")
+    def pause(self, is_paused, report_id):
+        r = Report(report_id)
+        r.pause_dag()
         return redirect(url_for("LumenReportsView.list"))
 
 class ReportForm(DynamicForm):

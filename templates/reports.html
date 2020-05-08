@@ -56,13 +56,12 @@
             <!-- Column 2: Turn report on/off -->
             <td>
               <input
-                id="toggle-{{ report.dag_id }}"
-                dag_id="{{ report.dag_id }}"
+                id="toggle-{{ report.name }}"
+                report_id="{{ report.name }}"
                 type="checkbox"
                 data-toggle="toggle"
                 data-size="mini"
                 method="post"
-                {{ "checked" if not report.is_paused else "" }}
               />
             </td>
 
@@ -106,7 +105,7 @@
                 <!-- Trigger Report -->
               <form 
                 style="display:inline-block;" 
-                action="{{url_for('LumenReportsView.trigger', dag_id=report.dag_id)}}" 
+                action="{{url_for('LumenReportsView.trigger', report_id=report.name)}}" 
                 method="post"
               >
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
@@ -147,15 +146,10 @@
   <script>
     $.each($("[id^=toggle]"), function(i, v) {
       var $input = $(v);
-      var dag_id = $input.attr('dag_id');
+      var report_id = $input.attr('report_id');
 
       $input.change(function() {
-        if ($input.prop('checked')) {
-          is_paused = 'true'
-        } else {
-          is_paused = 'false'
-        }
-        var url = 'paused?is_paused=' + is_paused + '&dag_id=' + encodeURIComponent(dag_id);
+        var url = 'report_id=' + encodeURIComponent(report_id);
         $.post(url).fail(function() {
           if (is_paused === 'true') {
             $input.data('bs.toggle').off(true);
