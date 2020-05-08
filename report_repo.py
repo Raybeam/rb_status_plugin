@@ -3,7 +3,7 @@ import re
 import abc
 
 from airflow.utils.db import provide_session
-
+import inflection
 from airflow.models import Variable
 from lumen_plugin.report import Report
 
@@ -108,3 +108,24 @@ class VariablesReportRepo(ReportRepo):
             return json.loads(json_val)
         except json.decoder.JSONDecodeError:
             return None
+
+    @staticmethod
+    @provide_session
+    def delete_report(report_id: str, session=None):
+        """
+        Deletes dag with specific dag id 
+        :param report_id: dag_id
+        """
+        variables = session.query(Variable).filter(
+            Variable.key == (VariablesReportRepo.report_prefix + report_id)
+        ).delete(synchronize_session='fetch')
+        print(
+            inflection.underscore(
+                inflection.parameterize("lumen %s" % report_id)
+            )
+        )
+        Report.delete_dag(
+            inflection.underscore(
+                inflection.parameterize("lumen %s" % report_id)
+            )
+        )

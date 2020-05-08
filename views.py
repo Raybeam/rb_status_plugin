@@ -15,6 +15,7 @@ import datetime
 from wtforms import StringField, TextAreaField, SelectMultipleField, SelectField
 from wtforms_components import TimeField
 
+from lumen_plugin.report import Report
 from lumen_plugin.report_repo import VariablesReportRepo
 from lumen_plugin.report_instance import ReportInstance
 from lumen_plugin.helpers.report_save_helpers import extract_report_data_into_airflow
@@ -116,10 +117,14 @@ class LumenReportsView(AppBuilderBaseView):
         trigger_dag(dag_id)
         return redirect(url_for("LumenReportsView.list"))
 
-    @expose("/reports/<string:dag_id>/delete/", methods=["POST"])
-    def delete(self, dag_id):
+    @expose("/reports/<string:report_id>/delete/", methods=["POST"])
+    def delete(self, report_id):
+        VariablesReportRepo.delete_report(report_id)
         return redirect(url_for("LumenReportsView.list"))
 
+    @expose("/reports/paused?is_paused=<int:is_paused>&dag_id=<string:dag_id>")
+    def pause(self, is_paused, dag_id):
+        return redirect(url_for("LumenReportsView.list"))
 
 class ReportForm(DynamicForm):
     title = StringField(("Title"), widget=BS3TextFieldWidget())

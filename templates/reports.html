@@ -55,7 +55,15 @@
 
             <!-- Column 2: Turn report on/off -->
             <td>
-              <input id="toggle-{{ report.report_title_url }}"  type="checkbox"  data-toggle="toggle" data-size="mini" method="post">
+              <input
+                id="toggle-{{ report.dag_id }}"
+                dag_id="{{ report.dag_id }}"
+                type="checkbox"
+                data-toggle="toggle"
+                data-size="mini"
+                method="post"
+                {{ "checked" if not report.is_paused else "" }}
+              />
             </td>
 
             <!-- Column 2: Name -->
@@ -113,9 +121,10 @@
               </form>
               <form 
                 style="display:inline-block;" 
-                action="{{url_for('LumenReportsView.delete', dag_id=report.dag_id)}}"
+                action="{{url_for('LumenReportsView.delete', report_id=report.name)}}"
                 method="post"
               >
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 <button style="border:none;background:none;outline:none;" type="submit">
                   <span 
                     class="glyphicon glyphicon-remove-circle" 
@@ -135,6 +144,29 @@
 
 {% block tail %}
   {{ super() }}
+  <script>
+    $.each($("[id^=toggle]"), function(i, v) {
+      var $input = $(v);
+      var dag_id = $input.attr('dag_id');
+
+      $input.change(function() {
+        var $buttons = $input.parent('.toggle').find('.btn');
+        if ($input.prop('checked')) {
+          is_paused = 'true'
+        } else {
+          is_paused = 'false'
+        }
+        var url = 'paused?is_paused=' + is_paused + '&dag_id=' + encodeURIComponent(dag_id);
+        $.post(url).fail(function() {
+          if (is_paused === 'true') {
+            $input.data('bs.toggle').off(true);
+          } else {
+            $input.data('bs.toggle').on(true);
+          }
+        });
+      });
+    });
+  </script>
   <script src="{{ url_for_asset('jquery.dataTables.min.js') }}"></script>
   <script src="{{ url_for_asset('dataTables.bootstrap.min.js') }}"></script>
   <script src="{{ url_for_asset('bootstrap-toggle.min.js') }}"></script>
