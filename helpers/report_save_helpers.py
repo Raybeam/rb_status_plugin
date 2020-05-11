@@ -63,7 +63,6 @@ def check_empty(report_dict, field_name):
     ):
         return True
     else:
-        logging.exception("Error: %s can not be empty." % (field_name))
         logging.error("Error: %s can not be empty." % (field_name))
         flash("Error: %s can not be empty." % (field_name))
         return False
@@ -77,7 +76,6 @@ def format_emails(form):
     # Add owner's email to subscribers; dedupe, order, & format subscribers
     emails = form.owner_email.data.split(",")
     if len(emails) != 1:
-        logging.exception("Error: Exactly one email is required for Owner Email field.")
         logging.error("Error: Exactly one email is required for Owner Email field.")
         flash("Error: Exactly one email is required for Owner Email field.")
 
@@ -99,9 +97,6 @@ def validate_email(email):
     email_format = re.compile(r"^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$")
 
     if not re.search(email_format, email):
-        logging.exception(
-            "Email (%s) is not valid. Please enter a valid email address." % email
-        )
         logging.error(
             "Email (%s) is not valid. Please enter a valid email address." % email
         )
@@ -129,6 +124,5 @@ def convert_schedule_to_cron_expression(report_dict, form):
 
         report_dict["schedule"] = cron_expression
     except AttributeError:
-        logging.exception("Error: Schedule's time is invalid.")
         logging.error("Error: Schedule's time is invalid.")
         flash("Error: Schedule's time is invalid.")
