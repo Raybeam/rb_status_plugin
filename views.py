@@ -22,7 +22,7 @@ from wtforms_components import TimeField
 
 from lumen_plugin.report_repo import VariablesReportRepo
 from lumen_plugin.report_instance import ReportInstance
-from lumen_plugin.save_report_form import SaveReportForm
+from lumen_plugin.save_report_form import ReportFormSaver
 from lumen_plugin.helpers.list_tasks_helper import get_all_test_choices
 import logging
 
@@ -209,7 +209,7 @@ class NewReportFormView(SimpleFormView):
     @has_access
     def form_post(self):
         form = self.form.refresh()
-        report_saver = SaveReportForm(form)
+        report_saver = ReportFormSaver(form)
         form_submitted = report_saver.extract_report_data_into_airflow(
             report_exists=False
         )
@@ -256,7 +256,7 @@ class EditReportFormView(SimpleFormView):
                 requested_report = report
 
         if requested_report:
-            form = SaveReportForm.load_form(form, requested_report)
+            form = ReportFormSaver.load_form(form, requested_report)
             return form
         return None
 
@@ -264,7 +264,7 @@ class EditReportFormView(SimpleFormView):
     @has_access
     def form_post(self, report_title):
         form = self.form.refresh()
-        report_saver = SaveReportForm(form)
+        report_saver = ReportFormSaver(form)
         form_submitted = report_saver.extract_report_data_into_airflow(
             report_exists=True
         )

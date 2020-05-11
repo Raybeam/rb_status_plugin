@@ -1,5 +1,5 @@
 from airflow.models import Variable
-from lumen_plugin.save_report_form import SaveReportForm
+from lumen_plugin.save_report_form import ReportFormSaver
 import datetime
 import copy
 
@@ -127,7 +127,7 @@ class ReportSaveTest(unittest.TestCase):
         Extract report_form_sample into airflow variable.
         """
         print("Creating airflow variable...")
-        report_saver = SaveReportForm(self.report_form_sample)
+        report_saver = ReportFormSaver(self.report_form_sample)
         report_saver.extract_report_data_into_airflow(report_exists=False)
 
     @classmethod
@@ -213,7 +213,7 @@ class ReportSaveTest(unittest.TestCase):
         """
         valid_email = "jdoe@raybeam.com"
         self.assertEqual(
-            None, SaveReportForm.validate_email(SaveReportForm, valid_email)
+            None, ReportFormSaver.validate_email(ReportFormSaver, valid_email)
         )
 
     def test_invalid_email(self):
@@ -222,7 +222,7 @@ class ReportSaveTest(unittest.TestCase):
         """
         invalid_email = "not an email"
         with self.assertRaises(Exception) as context:
-            SaveReportForm.validate_email(SaveReportForm, invalid_email)
+            ReportFormSaver.validate_email(ReportFormSaver, invalid_email)
             self.assertTrue(
                 (f"Email ({invalid_email}) is not valid."
                  "Please enter a valid email address.")
@@ -233,7 +233,7 @@ class ReportSaveTest(unittest.TestCase):
         """
         Test that daily schedule is converted properly into cron expression.
         """
-        report_saver = SaveReportForm(self.report_form_sample_daily)
+        report_saver = ReportFormSaver(self.report_form_sample_daily)
         report_saver.extract_report_data_into_airflow(report_exists=False)
         report_airflow_variable = Variable.get(
             "lumen_report_" + self.report_form_sample_daily.title.data,
@@ -246,7 +246,7 @@ class ReportSaveTest(unittest.TestCase):
         """
         Test that weekly schedule is converted properly into cron expression.
         """
-        report_saver = SaveReportForm(self.report_form_sample_weekly)
+        report_saver = ReportFormSaver(self.report_form_sample_weekly)
         report_saver.extract_report_data_into_airflow(report_exists=False)
         report_airflow_variable = Variable.get(
             "lumen_report_" + self.report_form_sample_weekly.title.data,
@@ -261,7 +261,7 @@ class ReportSaveTest(unittest.TestCase):
         """
         duplicate_report = copy.deepcopy(self.report_form_sample_duplicate)
         with self.assertRaises(Exception) as context:
-            report_saver = SaveReportForm(duplicate_report)
+            report_saver = ReportFormSaver(duplicate_report)
             report_saver.extract_report_data_into_airflow(report_exists=False)
 
             self.assertTrue(
@@ -278,7 +278,7 @@ class ReportSaveTest(unittest.TestCase):
             "lumen_report_" + self.report_form_sample_duplicate.title.data,
             deserialize_json=True,
         )
-        report_saver = SaveReportForm(updated_report)
+        report_saver = ReportFormSaver(updated_report)
         report_saver.extract_report_data_into_airflow(report_exists=True)
 
         self.assertEqual(

@@ -9,7 +9,7 @@ import datetime
 from lumen_plugin.report_repo import VariablesReportRepo
 
 
-class SaveReportForm:
+class ReportFormSaver:
     """
     A class for properly saving a report's form into an airflow variable.
     """
