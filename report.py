@@ -149,9 +149,11 @@ class Report:
     def is_paused(self):
         return models.DagModel.get_dagmodel(self.dag_id).is_paused
 
-    @is_paused.setter
-    def is_paused(self, val):
-        models.DagModel.get_dagmodel(self.dag_id).set_is_paused(val)
+    def activate_dag(self):
+        models.DagModel.get_dagmodel(self.dag_id).set_is_paused(False)
+
+    def deactivate_dag(self):
+        models.DagModel.get_dagmodel(self.dag_id).set_is_paused(True)
 
     def _trigger_dag(
         self,
@@ -190,6 +192,10 @@ class Report:
     def trigger_dag(self):
         """
         Triggers execution of DAG interpreted from the report's dag_id
+
+        _trigger_dag iterates through the class registry and looks
+        For any model that has dag_id as an attribute and deletes
+        all references to the specific dag_id
         """
         dag_model = DagModel.get_current(self.dag_id)
         if dag_model is None:
@@ -216,17 +222,12 @@ class Report:
         if dag is None:
             raise DagNotFound("Dag id {} not found".format(self.dag_id))
 
-        # Scheduler removes DAGs without files from serialized_dag table
-        # every dag_dir_list_interval. There may be a lag,
         # so explicitly removes serialized DAG here.
         if STORE_SERIALIZED_DAGS and SerializedDagModel.has_dag(
             dag_id=self.dag_id, session=session
         ):
             SerializedDagModel.remove_dag(dag_id=self.dag_id, session=session)
 
-        # This iterates through the class registry and looks
-        # For any model that has dag_id as an attribute and deletes
-        # all references to the specific dag_id
         # noinspection PyUnresolvedReferences,PyProtectedMember
         for model in models.base.Base._decl_class_registry.values():
             if hasattr(model, "dag_id"):
