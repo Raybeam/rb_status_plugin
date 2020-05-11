@@ -130,7 +130,7 @@ class LumenReportsView(AppBuilderBaseView):
         report_id = r_args.get('report_id')
 
         # We want to reverse the paused value on the dag whenenever
-        # the toggle is pressed. 
+        # the toggle is pressed.
         next_paused_val = False if r_args.get('is_paused') == 'true' else True
         r = Report(report_id)
         r.is_paused = next_paused_val

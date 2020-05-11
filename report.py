@@ -3,12 +3,13 @@ from airflow.utils.db import provide_session
 from airflow.configuration import conf
 from airflow.exceptions import DagNotFound, DagRunAlreadyExists
 from airflow import models
-from airflow.models import DagBag, DagModel, DagRun, TaskFail
+from airflow.models import DagBag, DagModel, DagRun, Variable
 from airflow.utils import timezone
 from airflow.utils.state import State
 from sqlalchemy import or_
 from airflow.models.serialized_dag import SerializedDagModel
 from airflow.settings import STORE_SERIALIZED_DAGS
+
 
 class Report:
     """
@@ -189,7 +190,7 @@ class Report:
             store_serialized_dags=conf.getboolean('core', 'store_serialized_dags')
         )
         dag_run = DagRun()
-        _trigger_dag(
+        this._trigger_dag(
             dag_id=self.dag_id,
             dag_bag=dagbag,
             dag_run=dag_run
@@ -212,7 +213,6 @@ class Report:
             dag_id=self.dag_id, session=session
         ):
             SerializedDagModel.remove_dag(dag_id=self.dag_id, session=session)
-
 
         # This iterates through the class registry and looks
         # For any model that has dag_id as an attribute and deletes
@@ -241,7 +241,7 @@ class Report:
     @provide_session
     def delete_report_variable(self, report_prefix, session=None):
         """
-        Deletes dag with specific dag id 
+        Deletes dag with specific dag id
         :param report_id: dag_id
         """
         session.query(Variable).filter(
