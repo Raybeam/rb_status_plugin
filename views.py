@@ -24,7 +24,7 @@ from wtforms_components import TimeField
 
 from lumen_plugin.report_repo import VariablesReportRepo
 from lumen_plugin.report_instance import ReportInstance
-from lumen_plugin.helpers.report_save_helpers import SaveReportForm
+from lumen_plugin.helpers.save_report_form import SaveReportForm
 from lumen_plugin.helpers.list_tasks_helper import get_all_test_choices
 import logging
 
