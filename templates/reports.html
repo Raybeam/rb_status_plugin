@@ -148,12 +148,12 @@
     $.each($("[id^=toggle]"), function(i, v) {
       var $input = $(v);
       var report_id = $input.attr('report_id');
-      if ($input.prop('checked')) {
-        is_paused = 'true'
-      } else {
-        is_paused = 'false'
-      }
       $input.change(function() {
+        if ($input.prop('checked')) {
+          is_paused = 'true'
+        } else {
+          is_paused = 'false'
+        }
         var url = 'reports/paused?report_id=' + encodeURIComponent(report_id) + '&is_paused=' + is_paused;
         $.post(url).fail(function() {
           if (is_paused === 'true') {
