@@ -178,9 +178,8 @@ class Report:
         )
 
     def trigger_dag(self):
-        """Triggers execution of DAG specified by dag_id
-        :param report_id: report_id
-        :return: dag run triggered
+        """
+        Triggers execution of DAG interpreted from the report's dag_id
         """
         dag_model = DagModel.get_current(self.dag_id)
         if dag_model is None:
