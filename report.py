@@ -180,7 +180,7 @@ class Report:
         :param report_id: report_id
         :return: dag run triggered
         """
-        dag_model = DagModel.get_current(dag_id)
+        dag_model = DagModel.get_current(self.dag_id)
         if dag_model is None:
             raise DagNotFound("Dag id {} not found in DagModel".format(self.dag_id))
 
@@ -239,11 +239,11 @@ class Report:
         ).delete(synchronize_session='fetch')
 
     @provide_session
-    def delete_report_variable(self. session=None):
+    def delete_report_variable(self, report_prefix, session=None):
         """
         Deletes dag with specific dag id 
         :param report_id: dag_id
         """
-        variables = session.query(Variable).filter(
-            Variable.key == (VariablesReportRepo.report_prefix + self.name)
+        session.query(Variable).filter(
+            Variable.key == (report_prefix + self.name)
         ).delete(synchronize_session='fetch')

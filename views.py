@@ -120,7 +120,7 @@ class LumenReportsView(AppBuilderBaseView):
     @expose("/reports/<string:report_id>/delete/", methods=["POST"])
     def delete(self, report_id):
         r = Report(report_id)
-        r.delete_report_variable()
+        VariablesReportRepo.delete_report_variable()
         r.delete_dag()
         return redirect(url_for("LumenReportsView.list"))
 
