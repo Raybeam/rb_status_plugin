@@ -66,7 +66,7 @@ def check_empty(report_dict, field_name):
         if field_name == "schedule":
             return True
 
-    logging.exception("Error: %s can not be empty." % (field_name))
+    logging.info("Error: %s can not be empty." % (field_name))
     flash("Error: %s can not be empty." % (field_name))
     return False
 
@@ -78,7 +78,7 @@ def format_emails(form):
     # Add owner's email to subscribers; dedupe, order, & format subscribers
     emails = form.owner_email.data.split(",")
     if len(emails) != 1:
-        logging.exception("Error: Exactly one email is required for Owner Email field.")
+        logging.info("Error: Exactly one email is required for Owner Email field.")
         flash("Error: Exactly one email is required for Owner Email field.")
 
     emails += form.subscribers.data.split(",")
@@ -99,7 +99,7 @@ def validate_email(email):
     email_format = re.compile(r"^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$")
 
     if not re.search(email_format, email):
-        logging.exception(
+        logging.info(
             "Email (%s) is not valid. Please enter a valid email address." % email
         )
         flash("Email (%s) is not valid. Please enter a valid email address." % email)
@@ -111,20 +111,16 @@ def convert_schedule_to_cron_expression(report_dict, form):
     saves attributes to report_dict
     """
     # add time of day
-    try:
-        time_of_day = form.schedule_time.data.strftime("%H:%M")
-        report_dict["schedule_time"] = time_of_day
-        hour, minute = time_of_day.split(":")
-        cron_expression = "%s %s * * " % (minute, hour)
+    time_of_day = form.schedule_time.data.strftime("%H:%M")
+    report_dict["schedule_time"] = time_of_day
+    hour, minute = time_of_day.split(":")
+    cron_expression = "%s %s * * " % (minute, hour)
 
-        # add day of week if applicable
-        if form.schedule_type.data == "weekly":
-            cron_expression += form.schedule_week_day.data
-            report_dict["schedule_week_day"] = form.schedule_week_day.data
-        else:
-            cron_expression += "*"
+    # add day of week if applicable
+    if form.schedule_type.data == "weekly":
+        cron_expression += form.schedule_week_day.data
+        report_dict["schedule_week_day"] = form.schedule_week_day.data
+    else:
+        cron_expression += "*"
 
-        report_dict["schedule"] = cron_expression
-    except AttributeError:
-        logging.exception("Error: Schedule's time is invalid.")
-        flash("Error: Schedule's time is invalid.")
+    report_dict["schedule"] = cron_expression
