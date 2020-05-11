@@ -73,9 +73,9 @@ class SaveReportForm:
             if report_exists:
                 self.report_dict["report_id"] = self.form.report_id.data
             else:
-                self.report_dict["report_id"] = "%s%s" % (
-                    VariablesReportRepo.report_prefix,
-                    self.report_dict["report_title"],
+                self.report_dict["report_id"] = (
+                    f"{VariablesReportRepo.report_prefix}"
+                    f"""{self.report_dict["report_title"]}"""
                 )
                 if not self.check_unique_field(report_exists, "report_id"):
                     return False
@@ -133,8 +133,8 @@ class SaveReportForm:
             if field_name == "schedule":
                 return True
 
-        logging.info("Error: %s can not be empty." % (field_name))
-        flash("Error: %s can not be empty." % (field_name))
+        logging.info(f"Error: {field_name} can not be empty.")
+        flash(f"Error: {field_name} can not be empty.")
         return False
 
     def check_empty_fields(self):
@@ -190,10 +190,10 @@ class SaveReportForm:
 
         if not re.search(email_format, email):
             logging.info(
-                "Email (%s) is not valid. Please enter a valid email address." % email
+                f"Email ({email}) is not valid. Please enter a valid email address."
             )
             flash(
-                "Email (%s) is not valid. Please enter a valid email address." % email
+                f"Email ({email}) is not valid. Please enter a valid email address."
             )
             return False
 
@@ -208,7 +208,7 @@ class SaveReportForm:
             time_of_day = self.form.schedule_time.data.strftime("%H:%M")
             self.report_dict["schedule_time"] = time_of_day
             hour, minute = time_of_day.split(":")
-            cron_expression = "%s %s * * " % (minute, hour)
+            cron_expression = f"{minute} {hour} * * "
 
             # add day of week if applicable
             if self.form.schedule_type.data == "weekly":

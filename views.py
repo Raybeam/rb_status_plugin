@@ -245,7 +245,7 @@ class EditReportFormView(SimpleFormView):
                 widgets=widgets,
                 appbuilder=self.appbuilder,
             )
-        flash("report title (%s) not found." % (report_title), "error")
+        flash(f"report title ({report_title}) not found.", "error")
         return redirect(url_for("LumenReportsView.list", filename="reports"))
 
     def form_get(self, form, report_title):
