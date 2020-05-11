@@ -1,7 +1,6 @@
 import json
 import re
 import abc
-
 from airflow.utils.db import provide_session
 from airflow.models import Variable
 from lumen_plugin.report import Report
