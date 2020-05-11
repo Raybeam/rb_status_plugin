@@ -31,6 +31,8 @@ def extract_report_data_into_airflow(form):
     report_dict["schedule_type"] = form.schedule_type.data
     if report_dict["schedule_type"] == "custom":
         report_dict["schedule"] = form.schedule_custom.data
+    elif report_dict["schedule_type"] == "manual":
+        report_dict["schedule"] = None
     else:
         report_dict["schedule_time"] = None
         convert_schedule_to_cron_expression(report_dict, form)
@@ -50,6 +52,7 @@ def extract_report_data_into_airflow(form):
         Variable.set(key=report_name, value=report_json)
     return form_completed
 
+
 def check_empty(report_dict, field_name):
     """
     Check for empty data in field
@@ -57,11 +60,16 @@ def check_empty(report_dict, field_name):
     """
     if report_dict[field_name]:
         return True
-    else:
-        logging.exception("Error: %s can not be empty." % (field_name))
-        logging.error("Error: %s can not be empty." % (field_name))
-        flash("Error: %s can not be empty." % (field_name))
-        return False
+
+    # manual schedules will store a null schedule field
+    if report_dict["schedule_type"] == "manual":
+        if field_name == "schedule":
+            return True
+
+    logging.info("Error: %s can not be empty." % (field_name))
+    flash("Error: %s can not be empty." % (field_name))
+    return False
+
 
 def format_emails(form):
     """
@@ -71,8 +79,7 @@ def format_emails(form):
     # Add owner's email to subscribers; dedupe, order, & format subscribers
     emails = form.owner_email.data.split(",")
     if len(emails) != 1:
-        logging.exception("Error: Exactly one email is required for Owner Email field.")
-        logging.error("Error: Exactly one email is required for Owner Email field.")
+        logging.info("Error: Exactly one email is required for Owner Email field.")
         flash("Error: Exactly one email is required for Owner Email field.")
 
     emails += form.subscribers.data.split(",")
@@ -93,13 +100,10 @@ def validate_email(email):
     email_format = re.compile(r"^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$")
 
     if not re.search(email_format, email):
-        logging.exception(
-            "Email (%s) is not valid. Please enter a valid email address." % email
+        logging.info(
+            f"Email ({email}) is not valid. Please enter a valid email address."
         )
-        logging.error(
-            "Email (%s) is not valid. Please enter a valid email address." % email
-        )
-        flash("Email (%s) is not valid. Please enter a valid email address." % email)
+        flash(f"Email ({email}) is not valid. Please enter a valid email address.")
 
 
 def convert_schedule_to_cron_expression(report_dict, form):
@@ -108,21 +112,16 @@ def convert_schedule_to_cron_expression(report_dict, form):
     saves attributes to report_dict
     """
     # add time of day
-    try:
-        time_of_day = form.schedule_time.data.strftime("%H:%M")
-        report_dict["schedule_time"] = time_of_day
-        hour, minute = time_of_day.split(":")
-        cron_expression = "%s %s * * " % (minute, hour)
+    time_of_day = form.schedule_time.data.strftime("%H:%M")
+    report_dict["schedule_time"] = time_of_day
+    hour, minute = time_of_day.split(":")
+    cron_expression = f"{minute} {hour} * * "
 
-        # add day of week if applicable
-        if form.schedule_type.data == "weekly":
-            cron_expression += form.schedule_week_day.data
-            report_dict["schedule_week_day"] = form.schedule_week_day.data
-        else:
-            cron_expression += "*"
+    # add day of week if applicable
+    if form.schedule_type.data == "weekly":
+        cron_expression += form.schedule_week_day.data
+        report_dict["schedule_week_day"] = form.schedule_week_day.data
+    else:
+        cron_expression += "*"
 
-        report_dict["schedule"] = cron_expression
-    except AttributeError:
-        logging.exception("Error: Schedule's time is invalid.")
-        logging.error("Error: Schedule's time is invalid.")
-        flash("Error: Schedule's time is invalid.")
+    report_dict["schedule"] = cron_expression
