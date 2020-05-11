@@ -242,8 +242,7 @@ class Report:
     @provide_session
     def delete_report_variable(self, report_prefix, session=None):
         """
-        Deletes dag with specific dag id
-        :param report_id: dag_id
+        Deletes variable of the report
         """
         session.query(Variable).filter(
             Variable.key == (report_prefix + self.name)
