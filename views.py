@@ -10,8 +10,6 @@ from flask_appbuilder.fieldwidgets import (
 )
 from flask_appbuilder.security.decorators import has_access
 
-import datetime
-
 from wtforms import (
     StringField,
     TextAreaField,
@@ -255,25 +253,7 @@ class EditReportFormView(SimpleFormView):
                 requested_report = report
 
         if requested_report:
-            form.report_id.data = requested_report.report_id
-            form.title.data = requested_report.report_title
-            form.description.data = requested_report.description
-            form.owner_name.data = requested_report.owner_name
-            form.owner_email.data = requested_report.owner_email
-            form.subscribers.data = ", ".join(requested_report.subscribers)
-            form.schedule_type.data = requested_report.schedule_type
-            if form.schedule_type.data == "custom":
-                form.schedule_custom.data = requested_report.schedule
-            if form.schedule_type.data == "daily":
-                form.schedule_time.data = datetime.datetime.strptime(
-                    requested_report.schedule_time, "%H:%M"
-                )
-            if form.schedule_type.data == "weekly":
-                form.schedule_time.data = datetime.datetime.strptime(
-                    requested_report.schedule_time, "%H:%M"
-                )
-                form.schedule_week_day.data = requested_report.schedule_week_day
-            form.tests.data = requested_report.tests
+            form = SaveReportForm.load_form(form, requested_report)
         return form
 
     @expose("/<string:report_title>/edit", methods=["POST"])

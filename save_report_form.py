@@ -4,6 +4,7 @@ import logging
 import re
 from flask import flash
 from inflection import parameterize
+import datetime
 
 from lumen_plugin.report_repo import VariablesReportRepo
 
@@ -222,3 +223,37 @@ class SaveReportForm:
             logging.exception("Error: Schedule's time is invalid.")
             logging.error("Error: Schedule's time is invalid.")
             flash("Error: Schedule's time is invalid.")
+
+    @staticmethod
+    def load_form(form, requested_report):
+        """
+        Update form using a requested report's configuation.
+
+        :param form: form to populate UI
+        :type form: ReportForm
+
+        :param requested_report: contains a Lumen Report configuration.
+        :type requested_report: Report
+
+        return form
+        """
+        form.report_id.data = requested_report.report_id
+        form.title.data = requested_report.report_title
+        form.description.data = requested_report.description
+        form.owner_name.data = requested_report.owner_name
+        form.owner_email.data = requested_report.owner_email
+        form.subscribers.data = ", ".join(requested_report.subscribers)
+        form.schedule_type.data = requested_report.schedule_type
+        if form.schedule_type.data == "custom":
+            form.schedule_custom.data = requested_report.schedule
+        if form.schedule_type.data == "daily":
+            form.schedule_time.data = datetime.datetime.strptime(
+                requested_report.schedule_time, "%H:%M"
+            )
+        if form.schedule_type.data == "weekly":
+            form.schedule_time.data = datetime.datetime.strptime(
+                requested_report.schedule_time, "%H:%M"
+            )
+            form.schedule_week_day.data = requested_report.schedule_week_day
+        form.tests.data = requested_report.tests
+        return form
