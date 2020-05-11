@@ -190,7 +190,7 @@ class Report:
             store_serialized_dags=conf.getboolean('core', 'store_serialized_dags')
         )
         dag_run = DagRun()
-        this._trigger_dag(
+        self._trigger_dag(
             dag_id=self.dag_id,
             dag_bag=dagbag,
             dag_run=dag_run
