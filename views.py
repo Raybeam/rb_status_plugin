@@ -115,6 +115,7 @@ class LumenReportsView(AppBuilderBaseView):
     def trigger(self, report_id):
         r = Report(report_id)
         r.trigger_dag()
+        flash(f"Triggered report: {report_id}", "info")
         return redirect(url_for("LumenReportsView.list"))
 
     @expose("/reports/<string:report_id>/delete/", methods=["POST"])
@@ -122,6 +123,7 @@ class LumenReportsView(AppBuilderBaseView):
         r = Report(report_id)
         r.delete_report_variable(VariablesReportRepo.report_prefix)
         r.delete_dag()
+        flash(f"Deleted report: {report_id}", "info")
         return redirect(url_for("LumenReportsView.list"))
 
     @expose("/reports/paused", methods=["POST"])
