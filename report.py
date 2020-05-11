@@ -175,7 +175,7 @@ class Report:
             external_trigger=True,
         )
 
-    def trigger_dag():
+    def trigger_dag(self):
         """Triggers execution of DAG specified by dag_id
         :param report_id: report_id
         :return: dag run triggered
@@ -197,6 +197,7 @@ class Report:
 
     @provide_session
     def delete_dag(
+        self,
         keep_records_in_log: bool = True,
         session=None
     ):
@@ -238,7 +239,7 @@ class Report:
         ).delete(synchronize_session='fetch')
 
     @provide_session
-    def delete_report_variable(session=None):
+    def delete_report_variable(self. session=None):
         """
         Deletes dag with specific dag id 
         :param report_id: dag_id
