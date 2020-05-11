@@ -128,8 +128,7 @@ class LumenReportsView(AppBuilderBaseView):
     def pause(self):
         r_args = request.args
         report_id = r_args.get('report_id')
-        paused = True if r_args.get('is_paused') == 'false' else False
-
+        paused = False if r_args.get('is_paused') == 'true' else True
         r = Report(report_id)
         r.is_paused = paused
         return "OK"

@@ -140,7 +140,7 @@ class Report:
 
     @is_paused.setter
     def is_paused(self, val):
-        return models.DagModel.get_dagmodel(self.dag_id).set_is_paused(val)
+        models.DagModel.get_dagmodel(self.dag_id).set_is_paused(val)
 
     def _trigger_dag(
         dag_id: str,
@@ -194,12 +194,6 @@ class Report:
             dag_bag=dagbag,
             dag_run=dag_run
         )
-
-    def pause_dag():
-        is_paused = True if self.is_paused == 'false' else False
-        models.DagModel.get_dagmodel(self.dag_id).set_is_paused(
-            is_paused=is_paused)
-        return "OK"
 
     @provide_session
     def delete_dag(
