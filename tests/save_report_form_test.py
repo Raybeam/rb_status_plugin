@@ -1,5 +1,5 @@
 from airflow.models import Variable
-from lumen_plugin.helpers.save_report_form import SaveReportForm
+from lumen_plugin.save_report_form import SaveReportForm
 import datetime
 import copy
 
