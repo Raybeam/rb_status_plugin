@@ -182,7 +182,7 @@ class Report:
             external_trigger=True,
         )
 
-    def trigger_dag():
+    def trigger_dag(self):
         """
         Triggers execution of DAG interpreted from the report's dag_id
 
