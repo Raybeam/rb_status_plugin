@@ -161,13 +161,6 @@ class Report:
         dag_bag: DagBag,
         dag_run: DagRun
     ):
-        """
-        Triggers DAG run.
-        :param dag_id: DAG ID
-        :param dagbag: dagbag
-        :param dagrun: empty dag run to be created
-        :return: triggered dag
-        """
         dag = dag_bag.get_dag(dag_id)  # prefetch dag if it is stored serialized
 
         if dag_id not in dag_bag.dags:
@@ -189,13 +182,17 @@ class Report:
             external_trigger=True,
         )
 
-    def trigger_dag(self):
+    def trigger_dag():
         """
         Triggers execution of DAG interpreted from the report's dag_id
 
         _trigger_dag iterates through the class registry and looks
         For any model that has dag_id as an attribute and deletes
         all references to the specific dag_id
+
+        :param dag_id: DAG ID
+        :param dagbag: dagbag
+        :param dagrun: empty dag run to be created
         """
         dag_model = DagModel.get_current(self.dag_id)
         if dag_model is None:
