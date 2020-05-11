@@ -70,6 +70,7 @@ def check_empty(report_dict, field_name):
     flash("Error: %s can not be empty." % (field_name))
     return False
 
+
 def format_emails(form):
     """
     Parse, transform, and vaildate emails.
@@ -100,9 +101,9 @@ def validate_email(email):
 
     if not re.search(email_format, email):
         logging.info(
-            "Email (%s) is not valid. Please enter a valid email address." % email
+            f"Email ({email}) is not valid. Please enter a valid email address."
         )
-        flash("Email (%s) is not valid. Please enter a valid email address." % email)
+        flash(f"Email ({email}) is not valid. Please enter a valid email address.")
 
 
 def convert_schedule_to_cron_expression(report_dict, form):
@@ -114,7 +115,7 @@ def convert_schedule_to_cron_expression(report_dict, form):
     time_of_day = form.schedule_time.data.strftime("%H:%M")
     report_dict["schedule_time"] = time_of_day
     hour, minute = time_of_day.split(":")
-    cron_expression = "%s %s * * " % (minute, hour)
+    cron_expression = f"{minute} {hour} * * "
 
     # add day of week if applicable
     if form.schedule_type.data == "weekly":

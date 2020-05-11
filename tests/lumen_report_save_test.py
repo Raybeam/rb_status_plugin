@@ -197,8 +197,7 @@ class ReportSaveTest(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             validate_email(invalid_email)
             self.assertTrue(
-                "Email (%s) is not valid. Please enter a valid email address."
-                % (invalid_email)
+                f"Email ({invalid_email}) is not valid. Please enter a valid email address."
                 in str(context.exception)
             )
 

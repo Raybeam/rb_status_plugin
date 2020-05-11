@@ -114,7 +114,7 @@ class Report:
     @property
     def dag_id(self):
         """ Returns a DAG ID based on the name of this report """
-        return inflection.underscore(inflection.parameterize("lumen %s" % self.name))
+        return inflection.underscore(inflection.parameterize(f"lumen {self.name}"))
 
     @property
     def tests(self):
