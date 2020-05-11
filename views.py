@@ -22,7 +22,7 @@ from wtforms_components import TimeField
 
 from lumen_plugin.report_repo import VariablesReportRepo
 from lumen_plugin.report_instance import ReportInstance
-from lumen_plugin.save_report_form import ReportFormSaver
+from lumen_plugin.report_form_saver import ReportFormSaver
 from lumen_plugin.helpers.list_tasks_helper import get_all_test_choices
 import logging
 
