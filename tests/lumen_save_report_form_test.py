@@ -271,7 +271,7 @@ class ReportSaveTest(unittest.TestCase):
 
     def test_editing_report(self):
         """
-        Test that report can be editted.
+        Test that report can be edited.
         """
         updated_report = copy.deepcopy(self.report_form_sample_duplicate)
         report_airflow_variable = Variable.get(
