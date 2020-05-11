@@ -13,6 +13,7 @@ from flask_appbuilder.security.decorators import has_access
 import datetime
 
 from wtforms import StringField, TextAreaField, SelectMultipleField, SelectField
+from wtforms.validators import DataRequired, Email
 from wtforms_components import TimeField
 
 from lumen_plugin.report import Report
@@ -137,10 +138,28 @@ class LumenReportsView(AppBuilderBaseView):
         return "OK"
 
 class ReportForm(DynamicForm):
-    title = StringField(("Title"), widget=BS3TextFieldWidget())
-    description = TextAreaField(("Description"), widget=BS3TextAreaFieldWidget())
-    owner_name = StringField(("Owner Name"), widget=BS3TextFieldWidget())
-    owner_email = StringField(("Owner Email"), widget=BS3TextFieldWidget())
+    title = StringField(
+        ("Title"),
+        description="Title will be used as report's DAG name",
+        widget=BS3TextFieldWidget(),
+        validators=[DataRequired()]
+    )
+    description = TextAreaField(
+        ("Description"),
+        widget=BS3TextAreaFieldWidget(),
+        validators=[DataRequired()]
+    )
+    owner_name = StringField(
+        ("Owner Name"),
+        widget=BS3TextFieldWidget(),
+        validators=[DataRequired()]
+    )
+    owner_email = StringField(
+        ("Owner Email"),
+        description="Owner email will be added to the subscribers list",
+        widget=BS3TextFieldWidget(),
+        validators=[DataRequired(), Email()]
+    )
     subscribers = StringField(
         ("Subscribers"),
         description=(
@@ -157,14 +176,25 @@ class ReportForm(DynamicForm):
         ),
         choices=get_all_test_choices(),
         widget=Select2ManyWidget(),
+        validators=[DataRequired()]
     )
     schedule_type = SelectField(
         ("Schedule"),
         description=("Select how you want to schedule the report"),
-        choices=[("daily", "Daily"), ("weekly", "Weekly"), ("custom", "Custom (Cron)")],
+        choices=[
+            ('manual', 'None (Manual triggering)'),
+            ("daily", "Daily"),
+            ("weekly", "Weekly"),
+            ("custom", "Custom (Cron)")
+        ],
         widget=Select2Widget(),
+        validators=[DataRequired()]
     )
-    schedule_time = TimeField("Time", render_kw={"class": "form-control"})
+    schedule_time = TimeField(
+        "Time",
+        render_kw={"class": "form-control"},
+        validators=[DataRequired()]
+    )
     schedule_week_day = SelectField(
         ("Day of week"),
         description=("Select day of a week you want to schedule the report"),
@@ -178,8 +208,14 @@ class ReportForm(DynamicForm):
             ("6", "Saturday"),
         ],
         widget=Select2Widget(),
+        validators=[DataRequired()]
     )
-    schedule_custom = StringField(("Cron schedule"), widget=BS3TextFieldWidget())
+    schedule_custom = StringField(
+        ("Cron schedule"),
+        description="Enter cron schedule (e.g. \"0 0 * * *\")",
+        widget=BS3TextFieldWidget(),
+        validators=[DataRequired()]
+    )
 
 
 class NewReportFormView(SimpleFormView):

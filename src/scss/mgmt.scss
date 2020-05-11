@@ -8,3 +8,12 @@
     margin-top: 0;
   }
 }
+
+.select2-container + select {
+  display: block !important;
+  height: 0 !important;
+  padding: 0;
+  -webkit-appearance: none;
+  appearance: none;
+  opacity: 0;
+}
