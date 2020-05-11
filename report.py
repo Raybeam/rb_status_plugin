@@ -144,6 +144,7 @@ class Report:
         models.DagModel.get_dagmodel(self.dag_id).set_is_paused(val)
 
     def _trigger_dag(
+        self,
         dag_id: str,
         dag_bag: DagBag,
         dag_run: DagRun
