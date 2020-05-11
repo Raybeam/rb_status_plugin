@@ -236,14 +236,17 @@ class EditReportFormView(SimpleFormView):
         form = self.form.refresh()
 
         form = self.form_get(form, report_title)
-        widgets = self._get_edit_widget(form=form)
-        self.update_redirect()
-        return self.render_template(
-            self.form_template,
-            title=self.form_title,
-            widgets=widgets,
-            appbuilder=self.appbuilder,
-        )
+        if form:
+            widgets = self._get_edit_widget(form=form)
+            self.update_redirect()
+            return self.render_template(
+                self.form_template,
+                title=self.form_title,
+                widgets=widgets,
+                appbuilder=self.appbuilder,
+            )
+        flash("report title (%s) not found." % (report_title), "error")
+        return redirect(url_for("LumenReportsView.list", filename="reports"))
 
     def form_get(self, form, report_title):
         # !get report by report_title and prefill form with its values
@@ -254,7 +257,8 @@ class EditReportFormView(SimpleFormView):
 
         if requested_report:
             form = SaveReportForm.load_form(form, requested_report)
-        return form
+            return form
+        return None
 
     @expose("/<string:report_title>/edit", methods=["POST"])
     @has_access

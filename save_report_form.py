@@ -133,7 +133,7 @@ class SaveReportForm:
             if field_name == "schedule":
                 return True
 
-        logging.exception("Error: %s can not be empty." % (field_name))
+        logging.info("Error: %s can not be empty." % (field_name))
         flash("Error: %s can not be empty." % (field_name))
         return False
 
@@ -160,7 +160,7 @@ class SaveReportForm:
         # owner_email should be a single email
         emails = self.form.owner_email.data.split(",")
         if len(emails) != 1:
-            logging.exception("Error: Exactly one email is required for Owner Email field.")
+            logging.info("Error: Exactly one email is required for Owner Email field.")
             flash("Error: Exactly one email is required for Owner Email field.")
             self.emails_formatted = False
 
@@ -189,7 +189,7 @@ class SaveReportForm:
         email_format = re.compile(r"^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$")
 
         if not re.search(email_format, email):
-            logging.exception(
+            logging.info(
                 "Email (%s) is not valid. Please enter a valid email address." % email
             )
             flash(
@@ -219,7 +219,7 @@ class SaveReportForm:
 
             self.report_dict["schedule"] = cron_expression
         except AttributeError:
-            logging.exception("Error: Schedule's time is invalid.")
+            logging.info("Error: Schedule's time is invalid.")
             flash("Error: Schedule's time is invalid.")
 
     @staticmethod
