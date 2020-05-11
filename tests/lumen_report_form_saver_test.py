@@ -1,9 +1,7 @@
 from airflow.models import Variable
-from lumen_plugin.helpers.report_save_helpers import (
-    extract_report_data_into_airflow,
-    validate_email,
-)
+from lumen_plugin.report_form_saver import ReportFormSaver
 import datetime
+import copy
 
 import unittest
 
@@ -15,6 +13,9 @@ class AttributeDict(dict):
 
     __getattr__ = dict.__getitem__
     __setattr__ = dict.__setitem__
+
+    def __deepcopy__(self, memo):
+        return AttributeDict(copy.deepcopy(dict(self)))
 
 
 class ReportSaveTest(unittest.TestCase):
@@ -41,6 +42,29 @@ class ReportSaveTest(unittest.TestCase):
             ),
             "schedule_type": AttributeDict({"data": "custom"}),
             "schedule_custom": AttributeDict({"data": "* * * 1 *"}),
+        }
+    )
+
+    report_form_sample_duplicate = AttributeDict(
+        {
+            "title": AttributeDict({"data": "new test report title"}),
+            "description": AttributeDict({"data": "new test description"}),
+            "owner_name": AttributeDict({"data": "Jake Doe"}),
+            "owner_email": AttributeDict({"data": "jakedoe@raybeam.com"}),
+            "subscribers": AttributeDict(
+                {"data": "email1@raybeam.com,email2@raybeam.com"}
+            ),
+            "tests": AttributeDict(
+                {
+                    "data": [
+                        "example_dag.python_print_date_0",
+                        "example_dag.python_random_0",
+                    ]
+                }
+            ),
+            "schedule_type": AttributeDict({"data": "custom"}),
+            "schedule_custom": AttributeDict({"data": "* * * 1 1"}),
+            "report_id": AttributeDict({"data": "lumen_report_new test report title"}),
         }
     )
 
@@ -103,7 +127,8 @@ class ReportSaveTest(unittest.TestCase):
         Extract report_form_sample into airflow variable.
         """
         print("Creating airflow variable...")
-        extract_report_data_into_airflow(self.report_form_sample)
+        report_saver = ReportFormSaver(self.report_form_sample)
+        report_saver.extract_report_data_into_airflow(report_exists=False)
 
     @classmethod
     def tearDownClass(self):
@@ -187,7 +212,9 @@ class ReportSaveTest(unittest.TestCase):
         Test that no errors are thrown with a correct email.
         """
         valid_email = "jdoe@raybeam.com"
-        self.assertEqual(None, validate_email(valid_email))
+        self.assertEqual(
+            None, ReportFormSaver.validate_email(ReportFormSaver, valid_email)
+        )
 
     def test_invalid_email(self):
         """
@@ -195,7 +222,7 @@ class ReportSaveTest(unittest.TestCase):
         """
         invalid_email = "not an email"
         with self.assertRaises(Exception) as context:
-            validate_email(invalid_email)
+            ReportFormSaver.validate_email(ReportFormSaver, invalid_email)
             self.assertTrue(
                 (f"Email ({invalid_email}) is not valid."
                  "Please enter a valid email address.")
@@ -206,23 +233,57 @@ class ReportSaveTest(unittest.TestCase):
         """
         Test that daily schedule is converted properly into cron expression.
         """
-        extract_report_data_into_airflow(self.report_form_sample_daily)
+        report_saver = ReportFormSaver(self.report_form_sample_daily)
+        report_saver.extract_report_data_into_airflow(report_exists=False)
         report_airflow_variable = Variable.get(
             "lumen_report_" + self.report_form_sample_daily.title.data,
             deserialize_json=True,
         )
+        Variable.delete("lumen_report_" + self.report_form_sample_daily.title.data)
         self.assertEqual("00 05 * * *", report_airflow_variable["schedule"])
 
     def test_weekly_schedule_conversion(self):
         """
         Test that weekly schedule is converted properly into cron expression.
         """
-        extract_report_data_into_airflow(self.report_form_sample_weekly)
+        report_saver = ReportFormSaver(self.report_form_sample_weekly)
+        report_saver.extract_report_data_into_airflow(report_exists=False)
         report_airflow_variable = Variable.get(
             "lumen_report_" + self.report_form_sample_weekly.title.data,
             deserialize_json=True,
         )
+        Variable.delete("lumen_report_" + self.report_form_sample_weekly.title.data)
         self.assertEqual("30 03 * * 0", report_airflow_variable["schedule"])
+
+    def test_duplicate_report(self):
+        """
+        Test that two reports can't be created with same name.
+        """
+        duplicate_report = copy.deepcopy(self.report_form_sample_duplicate)
+        with self.assertRaises(Exception) as context:
+            report_saver = ReportFormSaver(duplicate_report)
+            report_saver.extract_report_data_into_airflow(report_exists=False)
+
+            self.assertTrue(
+                "Error: report_id (lumen_report_test report title) already taken."
+                in str(context.exception)
+            )
+
+    def test_editing_report(self):
+        """
+        Test that report can be edited.
+        """
+        updated_report = copy.deepcopy(self.report_form_sample_duplicate)
+        report_airflow_variable = Variable.get(
+            "lumen_report_" + self.report_form_sample_duplicate.title.data,
+            deserialize_json=True,
+        )
+        report_saver = ReportFormSaver(updated_report)
+        report_saver.extract_report_data_into_airflow(report_exists=True)
+
+        self.assertEqual(
+            updated_report.schedule_custom.data, report_airflow_variable["schedule"]
+        )
 
 
 if __name__ == "__main__":

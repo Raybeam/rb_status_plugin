@@ -9,6 +9,7 @@ class Report:
 
     def __init__(self, name):
         self.name = name
+        self.__report_id = None
         self.__report_title = None
         self.__report_title_url = None
         self.__description = None
@@ -29,6 +30,15 @@ class Report:
     @report_title.setter
     def report_title(self, val):
         self.__report_title = val
+
+    @property
+    def report_id(self):
+        """ Unique Id of the report """
+        return self.__report_id
+
+    @report_id.setter
+    def report_id(self, val):
+        self.__report_id = val
 
     @property
     def report_title_url(self):
