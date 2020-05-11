@@ -69,7 +69,7 @@ class SaveReportForm:
         Return boolean on whether report is unique.
         """
 
-        if self.check_empty_fields():
+        if self.check_empty_fields() and self.emails_formatted:
             if report_exists:
                 self.report_dict["report_id"] = self.form.report_id.data
             else:
@@ -160,6 +160,7 @@ class SaveReportForm:
         Parse, transform, and vaildate emails.
         """
 
+        self.emails_formatted = True
         # owner_email should be a single email
         emails = self.form.owner_email.data.split(",")
         if len(emails) != 1:
@@ -168,14 +169,18 @@ class SaveReportForm:
             )
             logging.error("Error: Exactly one email is required for Owner Email field.")
             flash("Error: Exactly one email is required for Owner Email field.")
+            self.emails_formatted = False
 
         # Add owner's email to subscribers; dedupe, order, & format subscribers
         emails += self.form.subscribers.data.split(",")
         emails = list(set([email.replace(" ", "") for email in emails]))
         emails = [email for email in emails if email]
         emails.sort()
-        [self.validate_email(email) for email in emails]
-        self.form.subscribers.data = emails
+        if False in [self.validate_email(email) for email in emails]:
+            self.emails_formatted = False
+        # add updated list to subscribers, only if valid
+        if self.emails_formatted:
+            self.form.subscribers.data = emails
 
     def validate_email(self, email):
         """
@@ -183,6 +188,8 @@ class SaveReportForm:
 
         :param email: an email address
         :type email: String
+
+        Return boolean on whether email is valid.
         """
 
         email_format = re.compile(r"^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$")
@@ -197,6 +204,7 @@ class SaveReportForm:
             flash(
                 "Email (%s) is not valid. Please enter a valid email address." % email
             )
+            return False
 
     def convert_schedule_to_cron_expression(self):
         """
