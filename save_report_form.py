@@ -104,10 +104,6 @@ class SaveReportForm:
 
             # alert user that field_name is being used by another report
             if str(getattr(report, field_name)) == self.report_dict[field_name]:
-                logging.exception(
-                    "Error: %s (%s) already taken."
-                    % (field_name, self.report_dict[field_name])
-                )
                 logging.error(
                     "Error: %s (%s) already taken."
                     % (field_name, self.report_dict[field_name])
@@ -137,7 +133,6 @@ class SaveReportForm:
             if field_name == "schedule":
                 return True
 
-        logging.exception("Error: %s can not be empty." % (field_name))
         logging.error("Error: %s can not be empty." % (field_name))
         flash("Error: %s can not be empty." % (field_name))
         return False
@@ -161,12 +156,10 @@ class SaveReportForm:
         """
 
         self.emails_formatted = True
+
         # owner_email should be a single email
         emails = self.form.owner_email.data.split(",")
         if len(emails) != 1:
-            logging.exception(
-                "Error: Exactly one email is required for Owner Email field."
-            )
             logging.error("Error: Exactly one email is required for Owner Email field.")
             flash("Error: Exactly one email is required for Owner Email field.")
             self.emails_formatted = False
@@ -178,6 +171,7 @@ class SaveReportForm:
         emails.sort()
         if False in [self.validate_email(email) for email in emails]:
             self.emails_formatted = False
+
         # add updated list to subscribers, only if valid
         if self.emails_formatted:
             self.form.subscribers.data = emails
@@ -195,9 +189,6 @@ class SaveReportForm:
         email_format = re.compile(r"^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$")
 
         if not re.search(email_format, email):
-            logging.exception(
-                "Email (%s) is not valid. Please enter a valid email address." % email
-            )
             logging.error(
                 "Email (%s) is not valid. Please enter a valid email address." % email
             )
@@ -228,7 +219,6 @@ class SaveReportForm:
 
             self.report_dict["schedule"] = cron_expression
         except AttributeError:
-            logging.exception("Error: Schedule's time is invalid.")
             logging.error("Error: Schedule's time is invalid.")
             flash("Error: Schedule's time is invalid.")
 
