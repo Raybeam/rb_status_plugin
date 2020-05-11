@@ -25,7 +25,8 @@ class VariablesReportRepoTest(unittest.TestCase):
                     "example_dag.python_random_0"
                 ],
                 "schedule_type": "custom",
-                "schedule": "* * * 1 *"
+                "schedule": "* * * 1 *",
+                "report_id": "lumen_report_my report title"
             }
             """
 
