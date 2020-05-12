@@ -82,7 +82,7 @@ Lumen - Airflow
               {{ report.owner_name }}
             {% endif %}
             {% if report.owner_email %}
-              / <a href="mailto:{{ report.owner_email}}">{{ report.owner_email }}</a>
+              <a href="mailto:{{ report.owner_email}}">{{ report.owner_email }}</a>
             {% endif %}
           </p>
           {% if report.description %}
