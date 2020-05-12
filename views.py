@@ -139,7 +139,7 @@ class LumenReportsView(AppBuilderBaseView):
         if r_args.get('is_paused') == 'true':
             r.activate_dag()
         else:
-            r.deactivate_dag()
+            r.pause()
         return "OK"
 
 class ReportForm(DynamicForm):

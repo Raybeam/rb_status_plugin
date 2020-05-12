@@ -152,7 +152,7 @@ class Report:
     def activate_dag(self):
         models.DagModel.get_dagmodel(self.dag_id).set_is_paused(False)
 
-    def deactivate_dag(self):
+    def pause(self):
         models.DagModel.get_dagmodel(self.dag_id).set_is_paused(True)
 
     def _trigger_dag(
@@ -196,7 +196,7 @@ class Report:
         """
         dag_model = DagModel.get_current(self.dag_id)
         if dag_model is None:
-            raise DagNotFound("Dag id {} not found in DagModel".format(self.dag_id))
+            raise DagNotFound(f"Dag id {self.dag_id} not found in DagModel")
 
         dagbag = DagBag(
             dag_folder=dag_model.fileloc,
@@ -217,7 +217,7 @@ class Report:
     ):
         dag = session.query(DagModel).filter(DagModel.dag_id == self.dag_id).first()
         if dag is None:
-            raise DagNotFound("Dag id {} not found".format(self.dag_id))
+            raise DagNotFound(f"Dag id {self.dag_id} not found")
 
         # so explicitly removes serialized DAG here.
         if STORE_SERIALIZED_DAGS and SerializedDagModel.has_dag(
