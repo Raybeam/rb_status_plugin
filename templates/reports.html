@@ -56,13 +56,13 @@
             <!-- Column 2: Turn report on/off -->
             <td>
               <input
-                id="toggle-{{ report.name }}"
+                id="toggle-{{report.name}}-{{report.is_passed}}"
                 report_id="{{ report.name }}"
                 type="checkbox"
                 data-toggle="toggle"
                 data-size="mini"
                 method="post"
-                {{ "checked" if not report.is_paused else "" }} 
+                {{ "checked" if report.is_paused == False else "" }} 
               />
             </td>
 
