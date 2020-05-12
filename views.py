@@ -146,7 +146,7 @@ class ReportForm(DynamicForm):
     report_id = HiddenField()
     title = StringField(
         ("Title"),
-        description="Title will be used as report's DAG name",
+        description="Title will be used as the report's name",
         widget=BS3TextFieldWidget(),
         validators=[DataRequired()],
     )
