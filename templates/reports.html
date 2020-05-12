@@ -57,7 +57,7 @@
             <td>
               <input
                 id="toggle-{{ report.name }}"
-                report_id="{{ report.name }}"
+                report_name="{{ report.name }}"
                 type="checkbox"
                 data-toggle="toggle"
                 data-size="mini"
@@ -106,7 +106,7 @@
                 <!-- Trigger Report -->
               <form 
                 style="display:inline-block;" 
-                action="{{url_for('LumenReportsView.trigger', report_id=report.name)}}" 
+                action="{{url_for('LumenReportsView.trigger', report_name=report.name)}}" 
                 method="post"
               >
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
@@ -121,7 +121,7 @@
               </form>
               <form 
                 style="display:inline-block;" 
-                action="{{url_for('LumenReportsView.delete', report_id=report.name)}}"
+                action="{{url_for('LumenReportsView.delete', report_name=report.name)}}"
                 method="post"
               >
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
@@ -147,14 +147,14 @@
   <script>
     $.each($("[id^=toggle]"), function(i, v) {
       var $input = $(v);
-      var report_id = $input.attr('report_id');
+      var report_name = $input.attr('report_name');
       $input.change(function() {
         if ($input.prop('checked')) {
           is_paused = 'true'
         } else {
           is_paused = 'false'
         }
-        var url = 'reports/paused?report_id=' + encodeURIComponent(report_id) + '&is_paused=' + is_paused;
+        var url = 'reports/paused?report_name=' + encodeURIComponent(report_name) + '&is_paused=' + is_paused;
         $.post(url).fail(function() {
           if (is_paused === 'true') {
             $input.data('bs.toggle').off(true);

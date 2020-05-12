@@ -116,26 +116,26 @@ class LumenReportsView(AppBuilderBaseView):
     def list(self):
         return self.render_template("reports.html", content=VariablesReportRepo.list())
 
-    @expose("/reports/<string:report_id>/trigger/", methods=["POST"])
-    def trigger(self, report_id):
-        r = Report(report_id)
+    @expose("/reports/<string:report_name>/trigger/", methods=["POST"])
+    def trigger(self, report_name):
+        r = Report(report_name)
         r.trigger_dag()
-        flash(f"Triggered report: {report_id}", "info")
+        flash(f"Triggered report: {report_name}", "info")
         return redirect(url_for("LumenReportsView.list"))
 
-    @expose("/reports/<string:report_id>/delete/", methods=["POST"])
-    def delete(self, report_id):
-        r = Report(report_id)
+    @expose("/reports/<string:report_name>/delete/", methods=["POST"])
+    def delete(self, report_name):
+        r = Report(report_name)
         r.delete_report_variable(VariablesReportRepo.report_prefix)
         r.delete_dag()
-        flash(f"Deleted report: {report_id}", "info")
+        flash(f"Deleted report: {report_name}", "info")
         return redirect(url_for("LumenReportsView.list"))
 
     @expose("/reports/paused", methods=["POST"])
     def pause_dag(self):
         r_args = request.args
-        report_id = r_args.get('report_id')
-        r = Report(report_id)
+        report_name = r_args.get('report_name')
+        r = Report(report_name)
         if r_args.get('is_paused') == 'true':
             r.activate_dag()
         else:
