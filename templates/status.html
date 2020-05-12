@@ -85,9 +85,18 @@ Lumen - Airflow
               <a href="mailto:{{ report.owner_email}}">{{ report.owner_email }}</a>
             {% endif %}
           </p>
-          {% if report.description %}
-            <p>{{ report.description }}</p>
-          {% endif %}
+          <p>
+            <strong>Description:</strong>
+            {% if report.description %}
+              {{ report.description }}
+            {% endif %}
+          </p>
+          <p>
+            <strong>Subscribers:</strong>
+            {% if report.subscribers %}
+              {{ ", ".join(report.subscribers) }}
+            {% endif %}
+          </p>
           {% if report.passed == False %}
             <div class="report-errors-list">
               {% for error in report.errors %}

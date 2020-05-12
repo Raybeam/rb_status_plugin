@@ -87,7 +87,10 @@ class LumenStatusView(AppBuilderBaseView):
                     "passed": ri.passed,
                     "updated": ri.updated,
                     "title": report.report_title,
+                    "owner_name": report.owner_name,
                     "owner_email": report.owner_email,
+                    "description": report.description,
+                    "subscribers": report.subscribers,
                 }
 
                 r["errors"] = ri.errors()
