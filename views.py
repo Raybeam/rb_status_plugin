@@ -242,7 +242,7 @@ class NewReportFormView(SimpleFormView):
         # post process form
         if form_submitted:
             flash(self.message, "info")
-            return redirect(url_for("LumenReportsView.list", filename="reports"))
+            return redirect(url_for("LumenReportsView.list"))
         else:
             return self.this_form_get()
 
@@ -272,7 +272,7 @@ class EditReportFormView(SimpleFormView):
                 appbuilder=self.appbuilder,
             )
         flash(f"report title ({report_title}) not found.", "error")
-        return redirect(url_for("LumenReportsView.list", filename="reports"))
+        return redirect(url_for("LumenReportsView.list"))
 
     def form_get(self, form, report_title):
         # !get report by report_title and prefill form with its values
