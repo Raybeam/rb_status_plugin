@@ -55,7 +55,15 @@
 
             <!-- Column 2: Turn report on/off -->
             <td>
-              <input id="toggle-{{ report.report_title_url }}"  type="checkbox"  data-toggle="toggle" data-size="mini" method="post">
+              <input
+                id="toggle-{{ report.name }}"
+                report_id="{{ report.name }}"
+                type="checkbox"
+                data-toggle="toggle"
+                data-size="mini"
+                method="post"
+                {{ "checked" if not report.is_paused else "" }} 
+              />
             </td>
 
             <!-- Column 2: Name -->
@@ -96,25 +104,36 @@
             <!-- Column 7: Links -->
             <td class="text-center" >
                 <!-- Trigger Report -->
-                <a href="#">
-                  <span 
+              <form 
+                style="display:inline-block;" 
+                action="{{url_for('LumenReportsView.trigger', report_id=report.name)}}" 
+                method="post"
+              >
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <button style="border:none;background:none;outline:none;" type="submit">
+                  <span
                     class="glyphicon glyphicon-play-circle" 
                     aria-hidden="true" 
                     data-original-title="Trigger Report"
-                  >
-                  </span>
-                </a>
-
+                  />
+                </button>
                 <!-- Delete Report -->
-                <a href="#">
+              </form>
+              <form 
+                style="display:inline-block;" 
+                action="{{url_for('LumenReportsView.delete', report_id=report.name)}}"
+                method="post"
+              >
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <button style="border:none;background:none;outline:none;" type="submit">
                   <span 
                     class="glyphicon glyphicon-remove-circle" 
                     style="color:red" 
                     aria-hidden="true" 
                     data-original-title="Delete Report"
-                  >
-                  </span>
-                </a>
+                  />
+                </button>
+              </form>
             </td>
           </tr>
         {% endfor %}
@@ -125,6 +144,27 @@
 
 {% block tail %}
   {{ super() }}
+  <script>
+    $.each($("[id^=toggle]"), function(i, v) {
+      var $input = $(v);
+      var report_id = $input.attr('report_id');
+      $input.change(function() {
+        if ($input.prop('checked')) {
+          is_paused = 'true'
+        } else {
+          is_paused = 'false'
+        }
+        var url = 'reports/paused?report_id=' + encodeURIComponent(report_id) + '&is_paused=' + is_paused;
+        $.post(url).fail(function() {
+          if (is_paused === 'true') {
+            $input.data('bs.toggle').off(true);
+          } else {
+            $input.data('bs.toggle').on(true);
+          }
+        });
+      });
+    });
+  </script>
   <script src="{{ url_for_asset('jquery.dataTables.min.js') }}"></script>
   <script src="{{ url_for_asset('dataTables.bootstrap.min.js') }}"></script>
   <script src="{{ url_for_asset('bootstrap-toggle.min.js') }}"></script>

@@ -1,5 +1,5 @@
 from flask_appbuilder import BaseView as AppBuilderBaseView, expose
-from flask import flash, redirect, url_for
+from flask import flash, redirect, url_for, request
 from flask_appbuilder import SimpleFormView
 from flask_appbuilder.forms import DynamicForm
 from flask_appbuilder.fieldwidgets import (
@@ -20,6 +20,7 @@ from wtforms import (
 from wtforms.validators import DataRequired, Email
 from wtforms_components import TimeField
 
+from lumen_plugin.report import Report
 from lumen_plugin.report_repo import VariablesReportRepo
 from lumen_plugin.report_instance import ReportInstance
 from lumen_plugin.report_form_saver import ReportFormSaver
@@ -115,6 +116,31 @@ class LumenReportsView(AppBuilderBaseView):
     def list(self):
         return self.render_template("reports.html", content=VariablesReportRepo.list())
 
+    @expose("/reports/<string:report_id>/trigger/", methods=["POST"])
+    def trigger(self, report_id):
+        r = Report(report_id)
+        r.trigger_dag()
+        flash(f"Triggered report: {report_id}", "info")
+        return redirect(url_for("LumenReportsView.list"))
+
+    @expose("/reports/<string:report_id>/delete/", methods=["POST"])
+    def delete(self, report_id):
+        r = Report(report_id)
+        r.delete_report_variable(VariablesReportRepo.report_prefix)
+        r.delete_dag()
+        flash(f"Deleted report: {report_id}", "info")
+        return redirect(url_for("LumenReportsView.list"))
+
+    @expose("/reports/paused", methods=["POST"])
+    def pause_dag(self):
+        r_args = request.args
+        report_id = r_args.get('report_id')
+        r = Report(report_id)
+        if r_args.get('is_paused') == 'true':
+            r.activate_dag()
+        else:
+            r.pause_dag()
+        return "OK"
 
 class ReportForm(DynamicForm):
     report_id = HiddenField()

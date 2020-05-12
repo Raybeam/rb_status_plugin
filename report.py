@@ -1,4 +1,14 @@
 import inflection
+from airflow.utils.db import provide_session
+from airflow.configuration import conf
+from airflow.exceptions import DagNotFound, DagRunAlreadyExists
+from airflow import models
+from airflow.models import DagBag, DagModel, DagRun, Variable
+from airflow.utils import timezone
+from airflow.utils.state import State
+from sqlalchemy import or_
+from airflow.models.serialized_dag import SerializedDagModel
+from airflow.settings import STORE_SERIALIZED_DAGS
 
 
 class Report:
@@ -134,3 +144,113 @@ class Report:
     @tests.setter
     def tests(self, val):
         self.__tests = val
+
+    @property
+    def is_paused(self):
+        return models.DagModel.get_dagmodel(self.dag_id).is_paused
+
+    def activate_dag(self):
+        models.DagModel.get_dagmodel(self.dag_id).set_is_paused(False)
+
+    def pause(self):
+        models.DagModel.get_dagmodel(self.dag_id).set_is_paused(True)
+
+    def _trigger_dag(
+        self,
+        dag_id: str,
+        dag_bag: DagBag,
+        dag_run: DagRun
+    ):
+        dag = dag_bag.get_dag(dag_id)  # prefetch dag if it is stored serialized
+
+        if dag_id not in dag_bag.dags:
+            raise DagNotFound(f"Dag id {dag_id} not found")
+
+        execution_date = timezone.utcnow()
+
+        run_id = f"lumen_manual__{execution_date.isoformat()}"
+        dag_run_id = dag_run.find(dag_id=dag_id, run_id=run_id)
+        if dag_run_id:
+            raise DagRunAlreadyExists(
+                f"Run id {run_id} already exists for dag id {dag_id}"
+            )
+
+        dag.create_dagrun(
+            run_id=run_id,
+            execution_date=execution_date,
+            state=State.RUNNING,
+            external_trigger=True,
+        )
+
+    def trigger_dag(self):
+        """
+        Triggers execution of DAG interpreted from the report's dag_id
+
+        _trigger_dag iterates through the class registry and looks
+        For any model that has dag_id as an attribute and deletes
+        all references to the specific dag_id
+
+        :param dag_id: DAG ID
+        :param dagbag: dagbag
+        :param dagrun: empty dag run to be created
+        """
+        dag_model = DagModel.get_current(self.dag_id)
+        if dag_model is None:
+            raise DagNotFound(f"Dag id {self.dag_id} not found in DagModel")
+
+        dagbag = DagBag(
+            dag_folder=dag_model.fileloc,
+            store_serialized_dags=conf.getboolean('core', 'store_serialized_dags')
+        )
+        dag_run = DagRun()
+        self._trigger_dag(
+            dag_id=self.dag_id,
+            dag_bag=dagbag,
+            dag_run=dag_run
+        )
+
+    @provide_session
+    def delete_dag(
+        self,
+        keep_records_in_log: bool = True,
+        session=None
+    ):
+        dag = session.query(DagModel).filter(DagModel.dag_id == self.dag_id).first()
+        if dag is None:
+            raise DagNotFound(f"Dag id {self.dag_id} not found")
+
+        # so explicitly removes serialized DAG here.
+        if STORE_SERIALIZED_DAGS and SerializedDagModel.has_dag(
+            dag_id=self.dag_id, session=session
+        ):
+            SerializedDagModel.remove_dag(dag_id=self.dag_id, session=session)
+
+        # noinspection PyUnresolvedReferences,PyProtectedMember
+        for model in models.base.Base._decl_class_registry.values():
+            if hasattr(model, "dag_id"):
+                if model.__name__:
+                    print(model.__name__)
+                if keep_records_in_log and model.__name__ == 'Log':
+                    continue
+                cond = or_(
+                    model.dag_id == self.dag_id,
+                    model.dag_id.like(self.dag_id + ".%")
+                )
+                session.query(model).filter(cond).delete(
+                    synchronize_session='fetch'
+                )
+
+        # Delete entries in Import Errors table for a deleted DAG
+        # This handles the case when the dag_id is changed in the file
+        session.query(models.ImportError).filter(
+            models.ImportError.filename == dag.fileloc
+        ).delete(synchronize_session='fetch')
+
+    @provide_session
+    def delete_report_variable(self, report_prefix, session=None):
+        """
+        Deletes variable of the report
+        """
+        session.query(Variable).filter(
+            Variable.key == (report_prefix + self.name)
+        ).delete(synchronize_session='fetch')
