@@ -62,7 +62,7 @@
                 data-toggle="toggle"
                 data-size="mini"
                 method="post"
-                {{ "checked" if not report.is_paused else "" }} 
+                {{ "checked" if report.is_paused == False else "" }} 
               />
             </td>
 
