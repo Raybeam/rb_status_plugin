@@ -152,7 +152,7 @@ class Report:
     def activate_dag(self):
         models.DagModel.get_dagmodel(self.dag_id).set_is_paused(False)
 
-    def pause(self):
+    def pause_dag(self):
         models.DagModel.get_dagmodel(self.dag_id).set_is_paused(True)
 
     def _trigger_dag(
