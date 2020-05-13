@@ -8,6 +8,7 @@ module.exports = {
     Atomics: "readonly",
     SharedArrayBuffer: "readonly",
     $: "readonly",
+    csrfToken: "readonly",
   },
   parserOptions: {
     ecmaVersion: 2018,

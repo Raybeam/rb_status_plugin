@@ -116,7 +116,7 @@ class LumenReportsView(AppBuilderBaseView):
     def list(self):
         return self.render_template("reports.html", content=VariablesReportRepo.list())
 
-    @expose("/reports/<string:report_name>/trigger/", methods=["POST"])
+    @expose("/reports/<string:report_name>/trigger/", methods=["GET"])
     def trigger(self, report_name):
         r = Report(report_name)
         r.trigger_dag()
