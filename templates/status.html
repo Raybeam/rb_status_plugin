@@ -102,7 +102,7 @@ Lumen - Airflow
               {% for error in report.errors %}
               <div class="report-error">
                 <h5>
-                  <strong>Test Failed:</strong> {{ error.title }}
+                  <strong> Test {{ error.id}} failed:</strong>
                   <a href= "{{ error.description }}">
                     "Link to Error"
                   </a>
