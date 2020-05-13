@@ -57,12 +57,13 @@
             <td>
               <input
                 id="toggle-{{ report.name }}"
-                report_name="{{ report.name }}"
                 type="checkbox"
                 data-toggle="toggle"
                 data-size="mini"
-                method="post"
-                {{ "checked" if report.is_paused == False else "" }} 
+                data-pause-url="{{ url_for('LumenReportsView.pause_dag')}}"
+                data-report-name="{{ report.name }}"
+                onchange="return lumen.triggerReportStartPause(this)"
+                {% if not report.is_paused %}checked{% endif%}
               />
             </td>
 
@@ -104,37 +105,29 @@
             <!-- Column 7: Links -->
             <td class="text-center" >
                 <!-- Trigger Report -->
-              <form 
-                style="display:inline-block;" 
-                action="{{url_for('LumenReportsView.trigger', report_name=report.name)}}" 
-                method="post"
+              <a 
+                href="{{ url_for('LumenReportsView.trigger', report_name=report.name) }}"
+                id="report-run-trigger"
               >
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                <button style="border:none;background:none;outline:none;" type="submit">
-                  <span
-                    class="glyphicon glyphicon-play-circle" 
-                    aria-hidden="true" 
-                    data-original-title="Trigger Report"
-                  />
-                </button>
-                <!-- Delete Report -->
-              </form>
-              <form 
-                style="display:inline-block;" 
-                action="{{url_for('LumenReportsView.delete', report_name=report.name)}}"
-                method="post"
+                <span 
+                  class="glyphicon glyphicon-play-circle" 
+                  aria-hidden="true" 
+                  data-original-title="Trigger Dag"
+                ></span>
+              </a>
+              <!-- Delete Report -->
+              <a 
+                href="{{ url_for('LumenReportsView.delete', report_name=report.name) }}" 
+                onclick="return lumen.confirmDeleteReport(this)" 
+                data-report-name="{{report.name}}"
               >
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                <button style="border:none;background:none;outline:none;" type="submit">
-                  <span 
-                    class="glyphicon glyphicon-remove-circle" 
-                    style="color:red" 
-                    aria-hidden="true" 
-                    data-original-title="Delete Report"
-                  />
-                </button>
-              </form>
-            </td>
+                <span 
+                  class="glyphicon glyphicon-remove-circle" 
+                  style="color:red" 
+                  aria-hidden="true" 
+                  data-original-title="Delete Dag"
+                ></span>
+              </a>
           </tr>
         {% endfor %}
       </tbody>
@@ -144,29 +137,8 @@
 
 {% block tail %}
   {{ super() }}
-  <script>
-    $.each($("[id^=toggle]"), function(i, v) {
-      var $input = $(v);
-      var report_name = $input.attr('report_name');
-      $input.change(function() {
-        if ($input.prop('checked')) {
-          is_paused = 'true'
-        } else {
-          is_paused = 'false'
-        }
-        var url = 'paused?report_name=' + encodeURIComponent(report_name) + '&is_paused=' + is_paused;
-        $.post(url).fail(function() {
-          if (is_paused === 'true') {
-            $input.data('bs.toggle').off(true);
-          } else {
-            $input.data('bs.toggle').on(true);
-          }
-        });
-      });
-    });
-  </script>
   <script src="{{ url_for_asset('jquery.dataTables.min.js') }}"></script>
   <script src="{{ url_for_asset('dataTables.bootstrap.min.js') }}"></script>
   <script src="{{ url_for_asset('bootstrap-toggle.min.js') }}"></script>
-  <script src="{{ url_for('lumen.static',filename='mgmt.js') }}"></script>
+  <script src="{{ url_for('lumen.static',filename='reports.js') }}"></script>
 {% endblock %}

@@ -47,7 +47,7 @@ Lumen - Airflow
       {% else %}
         unknown
       {% endif %}">
-      <div id="report-{{ report.title }}-heading" class="report-header" role="tab">
+      <div id="report-{{ loop.index }}-heading" class="report-header" role="tab">
         <div class="report-highlights">
           <div class="report-indicator"></div>
           <div class="report-meta">
@@ -66,15 +66,15 @@ Lumen - Airflow
         </div>
         <div>
           <button type="button" class="btn btn-link report-details-trigger collapsed" data-toggle="collapse"
-            data-target="#report-{{ report.title }}-details" aria-expanded="false"
-            aria-controls="report-{{ report.title }}-details">
+            data-target="#report-{{ loop.index }}-details" aria-expanded="false"
+            aria-controls="report-{{ loop.index }}-details">
             Details
             <i class="fa fa-angle-down" aria-hidden="true"></i>
           </button>
         </div>
       </div>
-      <div id="report-{{ report.title }}-details" class="collapse" role="tabpanel"
-        aria-labelledby="report-{{ report.title }}-heading">
+      <div id="report-{{ loop.index }}-details" class="collapse" role="tabpanel"
+        aria-labelledby="report-{{ loop.index }}-heading">
         <div class="report-details">
           <p>
             <strong>Report Owner:</strong>
