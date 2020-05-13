@@ -104,7 +104,9 @@ Lumen - Airflow
                 <h5>
                   <strong>Test Failed:</strong> {{ error.title }}
                 </h5>
-                {{ error.description }}
+                  <a href= "{{ error.description }}">
+                    "Link to Error"
+                  </a>
               </div>
               {% endfor %}
             </div>
