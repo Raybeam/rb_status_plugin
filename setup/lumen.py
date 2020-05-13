@@ -16,7 +16,7 @@ default_args = {
     "email_on_failure": False,
     "email_on_retry": False,
     "retries": 0,
-    "start_date": "{{ prev_ds }}",
+    "start_date": "{{ yesterday_ds }}",
     "retry_delay": timedelta(minutes=5),
     "catchup": False,
 }
