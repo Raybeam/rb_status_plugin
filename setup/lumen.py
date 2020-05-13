@@ -16,7 +16,7 @@ default_args = {
     "email_on_failure": False,
     "email_on_retry": False,
     "retries": 0,
-    "start_date": datetime(2019, 1, 1),
+    "start_date": datetime.now() - timedelta(days=1),
     "retry_delay": timedelta(minutes=5),
     "catchup": False,
 }
