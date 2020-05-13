@@ -96,8 +96,6 @@ class LumenStatusView(AppBuilderBaseView):
                 r["errors"] = ri.errors()
                 if len(r["errors"]) > 0:
                     passed = False
-
-                logging.info(r)
                 reports.append(r)
             except Exception as e:
                 logging.exception(e)
