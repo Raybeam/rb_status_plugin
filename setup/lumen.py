@@ -1,6 +1,5 @@
-from datetime import datetime, timedelta
 import os
-
+from datetime import timedelta
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
 from airflow.operators.latest_only_operator import LatestOnlyOperator
@@ -8,6 +7,8 @@ from airflow.operators.latest_only_operator import LatestOnlyOperator
 from lumen_plugin.report_repo import VariablesReportRepo
 from lumen_plugin.sensors.lumen_sensor import LumenSensor
 from lumen_plugin.helpers.email_helpers import report_notify_email
+import airflow.utils.dates as dt
+
 
 # Default settings applied to all tests
 default_args = {
@@ -16,7 +17,7 @@ default_args = {
     "email_on_failure": False,
     "email_on_retry": False,
     "retries": 0,
-    "start_date": datetime(2019, 1, 1),
+    "start_date": dt.days_ago(1),
     "retry_delay": timedelta(minutes=5),
     "catchup": False,
 }

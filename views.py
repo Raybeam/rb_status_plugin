@@ -60,7 +60,7 @@ class LumenStatusView(AppBuilderBaseView):
     LumenStatusView is responsible for Lumen Status Page
     """
 
-    route_base = "/lumen"
+    route_base = "/lumen/status"
 
     def reports_data(self):
         """
@@ -87,14 +87,15 @@ class LumenStatusView(AppBuilderBaseView):
                     "passed": ri.passed,
                     "updated": ri.updated,
                     "title": report.report_title,
+                    "owner_name": report.owner_name,
                     "owner_email": report.owner_email,
+                    "description": report.description,
+                    "subscribers": report.subscribers,
                 }
 
                 r["errors"] = ri.errors()
                 if len(r["errors"]) > 0:
                     passed = False
-
-                logging.info(r)
                 reports.append(r)
             except Exception as e:
                 logging.exception(e)
@@ -104,26 +105,26 @@ class LumenStatusView(AppBuilderBaseView):
         data = {"summary": {"passed": passed, "updated": updated}, "reports": reports}
         return data
 
-    @expose("/status")
+    @expose("/")
     def list(self):
         return self.render_template("status.html", content=self.reports_data())
 
 
 class LumenReportsView(AppBuilderBaseView):
-    route_base = "/lumen"
+    route_base = "/lumen/reports"
 
-    @expose("/reports")
+    @expose("/")
     def list(self):
         return self.render_template("reports.html", content=VariablesReportRepo.list())
 
-    @expose("/reports/<string:report_name>/trigger/", methods=["GET"])
+    @expose("/<string:report_name>/trigger/", methods=["GET"])
     def trigger(self, report_name):
         r = Report(report_name)
         r.trigger_dag()
         flash(f"Triggered report: {report_name}", "info")
         return redirect(url_for("LumenReportsView.list"))
 
-    @expose("/reports/<string:report_name>/delete/", methods=["POST"])
+    @expose("/<string:report_name>/delete/", methods=["POST"])
     def delete(self, report_name):
         r = Report(report_name)
         r.delete_report_variable(VariablesReportRepo.report_prefix)
@@ -131,7 +132,7 @@ class LumenReportsView(AppBuilderBaseView):
         flash(f"Deleted report: {report_name}", "info")
         return redirect(url_for("LumenReportsView.list"))
 
-    @expose("/reports/paused", methods=["POST"])
+    @expose("/paused", methods=["POST"])
     def pause_dag(self):
         r_args = request.args
         report_name = r_args.get('report_name')
@@ -219,19 +220,19 @@ class ReportForm(DynamicForm):
 
 
 class NewReportFormView(SimpleFormView):
-    route_base = "/lumen/report"
+    route_base = "/lumen/report/new"
     form_template = "report_form.html"
     form = ReportForm
     form_title = "New Report"
     form_fieldsets = form_fieldsets_config
     message = "Report submitted"
 
-    @expose("/new", methods=["GET"])
+    @expose("/", methods=["GET"])
     @has_access
     def this_form_get(self):
         return super().this_form_get()
 
-    @expose("/new", methods=["POST"])
+    @expose("/", methods=["POST"])
     @has_access
     def form_post(self):
         form = self.form.refresh()
