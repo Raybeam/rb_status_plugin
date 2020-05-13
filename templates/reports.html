@@ -63,7 +63,7 @@
                 data-pause-url="{{ url_for('LumenReportsView.pause_dag')}}"
                 data-report-name="{{ report.name }}"
                 onchange="return lumen.triggerReportStartPause(this)"
-                {% if not report.is_paused %}checked{% endif%}
+                {% if report.is_paused == False %}checked{% endif%}
               />
             </td>
 
