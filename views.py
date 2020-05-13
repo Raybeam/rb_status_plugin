@@ -117,7 +117,7 @@ class LumenReportsView(AppBuilderBaseView):
     def list(self):
         return self.render_template("reports.html", content=VariablesReportRepo.list())
 
-    @expose("/<string:report_name>/trigger/", methods=["POST"])
+    @expose("/reports/<string:report_name>/trigger/", methods=["GET"])
     def trigger(self, report_name):
         r = Report(report_name)
         r.trigger_dag()
@@ -249,7 +249,7 @@ class NewReportFormView(SimpleFormView):
 
 
 class EditReportFormView(SimpleFormView):
-    route_base = "/lumen/report"
+    route_base = "/lumen"
     form_template = "report_form.html"
     form = ReportForm
     form_title = "Edit Report"
