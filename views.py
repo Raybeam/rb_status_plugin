@@ -86,7 +86,7 @@ class LumenStatusView(AppBuilderBaseView):
                     "id": ri.id,
                     "passed": ri.passed,
                     "updated": ri.updated,
-                    "title": report.report_title,
+                    "report_title": report.report_title,
                     "owner_name": report.owner_name,
                     "owner_email": report.owner_email,
                     "description": report.description,
