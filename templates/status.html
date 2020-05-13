@@ -100,14 +100,16 @@ Lumen - Airflow
           {% if report.passed == False %}
             <div class="report-errors-list">
               {% for error in report.errors %}
-              <div class="report-error">
-                <h5>
-                  <strong>{{ error.name}} failed:</strong>
-                  <a href= "{{ error.description }}">
-                    Link to error log
-                  </a>
-                </h5>
-              </div>
+                {% if error.test_status == False %}
+                  <div class="report-error">
+                    <h5>
+                      <strong>{{ error.name}} failed:</strong>
+                      <a href= "{{ error.description }}">
+                        Link to error log
+                      </a>
+                    </h5>
+                  </div>
+                {% endif %}
               {% endfor %}
             </div>
           {% endif %}
