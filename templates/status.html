@@ -66,15 +66,15 @@ Lumen - Airflow
         </div>
         <div>
           <button type="button" class="btn btn-link report-details-trigger collapsed" data-toggle="collapse"
-            data-target="#report-{{ report.report_title }}-details" aria-expanded="false"
-            aria-controls="report-{{ report.report_title }}-details">
+            data-target="#report-{{ report.title }}-details" aria-expanded="false"
+            aria-controls="report-{{ report.title }}-details">
             Details
             <i class="fa fa-angle-down" aria-hidden="true"></i>
           </button>
         </div>
       </div>
-      <div id="report-{{ report.report_title }}-details" class="collapse" role="tabpanel"
-        aria-labelledby="report-{{ report.report_title }}-heading">
+      <div id="report-{{ report.title }}-details" class="collapse" role="tabpanel"
+        aria-labelledby="report-{{ report.title }}-heading">
         <div class="report-details">
           <p>
             <strong>Report Owner:</strong>
