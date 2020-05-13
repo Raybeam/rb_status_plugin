@@ -154,7 +154,7 @@
         } else {
           is_paused = 'false'
         }
-        var url = 'reports/paused?report_name=' + encodeURIComponent(report_name) + '&is_paused=' + is_paused;
+        var url = 'paused?report_name=' + encodeURIComponent(report_name) + '&is_paused=' + is_paused;
         $.post(url).fail(function() {
           if (is_paused === 'true') {
             $input.data('bs.toggle').off(true);
