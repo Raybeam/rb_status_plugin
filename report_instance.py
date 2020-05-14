@@ -70,6 +70,7 @@ class ReportInstance:
                 continue
 
             test_status = ti.xcom_pull(key="lumen_test_task_status", task_ids=ti.task_id)
+            log_url = ti.xcom_pull(key="lumen_task_log_url", task_ids=ti.task_id)
 
             if not test_status:
                 ti.refresh_from_db()
@@ -77,7 +78,7 @@ class ReportInstance:
                 failed.append({
                     "id": ti.job_id,
                     "name": ti.task_id,
-                    "description": ti.log_url,
+                    "description": log_url,
                     "test_status": test_status
                 })
         return failed
