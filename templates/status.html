@@ -100,14 +100,14 @@ Lumen - Airflow
             {% if report.passed == None %}
               <div class="report-warnings-list">
                 <div class="report-warning">
-                <b>Unable to run:</b>
+                <strong>Unable to run:</strong>
                   {% for error in report.errors %}
                     <ul>
                       {% if error.test_status == None %}
                         <div class="report-error">
                           <li>
                             <a href= "{{ error.description }}">
-                              <strong>{{ error.name}}</strong>
+                              {{ error.name }}
                             </a>
                           </li>
                         </div>
@@ -119,14 +119,14 @@ Lumen - Airflow
             {% endif %}
             {% if report.passed == False %}
               <div class="report-errors-list">
-                <b>Failed:</b>
+                <strong>Failed:</strong>
                   {% for error in report.errors %}
                     <ul>
                       {% if error.test_status == False %}
                         <div class="report-error">
                           <li>
                             <a href= "{{ error.description }}">
-                              <strong>{{ error.name}}</strong>
+                              {{ error.name }}
                             </a>
                           </li>
                         </div>
