@@ -38,7 +38,7 @@ Lumen - Airflow
 
   {% if content.reports %}
     <h2>Reports</h2>
-    {% for report in content.reports %}
+    {% for report in content.reports | sort(attribute='title')%}
       <div class="report-base report 
         {% if report.passed == True %}
           passed
