@@ -97,7 +97,24 @@ Lumen - Airflow
               {{ ", ".join(report.subscribers) }}
             {% endif %}
           </p>
-          {% if report.passed == False %}
+          {% if report.passed == None %}
+            <div class="report-warnings-list">
+              <div class="report-warning">
+                {% for error in report.errors %}
+                  {% if error.test_status == None %}
+                    <div class="report-error">
+                      <h5>
+                        <strong>{{ error.name}} couldn't finish running:</strong>
+                        <a href= "{{ error.description }}">
+                          Link to error log
+                        </a>
+                      </h5>
+                    </div>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+          {% elif report.passed == False %}
             <div class="report-errors-list">
               {% for error in report.errors %}
                 {% if error.test_status == False %}
@@ -111,16 +128,6 @@ Lumen - Airflow
                   </div>
                 {% endif %}
               {% endfor %}
-            </div>
-          {% endif %}
-          {% if report.passed == None %}
-            <div class="report-warnings-list">
-              <div class="report-warning">
-                <h5>
-                  <strong>Warning:</strong> Report Failed to Run
-                </h5>
-                Report status is unknown because it failed to run
-              </div>
             </div>
           {% endif %}
         </div>

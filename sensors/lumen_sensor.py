@@ -65,4 +65,5 @@ class LumenSensor(BaseSensorOperator):
 
         except Exception as e:
             self.push_test_status(ti=context['ti'], test_status=None)
+            self.push_task_url(ti=context['ti'], log_url="unknown")
             raise e
