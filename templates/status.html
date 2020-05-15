@@ -104,13 +104,11 @@ Lumen - Airflow
                   {% for error in report.errors %}
                     <ul>
                       {% if error.test_status == None %}
-                        <div class="report-error">
-                          <li>
-                            <a href= "{{ error.description }}">
-                              {{ error.name }}
-                            </a>
-                          </li>
-                        </div>
+                        <li>
+                          <a href= "{{ error.description }}">
+                            {{ error.name }}
+                          </a>
+                        </li>
                       {% endif %}
                     </ul>
                   {% endfor %}
@@ -123,13 +121,11 @@ Lumen - Airflow
                   {% for error in report.errors %}
                     <ul>
                       {% if error.test_status == False %}
-                        <div class="report-error">
-                          <li>
-                            <a href= "{{ error.description }}">
-                              {{ error.name }}
-                            </a>
-                          </li>
-                        </div>
+                        <li>
+                          <a href= "{{ error.description }}">
+                            {{ error.name }}
+                          </a>
+                        </li>
                       {% endif %}
                     </ul>
                   {% endfor %}
