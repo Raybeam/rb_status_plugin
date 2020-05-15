@@ -218,8 +218,8 @@ class ReportForm(DynamicForm):
     schedule_custom = StringField(
         ("Cron schedule"),
         description=(
-            'Enter cron schedule (e.g. "0 0 * * *").'
-            'Note that time zone being used is UTC.'
+            'Enter cron schedule (e.g. "0 0 * * *").\
+         Note that time zone being used is UTC.'
         ),
         widget=BS3TextFieldWidget(),
         validators=[DataRequired()],
