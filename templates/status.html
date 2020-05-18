@@ -97,7 +97,7 @@ Lumen - Airflow
                 {{ ", ".join(report.subscribers) }}
               {% endif %}
             </p>
-            {% if report.passed == None %}
+            {% if None in report.errors|map(attribute="test_status") %}
               <div class="report-warnings-list">
                 <div class="report-warning">
                 <strong>Unable to run:</strong>
@@ -115,7 +115,7 @@ Lumen - Airflow
                 </div>
               </div>
             {% endif %}
-            {% if report.passed == False %}
+            {% if False in report.errors|map(attribute="test_status") %}
               <div class="report-errors-list">
                 <div class="report-error">
                 <strong>Failed:</strong>
