@@ -76,9 +76,16 @@ In a new terminal, navigate to the same directory.
 `>source bin/activate`  
 `>airflow scheduler`  
 
+### Interact with UI
+In a web brower, visit localhost:8080.  
+If you see a tab for Lumen in the header, then the installation was a success.
+
 ## Set up : Astronomer Deploy
 ### Set up local environment
 Follow the local deploy [instructions](#set-up--local-deploy) for configuring your local environment.  
+
+### Turn off Webserver and Scheduler
+Either Control+C or closing the terminal's window/tab should work to turn either of them off. 
 
 ### Download Astronomer
 Download astronomer package following their [tutorial](https://www.astronomer.io/docs/cli-getting-started/).
@@ -90,6 +97,10 @@ In your working directory
 ### Start Astronomer
 `> astro dev start`
   
+### Interact with UI
+In a web brower, visit localhost:8080.  
+If you see a tab for Lumen in the header, then the installation was a success.
+
 ## Set up : Google Cloud Composer Deploy
 
 ### Clone lumen into your plugins
@@ -103,10 +114,18 @@ In your working directory
 
 `>gcloud config set project <your Google Cloud project name>`  
 
-`>gcloud composer environments update  --update-pypi-packages-from-file=plugins/lumen_plugin/requirements.txt`
+`>gcloud composer environments update ENVIRONMENT_NAME --location LOCATION --update-pypi-packages-from-file=plugins/lumen_plugin/requirements.txt`  
+
+`ENVIRONMENT_NAME` is the name of the environment.  
+`LOCATION` is the Compute Engine region where the environment is located.  
+It may take a few minutes for cloud composer to finish updating after running this command.
 
 ### Disable rbac
-`>gcloud composer environments update --update-env-variables[rbac=False]`
+`>gcloud composer environments update ENVIRONMENT_NAME --location LOCATION --update-env-variables[rbac=False]`  
+
+`ENVIRONMENT_NAME` is the name of the environment.  
+`LOCATION` is the Compute Engine region where the environment is located.  
+
 
 ### Uploading Plugin to Google Cloud Composer (CLI)
 ```
