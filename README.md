@@ -13,9 +13,12 @@ The Lumen Airflow plugin makes it easy to communicate confidence about your data
 
 # Lumen : Set up
 These are instructions for importing this plugin into an existing airflow instance.  
-To start, navigate to the root of your airflow workspace.
+To start, navigate to the root of your airflow workspace.  
+[Local Deploy](#set-up--local-deploy)  
+[Astronomer Deploy](#set-up--astronomer-deploy)  
+[Google Cloud Composer Deploy](#set-up--google-cloud-composer-deploy)  
 
-## Set up : Virtual environment
+## Set up : Local Deploy
 
 ### Set up the Python virtual environment
 `> python -m venv .`
@@ -33,6 +36,9 @@ By putting the `AIRFLOW_HOME` env in the `bin/activate` file, you set the path e
 
 ### Initialize your Airflow DB
 `> airflow initdb`
+
+### Set up a user (admin:admin)
+`> airflow create_user -r Admin -u admin -e admin@example.com -f admin -l user -p admin`
 
 ### Clone lumen into your plugins
 `> git clone https://github.com/Raybeam/lumen_plugin plugins/lumen_plugin`
@@ -52,35 +58,36 @@ Only the DAG works from the Lumen binary right now.
 
 `> plugins/lumen_plugin/bin/lumen add_samples --dag_only`
 
-### Disable rbac
-In the root directory of your airflow workspace, open airflow.cfg and set `rbac=False`.
+### Enable rbac
+In the root directory of your airflow workspace, open airflow.cfg and set `rbac=True`.
 
-## Set up : Google Cloud Composer
+### Turn on Webserver
+`>airflow webserver`
 
-### Create a Cloud Composer Environment
-If you don't already have an existing Cloud Composer Environment, [create](https://console.cloud.google.com/composer/environments/create?_ga=2.148358327.1202999744.1589816907-593717271.1588273490) a Cloud Composer Environment.
+### Turn on Scheduler
+In a new terminal, navigate to the same directory.  
+`>source bin/activate`  
+`>airflow scheduler`  
+
+## Set up : Google Cloud Composer Deploy
+
+### Clone lumen into your plugins
+`> git clone https://github.com/Raybeam/lumen_plugin plugins/lumen_plugin`
 
 ### Install gcloud 
-For macOS, run:  
-`>brew cask install google-cloud-sdk`  
-For Debian & Ubuntu, run:  
-```
->echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
->curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
->sudo apt-get update && sudo apt-get install google-cloud-sdk
-```
+[Install](hhttps://cloud.google.com/sdk/docs/quickstarts) the gcloud SDK and configure it to your Cloud Composer Environment.
 
-### Configure gcloud
-Run `gcloud init` and follow the prompts to configure gcloud to connect to your Cloud Composer Environment.  
-  
-Enable cleaner CLI experience:  
-`>gcloud config set accessibility/screen_reader true`
-
-### Uploading Plugin to Google Cloud Composer (CLI)
+### Updating requirements.txt in Google Cloud Composer (CLI)
 `>gcloud auth login`  
 
 `>gcloud config set project <your Google Cloud project name>`  
 
+`>gcloud composer environments update  --update-pypi-packages-from-file=plugins/lumen_plugin/requirements.txt`
+
+### Disable rbac
+`>gcloud composer environments update --update-env-variables[rbac=False]`
+
+### Uploading Plugin to Google Cloud Composer (CLI)
 ```
 >gcloud composer environments storage plugins import\
     --environment ENVIRONMENT_NAME \
