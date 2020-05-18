@@ -12,7 +12,7 @@ def get_details_link():
         route_base = LumenStatusView.route_base
     else:
         route_base = LumenStatusView.__name__.lower()
-    return f"{base_url}/{route_base}/"
+    return base_url + route_base
 
 
 def get_status(passed):
@@ -54,7 +54,7 @@ def report_notify_email(report, email_template_location, **context):
             "passed": passed,
             "status": status,
             "updated": updated_time,
-            "title": report.name,
+            "title": report.report_title,
             "details_link": details_link,
         }
         send_email.render_template_fields(

@@ -16,7 +16,7 @@ window.lumen = {
 function confirmDeleteReport(link) {
   const reportName = link.dataset.reportName;
   const answer = confirm(
-    `Are you sure you want to delete ${reportName} report`
+    `Are you sure you want to delete "${reportName}" report?`
   );
   if (answer) {
     postAsForm(link.href, {
