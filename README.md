@@ -76,10 +76,11 @@ Run `gcloud init` and follow the prompts to configure gcloud to connect to your 
 Enable cleaner CLI experience:  
 `>gcloud config set accessibility/screen_reader true`
 
+### Uploading Plugin to Google Cloud Composer (CLI)
 `>gcloud auth login`  
+
 `>gcloud config set project <your Google Cloud project name>`  
 
-### Uploading Plugin to Google Cloud Composer (CLI)
 ```
 >gcloud composer environments storage plugins import\
     --environment ENVIRONMENT_NAME \
