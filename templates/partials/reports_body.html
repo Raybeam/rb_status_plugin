@@ -1,7 +1,7 @@
 <div id="reports-heading">
   <h2>Reports</h2>
 
-  <a href="{{ url_for('NewReportFormView.this_form_get') }}" class="btn btn-sm btn-primary">
+  <a href="#" class="btn btn-sm btn-primary">
     <i class="fa fa-edit"></i>
     Create New Report
   </a>
@@ -24,11 +24,11 @@
       </tr>
     </thead>
     <tbody>
-      {% for report in content %}
+      {% for report in context %}
         <tr>
           <!-- Column 1: View Report -->
           <td class="text-center" style="width:10px;">
-            <a href="{{ url_for('EditReportFormView.this_form_get', report_title=report.report_title_url) }}" title="Edit">
+            <a href="#" title="Edit">
               <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
             </a>
           </td>
@@ -40,7 +40,7 @@
               type="checkbox"
               data-toggle="toggle"
               data-size="mini"
-              data-pause-url="{{ url_for('LumenReportsView.pause_dag')}}"
+              data-pause-url="#"
               data-report-name="{{ report.name }}"
               onchange="return lumen.triggerReportStartPause(this)"
               {% if report.is_paused == False %}checked{% endif%}
@@ -86,7 +86,7 @@
           <td class="text-center" >
               <!-- Trigger Report -->
             <a 
-              href="{{ url_for('LumenReportsView.trigger', report_name=report.name) }}"
+              href="#"
               id="report-run-trigger"
             >
               <span 
@@ -97,7 +97,7 @@
             </a>
             <!-- Delete Report -->
             <a 
-              href="{{ url_for('LumenReportsView.delete', report_name=report.name) }}" 
+              href="#" 
               onclick="return lumen.confirmDeleteReport(this)" 
               data-report-name="{{report.name}}"
             >
@@ -108,6 +108,7 @@
                 data-original-title="Delete Dag"
               ></span>
             </a>
+          </td>
         </tr>
       {% endfor %}
     </tbody>
