@@ -96,7 +96,7 @@ In your working directory
 `> git clone https://github.com/Raybeam/lumen_plugin plugins/lumen_plugin`
 
 ### Install gcloud 
-[Install](hhttps://cloud.google.com/sdk/docs/quickstarts) the gcloud SDK and configure it to your Cloud Composer Environment.
+[Install](https://cloud.google.com/sdk/docs/quickstarts) the gcloud SDK and configure it to your Cloud Composer Environment.
 
 ### Updating requirements.txt in Google Cloud Composer (CLI)
 `>gcloud auth login`  
