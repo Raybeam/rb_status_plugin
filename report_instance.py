@@ -46,6 +46,10 @@ class ReportInstance:
             return True
 
         for err in errs:
+            if err["test_status"] is None:
+                return None
+
+        for err in errs:
             if err["test_status"] is False:
                 return False
         return None
@@ -70,6 +74,10 @@ class ReportInstance:
                 continue
 
             test_status = ti.xcom_pull(key="lumen_test_task_status", task_ids=ti.task_id)
+            log_url = ti.xcom_pull(key="lumen_task_log_url", task_ids=ti.task_id)
+
+            # if error extracting state return error logs, else return underlying task
+            log_url = ti.log_url if log_url == "unknown" else log_url
 
             if not test_status:
                 ti.refresh_from_db()
@@ -77,7 +85,7 @@ class ReportInstance:
                 failed.append({
                     "id": ti.job_id,
                     "name": ti.task_id,
-                    "description": ti.log_url,
+                    "description": log_url,
                     "test_status": test_status
                 })
         return failed

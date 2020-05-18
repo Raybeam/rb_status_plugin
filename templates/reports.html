@@ -44,7 +44,7 @@
         </tr>
       </thead>
       <tbody>
-        {% for report in content %}
+        {% for report in content | sort(attribute='name') %}
           <tr>
             <!-- Column 1: View Report -->
             <td class="text-center" style="width:10px;">
