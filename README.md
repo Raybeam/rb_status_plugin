@@ -12,8 +12,15 @@
 The Lumen Airflow plugin makes it easy to communicate confidence about your data system to manager, executives and other stakeholders in your organization.  It improves trust in underlying data by increasing transparency.
 
 # Lumen : Set up
-These are instructions for importing this plugin into an existing airflow instance.  
+These are instructions for importing this plugin into an existing airflow workspace.  
 To start, navigate to the root of your airflow workspace.  
+If you don't have an existing workspace, you can download the sample:  
+```
+>git clone https://github.com/Raybeam/lumen-test-airflow/ sample_workspace
+>cd sample_workspace
+```
+  
+The deployment environments are:  
 [Local Deploy](#set-up--local-deploy)  
 [Astronomer Deploy](#set-up--astronomer-deploy)  
 [Google Cloud Composer Deploy](#set-up--google-cloud-composer-deploy)  
@@ -45,7 +52,7 @@ By putting the `AIRFLOW_HOME` env in the `bin/activate` file, you set the path e
 
 ### Copy over Lumen requirements
 `> cat plugins/lumen_plugin/requirements.txt >> requirements.txt`  
-`> pip install requirements.txt`
+`> pip install -r requirements.txt`
 
 ### Set up Lumen
 Move over the main Lumen DAG and sample DAGs (if wanted)
@@ -69,6 +76,20 @@ In a new terminal, navigate to the same directory.
 `>source bin/activate`  
 `>airflow scheduler`  
 
+## Set up : Astronomer Deploy
+### Set up local environment
+Follow the local deploy [instructions](#set-up--local-deploy) for configuring your local environment.  
+
+### Download Astronomer
+Download astronomer package following their [tutorial](https://www.astronomer.io/docs/cli-getting-started/).
+
+### Initialize Astronomer
+In your working directory
+`> astro dev init`
+
+### Start Astronomer
+`> astro dev start`
+  
 ## Set up : Google Cloud Composer Deploy
 
 ### Clone lumen into your plugins
