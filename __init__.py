@@ -8,6 +8,10 @@ from lumen_plugin.views import (
     EditReportFormView,
 )
 from lumen_plugin.sensors.lumen_sensor import LumenSensor
+from lumen_plugin.views_no_rbac import (
+    LumenStatusViewAdmin,
+    LumenReportsViewAdmin,
+)
 
 v_appbuilder_status_view = LumenStatusView()
 v_appbuilder_status_package = {
@@ -47,6 +51,18 @@ bp = Blueprint(
     url_prefix="/lumen",
 )
 
+v_admin_status_package = LumenStatusViewAdmin(
+    category="Lumen",
+    name="Status Page",
+    endpoint='lumen/status'
+)
+
+v_admin_reports_package = LumenReportsViewAdmin(
+    category="Lumen",
+    name="Reports",
+    endpoint='lumen/reports'
+)
+
 
 class LumenPlugin(AirflowPlugin):
     name = "lumen_plugin"
@@ -56,7 +72,10 @@ class LumenPlugin(AirflowPlugin):
     hooks = []
     executors = []
     macros = []
-    admin_views = []
+    admin_views = [
+        v_admin_status_package,
+        v_admin_reports_package,
+    ]
     menu_links = []
     appbuilder_views = [
         v_appbuilder_status_package,

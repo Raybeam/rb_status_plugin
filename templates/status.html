@@ -1,11 +1,7 @@
 {% extends base_template %}
 
 {% block page_title %}
-{% if search_query %}
-"{{ search_query }}" - Lumen - Airflow
-{% else %}
-Lumen - Airflow
-{% endif %}
+  {% include "partials/status_title.html" %}
 {% endblock %}
 
 {% block head_css %}
@@ -14,118 +10,5 @@ Lumen - Airflow
 {% endblock %}
 
 {% block content %}
-<div id="reports-wrap">
-  {% if content.summary.updated %}
-  <div class="report-base reports-summary {% if content.summary.passed %}passed{% else %}failed{% endif %}">
-    <div class="report-header">
-      <div class="status">
-        <h2>
-          {% if content.summary.passed %}
-          <i class="fa fa-check-circle" aria-hidden="true"></i>
-          All Tests Are Passing
-          {% else %}
-          <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
-          Some Tests Are Failing
-          {% endif %}
-        </h2>
-      </div>
-      <div class="updated">
-        Updated {{ content.summary.updated.strftime('%b %d at %H:%M') }}
-      </div>
-    </div>
-  </div>
-  {% endif %}
-
-  <h2>Reports</h2>
-
-  {% for report in content.reports %}
-    <div class="report-base report 
-      {% if report.passed == True %}
-        passed
-      {% elif report.passed == False %}
-        failed
-      {% else %}
-        unknown
-      {% endif %}">
-      <div id="report-{{ loop.index }}-heading" class="report-header" role="tab">
-        <div class="report-highlights">
-          <div class="report-indicator"></div>
-          <div class="report-meta">
-            <span class="report-status">
-              {% if report.passed == True %}
-                Passed
-              {% elif report.passed == False %}
-                Failed
-              {% else %}
-                Unknown
-              {% endif %}
-            </span> /
-            Updated {{ report.updated.strftime('%b %d at %H:%M') }}
-            <h3>{{ report.title }}</h3>
-          </div>
-        </div>
-        <div>
-          <button type="button" class="btn btn-link report-details-trigger collapsed" data-toggle="collapse"
-            data-target="#report-{{ loop.index }}-details" aria-expanded="false"
-            aria-controls="report-{{ loop.index }}-details">
-            Details
-            <i class="fa fa-angle-down" aria-hidden="true"></i>
-          </button>
-        </div>
-      </div>
-      <div id="report-{{ loop.index }}-details" class="collapse" role="tabpanel"
-        aria-labelledby="report-{{ loop.index }}-heading">
-        <div class="report-details">
-          <p>
-            <strong>Report Owner:</strong>
-            {% if report.owner_name %}
-              {{ report.owner_name }}
-            {% endif %}
-            {% if report.owner_email %}
-              <a href="mailto:{{ report.owner_email}}">{{ report.owner_email }}</a>
-            {% endif %}
-          </p>
-          <p>
-            <strong>Description:</strong>
-            {% if report.description %}
-              {{ report.description }}
-            {% endif %}
-          </p>
-          <p>
-            <strong>Subscribers:</strong>
-            {% if report.subscribers %}
-              {{ ", ".join(report.subscribers) }}
-            {% endif %}
-          </p>
-          {% if report.passed == False %}
-            <div class="report-errors-list">
-              {% for error in report.errors %}
-                {% if error.test_status == False %}
-                  <div class="report-error">
-                    <h5>
-                      <strong>{{ error.name}} failed:</strong>
-                      <a href= "{{ error.description }}">
-                        Link to error log
-                      </a>
-                    </h5>
-                  </div>
-                {% endif %}
-              {% endfor %}
-            </div>
-          {% endif %}
-          {% if report.passed == None %}
-            <div class="report-warnings-list">
-              <div class="report-warning">
-                <h5>
-                  <strong>Warning:</strong> Report Failed to Run
-                </h5>
-                Report status is unknown because it failed to run
-              </div>
-            </div>
-          {% endif %}
-        </div>
-      </div>
-    </div>
-  {% endfor %}
-</div>
+  {% include "partials/status_body.html" %}
 {% endblock %}

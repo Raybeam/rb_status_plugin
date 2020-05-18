@@ -27,6 +27,7 @@ from lumen_plugin.report_form_saver import ReportFormSaver
 from lumen_plugin.helpers.list_tasks_helper import get_all_test_choices
 import logging
 
+
 form_fieldsets_config = [
     (
         "General",

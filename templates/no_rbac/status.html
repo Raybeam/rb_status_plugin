@@ -1,0 +1,14 @@
+{% extends "airflow/master.html" %}
+
+{% block title %}
+  {% include "partials/status_title.html" %}
+{% endblock %}
+
+{% block head_css %}
+  {{ super() }}
+  <link href="{{ url_for('lumen.static', filename='status.css') }}" rel="stylesheet" type="text/css">
+{% endblock %}
+
+{% block body %}
+  {% include "partials/status_body.html" with context %}
+{% endblock %}
