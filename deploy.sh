@@ -5,18 +5,18 @@
 Help()
 {
    # Display Help
-   echo “This script will deploy the lumen plugin to an environment, using the instructions listed in the README.md file.”
+   echo "This script will deploy the lumen plugin to an environment, using the instructions listed in the README.md file."
    echo
    echo
-   echo “Required parameters:”
-   echo “environment               The environment you’d like to deploy to. (local, astronomer, google_cloud_composer)”
-   echo “install_dependencies      Whether to install all required depencies (True, False)”
-   echo “operating_system          The OS on which the script is being run (macOS, Ubuntu, Windows)”
+   echo "Required parameters:"
+   echo "environment               The environment you'd like to deploy to. (local, astronomer, google_cloud_composer)"
+   echo "install_dependencies      Whether to install all required depencies (True, False)"
+   echo "operating_system          The OS on which the script is being run (macOS, Ubuntu, Windows)"
    echo
    echo
    echo
-   echo “Example:”
-   echo “\t./plugins/lumen_plugin/deploy.sh --environment=local --install_dependencies=True”
+   echo "Example:"
+   echo "\t./plugins/lumen_plugin/deploy.sh --environment=local --install_dependencies=True"
    echo
 }
 ################################################################################
@@ -24,12 +24,12 @@ Help()
 ################################################################################
 Local_Deploy()
 {
-  echo “Deploying airflow locally...”
-  echo -e “\n\n\nCreating virtual environment...”
+  echo "Deploying airflow locally..."
+  echo -e "\n\n\nCreating virtual environment..."
   python3 -m venv .
-  source “bin/activate”
-  echo “export AIRFLOW_HOME=$PWD” >> bin/activate
-  echo -e “\n\n\nInstalling and configuring airflow in virtual environment...”
+  source "bin/activate"
+  echo "export AIRFLOW_HOME=$PWD" >> bin/activate
+  echo -e "\n\n\nInstalling and configuring airflow in virtual environment..."
   pip3 install apache-airflow
   pip3 install psycopg2
   airflow initdb
@@ -47,17 +47,17 @@ Local_Deploy()
 ################################################################################
 Start_Airflow()
 {
-  if [ “$operating_system” == “Ubuntu” ]; then
-    x-terminal-emulator --window-with-profile=“$(id -u)” --working-directory=$(pwd) -e “echo \“Starting webserver...\“;. \“bin/activate\“; airflow webserver”
-    x-terminal-emulator --window-with-profile=“$(id -u)” --working-directory=$(pwd) -e “echo \“Starting scheduler...\“;. \“bin/activate\“; airflow scheduler”
+  if [ "$operating_system" == "Ubuntu" ]; then
+    x-terminal-emulator --window-with-profile="$(id -u)" --working-directory=$(pwd) -e "echo \"Starting webserver...\";. \"bin/activate\"; airflow webserver"
+    x-terminal-emulator --window-with-profile="$(id -u)" --working-directory=$(pwd) -e "echo \"Starting scheduler...\";. \"bin/activate\"; airflow scheduler"
   else
     pwd=$(pwd)
-    osascript -e ‘tell application “Terminal”
-       do script “echo \“Starting webserver...\“;cd ‘$pwd’; source \“bin/activate\“; airflow webserver”
-    end tell’
-    osascript -e ‘tell application “Terminal”
-       do script “echo \“Starting scheduler...\“;cd ‘$pwd’; source \“bin/activate\“; airflow scheduler”
-    end tell’
+    osascript -e 'tell application "Terminal"
+       do script "echo \"Starting webserver...\";cd '$pwd'; source \"bin/activate\"; airflow webserver"
+    end tell'
+    osascript -e 'tell application "Terminal"
+       do script "echo \"Starting scheduler...\";cd '$pwd'; source \"bin/activate\"; airflow scheduler"
+    end tell'
   fi
 }
 ################################################################################
@@ -70,25 +70,25 @@ Start_Airflow()
 ################################################################################
 # Get the options
 while [ $# -gt 0 ]; do
-  case “$1" in
+  case "$1" in
     --help)
       Help
       exit;;
     --environment=*)
-      environment=“${1#*=}”
+      environment="${1#*=}"
       ;;
     --install_dependencies=*)
-      install_dependencies=“${1#*=}”
+      install_dependencies="${1#*=}"
       ;;
     --operating_system=*)
-      operating_system=“${1#*=}”
+      operating_system="${1#*=}"
       ;;
     *)
-      printf “**********************************************************************************\n”
-      printf “Error: Invalid argument. \“”
+      printf "**********************************************************************************\n"
+      printf "Error: Invalid argument. \""
       printf $1
-      printf “\” is not defined.\n”
-      printf “**********************************************************************************\n\n\n”
+      printf "\" is not defined.\n"
+      printf "**********************************************************************************\n\n\n"
       Help
       exit 1
   esac
@@ -96,6 +96,6 @@ while [ $# -gt 0 ]; do
 done
 Local_Deploy
 Start_Airflow
-printf “environment is set to %s\n” “$environment”
-printf “install_dependencies is set to %s\n” “$install_dependencies”
-printf “operating_system is set to %s\n” “$operating_system”
+printf "environment is set to %s\n" "$environment"
+printf "install_dependencies is set to %s\n" "$install_dependencies"
+printf "operating_system is set to %s\n" "$operating_system"
