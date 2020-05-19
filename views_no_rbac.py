@@ -21,4 +21,4 @@ class LumenStatusViewAdmin(BaseView):
 class LumenReportsViewAdmin(BaseView):
     @expose('/')
     def test(self):
-        return self.render('no_rbac/reports.html', context=VariablesReportRepo.list())
+        return self.render('no_rbac/reports.html', content=VariablesReportRepo.list())
