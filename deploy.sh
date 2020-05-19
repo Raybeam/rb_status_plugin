@@ -19,15 +19,17 @@ Help()
    echo "\t./plugins/lumen_plugin/deploy.sh --environment=local --install_dependencies=True"
    echo
 }
-
+################################################################################
+# Deploy Locally                                                               #
+################################################################################
 Local_Deploy()
 {
   echo "Deploying airflow locally..."
-  echo "export AIRFLOW_HOME=$PWD" >> bin/activate
 
   echo -e "\n\n\nCreating virtual environment..."
   python3 -m venv .
-  source bin/activate
+  source "bin/activate"
+  echo "export AIRFLOW_HOME=$PWD" >> bin/activate
 
   echo -e "\n\n\nInstalling and configuring airflow in virtual environment..."
   pip3 install apache-airflow
@@ -42,13 +44,8 @@ Local_Deploy()
   plugins/lumen_plugin/bin/lumen add_samples
   plugins/lumen_plugin/bin/lumen add_samples --dag_only
 
-  echo -e "\n\n\nStarting webserver..."
-  airflow webserver
-
-  echo -e "\n\n\nStarting scheduler..."
-  x-terminal-emulator
-  source bin/activate
-  airflow scheduler
+  x-terminal-emulator --window-with-profile="$(id -u)" --working-directory=$(pwd) -e "echo -e \"\n\n\nStarting webserver...\";. \"bin/activate\"; airflow webserver"
+  x-terminal-emulator --window-with-profile="$(id -u)" --working-directory=$(pwd) -e "echo -e \"\n\n\nStarting scheduler...\";. \"bin/activate\"; airflow scheduler"
 }
 
 ################################################################################
@@ -63,9 +60,9 @@ Local_Deploy()
 
 while [ $# -gt 0 ]; do
   case "$1" in
-  	--help)
+    --help)
       Help
-  	  exit;;
+      exit;;
     --environment=*)
       environment="${1#*=}"
       ;;
