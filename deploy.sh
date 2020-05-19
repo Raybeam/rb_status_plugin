@@ -43,11 +43,26 @@ Local_Deploy()
   plugins/lumen_plugin/bin/lumen init
   plugins/lumen_plugin/bin/lumen add_samples
   plugins/lumen_plugin/bin/lumen add_samples --dag_only
-
-  x-terminal-emulator --window-with-profile="$(id -u)" --working-directory=$(pwd) -e "echo -e \"\n\n\nStarting webserver...\";. \"bin/activate\"; airflow webserver"
-  x-terminal-emulator --window-with-profile="$(id -u)" --working-directory=$(pwd) -e "echo -e \"\n\n\nStarting scheduler...\";. \"bin/activate\"; airflow scheduler"
 }
 
+################################################################################
+# Start Webserver and Scheduler                                                #
+################################################################################
+Start_Airflow()
+{
+  if [$environment="Ubuntu"]
+  then
+    x-terminal-emulator --window-with-profile="$(id -u)" --working-directory=$(pwd) -e "echo -e \"\n\n\nStarting webserver...\";. \"bin/activate\"; airflow webserver"
+    x-terminal-emulator --window-with-profile="$(id -u)" --working-directory=$(pwd) -e "echo -e \"\n\n\nStarting scheduler...\";. \"bin/activate\"; airflow scheduler"
+  else
+    osascript -e 'tell app "Terminal"
+      do script "echo -e \"\n\n\nStarting webserver...\";. \"bin/activate\"; airflow webserver"
+    end tell's
+    osascript -e 'tell app "Terminal"
+      do script "echo -e \"\n\n\nStarting scheduler...\";. \"bin/activate\"; airflow scheduler"
+    end tell'
+
+}
 ################################################################################
 ################################################################################
 # Main program                                                                 #
@@ -83,7 +98,10 @@ while [ $# -gt 0 ]; do
   esac
   shift
 done
+
 Local_Deploy
+Start_Airflow
+
 printf "environment is set to %s\n" "$environment"
 printf "install_dependencies is set to %s\n" "$install_dependencies"
 printf "operating_system is set to %s\n" "$operating_system"
