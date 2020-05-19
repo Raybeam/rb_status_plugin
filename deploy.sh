@@ -31,15 +31,19 @@ deploy_local()
   python3 -m venv .
   source "bin/activate"
   echo "export AIRFLOW_HOME=$PWD" >> bin/activate
+
   echo -e "\n\n\nInstalling and configuring airflow in virtual environment..."
   pip3 install apache-airflow
   pip3 install psycopg2
   airflow initdb
   airflow create_user -r Admin -u admin -e admin@example.com -f admin -l user -p admin
+
   git clone https://github.com/Raybeam/lumen_plugin plugins/lumen_plugin
   echo >> requirements.txt
   cat plugins/lumen_plugin/requirements.txt >> requirements.txt
+  sort -u requirements.txt | tee requirements.txt 
   pip3 install -r requirements.txt
+
   plugins/lumen_plugin/bin/lumen init
   plugins/lumen_plugin/bin/lumen add_samples
   plugins/lumen_plugin/bin/lumen add_samples --dag_only
@@ -53,6 +57,7 @@ deploy_gcc()
   python3 -m venv .
   source "bin/activate"
   git clone https://github.com/Raybeam/lumen_plugin plugins/lumen_plugin
+
   if [ "$operating_system" == "Ubuntu" ]; then
     echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
     curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
@@ -90,7 +95,33 @@ deploy_gcc()
 ################################################################################
 deploy_astronomer()
 {
-  echo "Not implemented yet..."
+  deploy_local
+
+  curl -sSL https://install.astronomer.io | sudo bash
+  astro dev init
+  astro auth login gcp0001.us-east4.astronomer.io
+
+  echo "Would you like to deploy to a remote workspace? (y/N)"
+  read deploy_remote
+
+  if [ "$deploy_remote" == "y" ]; then
+    if [ "$operating_system" == "Ubuntu" ]; then
+      sudo astro dev deploy
+    else
+      astro dev deoloy
+    fi
+
+  elif [ "$deploy_remote" == "N" ]; then
+    if [ "$operating_system" == "Ubuntu" ]; then
+      sudo astro dev start
+    else
+      astro dev start
+    fi
+
+  else
+    echo "invalid entry"
+    exit 1
+  fi
 }
 
 ################################################################################
@@ -119,6 +150,7 @@ start_airflow()
   if [ "$operating_system" == "Ubuntu" ]; then
     x-terminal-emulator --window-with-profile="$(id -u)" --working-directory=$(pwd) -e "echo \"Starting webserver...\";. \"bin/activate\"; airflow webserver"
     x-terminal-emulator --window-with-profile="$(id -u)" --working-directory=$(pwd) -e "echo \"Starting scheduler...\";. \"bin/activate\"; airflow scheduler"
+  
   else
     osascript -e 'tell application "Terminal"
        do script "echo \"Starting webserver...\";cd '$(pwd)'; source \"bin/activate\"; airflow webserver"
