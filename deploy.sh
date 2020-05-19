@@ -7,11 +7,16 @@ Help()
    # Display Help
    echo "This script will deploy the lumen plugin to an environment, using the instructions listed in the README.md file."
    echo
-   echo "Example: .plugins/lumen_plugin/deploy.sh --environment=local --install_dependencies=True"
    echo
    echo "Required parameters:"
    echo "environment               The environment you'd like to deploy to. (local, astronomer, google_cloud_composer)"
-   echo "install_dependencies      Whether you want a fresh install of Lumen plugin. This will import all necessary depencies for the environment chosen (True, False)"
+   echo "install_dependencies      Whether to install all required depencies (True, False)"
+   echo "operating_system          The OS on which the script is being run (macOS, Ubuntu, Windows)"
+   echo
+   echo
+   echo 
+   echo "Example:" 
+   echo "\t./plugins/lumen_plugin/deploy.sh --environment=local --install_dependencies=True"
    echo
 }
 
@@ -36,17 +41,21 @@ while [ $# -gt 0 ]; do
     --install_dependencies=*)
       install_dependencies="${1#*=}"
       ;;
+    --operating_system=*)
+      operating_system="${1#*=}"
+      ;;
     *)
-      printf "***************************\n"
-      printf "Error: Invalid argument.\n\""
+      printf "**********************************************************************************\n"
+      printf "Error: Invalid argument. \""
       printf $1
       printf "\" is not defined.\n"
-      printf "***************************\n"
+      printf "**********************************************************************************\n\n\n"
       Help
       exit 1
   esac
   shift
 done
 
-printf "Argument environment is %s\n" "$environment"
-printf "Argument install_dependencies is %s\n" "$install_dependencies"
+printf "environment is set to %s\n" "$environment"
+printf "install_dependencies is set to %s\n" "$install_dependencies"
+printf "operating_system is set to %s\n" "$operating_system"
