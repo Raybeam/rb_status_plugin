@@ -533,7 +533,7 @@
                                                       width: 20px;
                                                     "
                                                   ></div>
-                                                {% else %}
+                                                {% elif passed == False %}
                                                   <div
                                                     style="
                                                       background-color: #dd2c00;
@@ -541,6 +541,22 @@
                                                         #ff4011 40%,
                                                         #dd2c00 70%,
                                                         #440e00
+                                                      );
+                                                      border-radius: 50%;
+                                                      height: 20px;
+                                                      margin-right: 10px;
+                                                      width: 20px;
+                                                    "
+                                                  ></div>
+
+                                                {% else %}
+                                                  <div
+                                                    style="
+                                                      background-color: #ffab00;
+                                                          background-image: radial-gradient(
+                                                            #ffbc33 40%,
+                                                            #ffab00 70%,
+                                                            #664400
                                                       );
                                                       border-radius: 50%;
                                                       height: 20px;
@@ -574,9 +590,13 @@
                                                   <span style="color: #00c853;"
                                                     >Passed</span
                                                   >
-                                                {% else %}
+                                                {% elif passed == False %}
                                                   <span style="color: #dd2c00;"
                                                     >Failed</span
+                                                  >
+                                                {% else %}
+                                                  <span style="color: #ffab00;"
+                                                    >Unknown</span
                                                   >
                                                 {% endif %}
                                                 / Updated {{ updated.strftime('%b %d at %H:%M') }}
