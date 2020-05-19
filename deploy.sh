@@ -50,18 +50,17 @@ Local_Deploy()
 ################################################################################
 Start_Airflow()
 {
-  if [$environment="Ubuntu"]
-  then
-    x-terminal-emulator --window-with-profile="$(id -u)" --working-directory=$(pwd) -e "echo -e \"\n\n\nStarting webserver...\";. \"bin/activate\"; airflow webserver"
-    x-terminal-emulator --window-with-profile="$(id -u)" --working-directory=$(pwd) -e "echo -e \"\n\n\nStarting scheduler...\";. \"bin/activate\"; airflow scheduler"
+  if [ "$operating_system" == "Ubuntu" ]; then
+    x-terminal-emulator --window-with-profile="$(id -u)" --working-directory=$(pwd) -e "echo \"Starting webserver...\";. \"bin/activate\"; airflow webserver"
+    x-terminal-emulator --window-with-profile="$(id -u)" --working-directory=$(pwd) -e "echo \"Starting scheduler...\";. \"bin/activate\"; airflow scheduler"
   else
     osascript -e 'tell app "Terminal"
-      do script "echo -e \"\n\n\nStarting webserver...\";. \"bin/activate\"; airflow webserver"
+      do script "echo \"Starting webserver...\";. \"bin/activate\"; airflow webserver"
     end tell's
     osascript -e 'tell app "Terminal"
-      do script "echo -e \"\n\n\nStarting scheduler...\";. \"bin/activate\"; airflow scheduler"
+      do script "echo \"Starting scheduler...\";. \"bin/activate\"; airflow scheduler"
     end tell'
-
+  fi
 }
 ################################################################################
 ################################################################################
@@ -99,7 +98,7 @@ while [ $# -gt 0 ]; do
   shift
 done
 
-Local_Deploy
+# Local_Deploy
 Start_Airflow
 
 printf "environment is set to %s\n" "$environment"
