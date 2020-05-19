@@ -33,7 +33,7 @@ Local_Deploy()
   pip3 install apache-airflow
   pip3 install psycopg2
   airflow initdb
-  airflow create_user -r Admin -u admin -e admin@example.com(opens in new tab) -f admin -l user -p admin
+  airflow create_user -r Admin -u admin -e admin@example.com -f admin -l user -p admin
   git clone https://github.com/Raybeam/lumen_plugin plugins/lumen_plugin
   echo >> requirements.txt
   cat plugins/lumen_plugin/requirements.txt >> requirements.txt
