@@ -220,7 +220,11 @@ class ReportModel(BaseModelView):
         return None, VariablesReportRepo.list()
 
     def get_one(self, id):
-        return None
+        report = VariablesReportRepo.get_report(id)
+        if not report:
+            return None
+
+        return report
 
     def create_model(self, form):
         return None
