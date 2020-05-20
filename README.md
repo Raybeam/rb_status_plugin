@@ -26,19 +26,33 @@ The deployment environments are:
 [Google Cloud Composer Deploy](#set-up--google-cloud-composer-deploy)  
 
 ## Quick Setup
-### macOS (with sample airflow workspace)
+### macOS
+Clone a sample airflow workspace (if you dont have an existing airflow repository).  
 ```
 git clone https://github.com/Raybeam/lumen-test-airflow/ deploy_test
 cd deploy_test
+```
+Clone plugin into local workspace  
+```
 git clone -b deploy_script https://github.com/Raybeam/lumen_plugin plugins/lumen_plugin
+```
+Run plugin's deploy script.  
+```
 . plugins/lumen_plugin/deploy.sh
 ```
 
-### Ubuntu (with sample airflow workspace)
+### Ubuntu
+Clone a sample airflow workspace (if you dont have an existing airflow repository).  
 ```
 git clone https://github.com/Raybeam/lumen-test-airflow/ deploy_test
 cd deploy_test
+```
+Clone plugin into local workspace  
+```
 git clone -b deploy_script https://github.com/Raybeam/lumen_plugin plugins/lumen_plugin
+```
+Run plugin's deploy script.  
+```
 ./plugins/lumen_plugin/deploy.sh --operating_system=Ubuntu
 ```
 
