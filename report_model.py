@@ -60,7 +60,20 @@ class ReportModel(BaseModelView):
         return model.report_id
 
     def scaffold_list_columns(self):
-        return self.model.__dict__.keys()
+        return [
+            "__report_id",
+            "__report_title",
+            "__report_title_url",
+            "__description",
+            "__owner_name",
+            "__owner_email",
+            "__subscribers",
+            "__tests",
+            "__schedule_type",
+            "__schedule_time",
+            "__schedule_week_day",
+            "__schedule"
+        ]
 
     def scaffold_sortable_columns(self):
         return None
