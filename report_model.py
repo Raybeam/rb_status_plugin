@@ -1,5 +1,5 @@
-from flask_admin.model import BaseModelView, Form
-from flask_admin.contrib.sqla import form, filters as sqla_filters, tools
+from flask_admin.model import BaseModelView
+
 
 class ReportModel(BaseModelView):
     """
@@ -37,7 +37,8 @@ class ReportModel(BaseModelView):
     def get_pk_value(self, model):
         """
             Return the primary key value from a model object.
-            If there are multiple primary keys, they're encoded into string representation.
+            If there are multiple primary keys, they're
+            encoded into string representation.
         """
         return None
 
