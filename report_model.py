@@ -21,6 +21,7 @@ class ReportModel(BaseModelView):
         menu_icon_type=None,
         menu_icon_value=None
     ):
+        self.session = session
         super().__init__(
             model,
             name,
