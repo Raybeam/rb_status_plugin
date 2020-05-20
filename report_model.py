@@ -1,5 +1,5 @@
 from flask_admin.model import BaseModelView
-from flask_admin.contrib.sqla import form
+from flask_admin.form import BaseForm
 
 from wtforms import (
     StringField,
@@ -69,7 +69,7 @@ class ReportModel(BaseModelView):
         return False
 
     def scaffold_form(self):
-        class ReportForm(form.BaseForm):
+        class ReportForm(BaseForm):
             report_id = HiddenField()
             title = StringField(
                 ("Title"),
