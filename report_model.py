@@ -152,7 +152,7 @@ class ReportModel(BaseModelView):
         return ReportForm
 
     def get_list(self, page, sort_field, sort_desc, search, filters, page_size=None):
-        return VariablesReportRepo.list()
+        return None, VariablesReportRepo.list()
 
     def get_one(self, id):
         return None
