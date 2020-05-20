@@ -69,7 +69,7 @@ class ReportModel(BaseModelView):
         return False
 
     def scaffold_form(self):
-        class ReportForm(Form):
+        class ReportForm(form.Form):
             report_id = HiddenField()
             title = StringField(
                 ("Title"),
