@@ -14,7 +14,7 @@ class ReportModel(BaseModelView):
     return None
 
   def init_search(self):
-    return None
+    return False
 
   def scaffold_form(self):
     class MyForm(Form):
@@ -23,7 +23,7 @@ class ReportModel(BaseModelView):
     return MyForm
 
   def get_list(self, page, sort_field, sort_desc, search, filters, page_size=None):
-    return None
+    return []
   
   def get_one(self, id):
     return None
@@ -35,7 +35,7 @@ class ReportModel(BaseModelView):
     return None
   
   def delete_model(self, model)
-    return None
+    return True
   
   def is_valid_filter(self, filter):
     return None
