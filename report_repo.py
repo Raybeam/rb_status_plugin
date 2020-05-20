@@ -48,6 +48,15 @@ class VariablesReportRepo(ReportRepo):
 
     @classmethod
     @provide_session
+    def get_report(cls, lookup_id, session=None):
+        """ Return a list of all matching reports in variables """
+        variable = session.query(Variable).filter(
+            Variable.id == lookup_id,
+        ).one()
+        return cls.to_report(variable)
+
+    @classmethod
+    @provide_session
     def get(cls, name, session=None):
         """ Get a single report from variables """
         for (n, val) in cls.each_from_db(session):
