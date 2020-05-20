@@ -1,5 +1,6 @@
 from flask_admin.model import BaseModelView
 from flask_admin.form import BaseForm
+from wtforms import widgets
 
 from wtforms import (
     StringField,
@@ -8,16 +9,67 @@ from wtforms import (
     SelectField,
     HiddenField,
 )
-from flask_appbuilder.fieldwidgets import (
-    BS3TextFieldWidget,
-    BS3TextAreaFieldWidget,
-    Select2ManyWidget,
-    Select2Widget,
-)
+
 from wtforms.validators import DataRequired, Email
 from wtforms_components import TimeField
 from lumen_plugin.helpers.list_tasks_helper import get_all_test_choices
 from lumen_plugin.report_repo import VariablesReportRepo
+
+
+class BS3TextFieldWidget(widgets.TextInput):
+    def __call__(self, field, **kwargs):
+        kwargs["class"] = u"form-control"
+        if field.label:
+            kwargs["placeholder"] = field.label.text
+        if "name_" in kwargs:
+            field.name = kwargs["name_"]
+        return super(BS3TextFieldWidget, self).__call__(field, **kwargs)
+
+
+class BS3TextAreaFieldWidget(widgets.TextArea):
+    def __call__(self, field, **kwargs):
+        kwargs["class"] = u"form-control"
+        kwargs["rows"] = 3
+        if field.label:
+            kwargs["placeholder"] = field.label.text
+        return super(BS3TextAreaFieldWidget, self).__call__(field, **kwargs)
+
+
+class Select2Widget(widgets.Select):
+    extra_classes = None
+
+    def __init__(self, extra_classes=None, style=None):
+        self.extra_classes = extra_classes
+        self.style = style or u"width:250px"
+        return super(Select2Widget, self).__init__()
+
+    def __call__(self, field, **kwargs):
+        kwargs["class"] = u"my_select2 form-control"
+        if self.extra_classes:
+            kwargs["class"] = kwargs["class"] + " " + self.extra_classes
+        kwargs["style"] = self.style
+        if "name_" in kwargs:
+            field.name = kwargs["name_"]
+        return super(Select2Widget, self).__call__(field, **kwargs)
+
+
+class Select2ManyWidget(widgets.Select):
+    extra_classes = None
+
+    def __init__(self, extra_classes=None, style=None):
+        self.extra_classes = extra_classes
+        self.style = style or u"width:250px"
+        return super(Select2ManyWidget, self).__init__()
+
+    def __call__(self, field, **kwargs):
+        kwargs["class"] = u"my_select2 form-control"
+        if self.extra_classes:
+            kwargs["class"] = kwargs["class"] + " " + self.extra_classes
+        kwargs["style"] = self.style
+        kwargs["multiple"] = u"true"
+        if "name_" in kwargs:
+            field.name = kwargs["name_"]
+        return super(Select2ManyWidget, self).__call__(field, **kwargs)
 
 
 class ReportModel(BaseModelView):
@@ -61,18 +113,18 @@ class ReportModel(BaseModelView):
 
     def scaffold_list_columns(self):
         return [
-            "__report_id",
-            "__report_title",
-            "__report_title_url",
-            "__description",
-            "__owner_name",
-            "__owner_email",
-            "__subscribers",
-            "__tests",
-            "__schedule_type",
-            "__schedule_time",
-            "__schedule_week_day",
-            "__schedule"
+            "report_id",
+            "report_title",
+            "report_title_url",
+            "description",
+            "owner_name",
+            "owner_email",
+            "subscribers",
+            "tests",
+            "schedule_type",
+            "schedule_time",
+            "schedule_week_day",
+            "schedule"
         ]
 
     def scaffold_sortable_columns(self):
