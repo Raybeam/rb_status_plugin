@@ -10,14 +10,13 @@ help()
    echo
    echo
    echo "Required parameters:"
-   echo "environment               The environment you'd like to deploy to. (local, astronomer, google_cloud_composer)"
-   echo "install_dependencies      Whether to install all required depencies (True, False)"
-   echo "operating_system          The OS on which the script is being run (macOS, Ubuntu)"
+   echo "environment               The environment you'd like to deploy to."
+   echo "                          (local, astronomer_local, astronomer_remote, google_cloud_composer)"
    echo
    echo
    echo
    echo "Example:"
-   echo -e "\t./plugins/lumen_plugin/deploy.sh --environment=local --operating_system=macOS --install_dependencies=True"
+   echo -e "\t./plugins/lumen_plugin/deploy.sh --environment=local"
    echo
 }
 
@@ -26,6 +25,13 @@ help()
 ################################################################################
 deploy_local()
 {
+  declare -a dependencies=("python3" "pip3" "git")
+  for val in $dependencies; do
+      if ! [ -x "$(command -v $val)" ]; then
+        printf "Unable to complete deploy, please install %s\n" "$val."
+        exit 1
+      fi
+  done
   echo "Deploying airflow locally..."
   echo -e "\n\n\nCreating virtual environment..."
   python3 -m venv .
@@ -38,7 +44,6 @@ deploy_local()
   airflow initdb
   airflow create_user -r Admin -u admin -e admin@example.com -f admin -l user -p admin
 
-  git clone https://github.com/Raybeam/lumen_plugin plugins/lumen_plugin
   echo >> requirements.txt
   cat plugins/lumen_plugin/requirements.txt >> requirements.txt
   sort -u requirements.txt | tee requirements.txt 
@@ -54,21 +59,10 @@ deploy_local()
 ################################################################################
 deploy_gcc()
 {
-  python3 -m venv .
-  source "bin/activate"
-  git clone https://github.com/Raybeam/lumen_plugin plugins/lumen_plugin
-
-  if [ "$operating_system" == "Ubuntu" ]; then
-    echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
-    sudo apt-get update && sudo apt-get install google-cloud-sdk
-  else
-    brew cask install gcloud
+  if ! [ -x "$(command -v gcloud)" ]; then
+    echo "Unable to complete deploy, please install gcloud."
+    exit 1
   fi
-
-  gcloud init
-  gcloud config set accessibility/screen_reader true
-  gcloud auth login
 
   echo -e "\n\n\n"
   echo "Please enter the location of the environment (ie. us-west3):"
@@ -91,36 +85,39 @@ deploy_gcc()
 }
 
 ################################################################################
-# Deploy to Astronomer                                                         #
+# Deploy to Astronomer Locally                                                 #
 ################################################################################
-deploy_astronomer()
+deploy_astronomer_local()
 {
+  if ! [ -x "$(command -v astro)" ]; then
+    echo "Unable to complete deploy, please install astro."
+    exit 1
+  fi
+  
   deploy_local
 
-  curl -sSL https://install.astronomer.io | sudo bash
-  astro dev init
-  astro auth login gcp0001.us-east4.astronomer.io
-
-  echo "Would you like to deploy to a remote workspace? (y/N)"
-  read deploy_remote
-
-  if [ "$deploy_remote" == "y" ]; then
-    if [ "$operating_system" == "Ubuntu" ]; then
-      sudo astro dev deploy
-    else
-      astro dev deploy
-    fi
-
-  elif [ "$deploy_remote" == "N" ]; then
-    if [ "$operating_system" == "Ubuntu" ]; then
-      sudo astro dev start
-    else
-      astro dev start
-    fi
-
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+   echo -e "To start astro-airflow instance, please run:\n\tsudo astro dev start"
   else
-    echo "invalid entry"
+    echo -e "To start astro-airflow instance, please run:\n\tastro dev start"
+  fi
+}
+################################################################################
+# Deploy to Astronomer Remotely                                                #
+################################################################################
+deploy_astronomer_remote()
+{
+  if ! [ -x "$(command -v astro)" ]; then
+    echo "Unable to complete deploy, please install astro."
     exit 1
+  fi
+
+  deploy_local
+
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    sudo astro dev deploy
+  else
+    astro dev deploy
   fi
 }
 
@@ -132,10 +129,12 @@ deploy_plugin()
   if [ "$environment" == "local" ]; then
     deploy_local
     start_airflow
+  elif [ "$environment" == "astronomer_local" ]; then
+    deploy_astronomer_local
+  elif [ "$environment" == "astronomer_remote" ]; then
+    deploy_astronomer_remote
   elif [ "$environment" == "google_cloud_composer" ]; then
     deploy_gcc
-  elif [ "$environment" == "astronomer" ]; then
-    deploy_astronomer
   else
     echo "Error: Environment not specified."
     help
@@ -147,18 +146,8 @@ deploy_plugin()
 ################################################################################
 start_airflow()
 {
-  if [ "$operating_system" == "Ubuntu" ]; then
-    x-terminal-emulator --window-with-profile="$(id -u)" --working-directory=$(pwd) -e "echo \"Starting webserver...\";. \"bin/activate\"; airflow webserver"
-    x-terminal-emulator --window-with-profile="$(id -u)" --working-directory=$(pwd) -e "echo \"Starting scheduler...\";. \"bin/activate\"; airflow scheduler"
-  
-  else
-    osascript -e 'tell application "Terminal"
-       do script "echo \"Starting webserver...\";cd '$(pwd)'; source \"bin/activate\"; airflow webserver"
-    end tell'
-    osascript -e 'tell application "Terminal"
-       do script "echo \"Starting scheduler...\";cd '$(pwd)'; source \"bin/activate\"; airflow scheduler"
-    end tell'
-  fi
+    echo -e "To start airflow webserver, please open a new tab and run:\n\tcd '$(pwd)'; source \"bin/activate\"; airflow webserver"
+    echo -e "To start airflow scheduler, please open a new tab and run:\n\tcd '$(pwd)'; source \"bin/activate\"; airflow scheduler"
 }
 
 
@@ -172,12 +161,6 @@ while [ $# -gt 0 ]; do
       exit;;
     --environment=*)
       environment="${1#*=}"
-      ;;
-    --install_dependencies=*)
-      install_dependencies="${1#*=}"
-      ;;
-    --operating_system=*)
-      operating_system="${1#*=}"
       ;;
     *)
       printf "**********************************************************************************\n"
@@ -194,15 +177,8 @@ done
 if [ -z ${environment+x} ]; then
   environment="local"
 fi
-if [ -z ${operating_system+x} ]; then
-  operating_system="macOS"
-fi
-if [ -z ${install_dependencies+x} ]; then
-  install_dependencies="True"
-fi
 
-printf "environment is set to:                 %s\n" "$environment"
-printf "operating_system is set to:            %s\n" "$operating_system"
-printf "install_dependencies is set to:        %s\n" "$install_dependencies"
-
+set -o noclobber
 deploy_plugin
+set +o noclobber
+printf "plugin has been deploy to %s.\n" "$environment"
