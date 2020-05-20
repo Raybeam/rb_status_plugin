@@ -1,5 +1,5 @@
 from flask_admin.model import BaseModelView, Form
-
+from flask_admin.contrib.sqla import form, filters as sqla_filters, tools
 
 class ReportModel(BaseModelView):
     """
@@ -8,7 +8,36 @@ class ReportModel(BaseModelView):
     """
 
     # Implementing the required BaseModelView functions
+    def __init__(
+        self,
+        model,
+        session,
+        name=None,
+        category=None,
+        endpoint=None,
+        url=None,
+        static_folder=None,
+        menu_class_name=None,
+        menu_icon_type=None,
+        menu_icon_value=None
+    ):
+        super().__init__(
+            model,
+            name,
+            category,
+            endpoint,
+            url,
+            static_folder,
+            menu_class_name=menu_class_name,
+            menu_icon_type=menu_icon_type,
+            menu_icon_value=menu_icon_value
+        )
+
     def get_pk_value(self, model):
+        """
+            Return the primary key value from a model object.
+            If there are multiple primary keys, they're encoded into string representation.
+        """
         return None
 
     def scaffold_list_columns(self):
