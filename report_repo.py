@@ -53,6 +53,10 @@ class VariablesReportRepo(ReportRepo):
         variable = session.query(Variable).filter(
             Variable.id == lookup_id,
         ).one()
+
+        if not variable:
+            return None
+
         return cls.to_report(variable)
 
     @classmethod
