@@ -1,4 +1,6 @@
-from flask_admin.model import BaseModelView, Form
+from flask_admin.model import BaseModelView
+from flask_admin.contrib.sqla import form
+
 from wtforms import (
     StringField,
     TextAreaField,
