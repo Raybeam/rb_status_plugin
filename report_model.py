@@ -15,6 +15,8 @@ from flask_appbuilder.fieldwidgets import (
 from wtforms.validators import DataRequired, Email
 from wtforms_components import TimeField
 from lumen_plugin.helpers.list_tasks_helper import get_all_test_choices
+from lumen_plugin.report_repo import VariablesReportRepo
+
 
 class ReportModel(BaseModelView):
     """
@@ -148,7 +150,7 @@ class ReportModel(BaseModelView):
         return ReportForm
 
     def get_list(self, page, sort_field, sort_desc, search, filters, page_size=None):
-        return []
+        return VariablesReportRepo.list()
 
     def get_one(self, id):
         return None
