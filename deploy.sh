@@ -108,7 +108,7 @@ deploy_astronomer()
     if [ "$operating_system" == "Ubuntu" ]; then
       sudo astro dev deploy
     else
-      astro dev deoloy
+      astro dev deploy
     fi
 
   elif [ "$deploy_remote" == "N" ]; then
