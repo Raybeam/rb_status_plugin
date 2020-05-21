@@ -1,16 +1,14 @@
 from flask_admin.model import BaseModelView
-from flask_admin import expose
-
 from wtforms.validators import DataRequired, Email
 from wtforms_components import TimeField
 from wtforms.form import Form
+from wtforms import widgets
 from wtforms import (
     StringField,
     TextAreaField,
     SelectMultipleField,
     SelectField,
-    HiddenField,
-    widgets,
+    HiddenField
 )
 
 from lumen_plugin.helpers.list_tasks_helper import get_all_test_choices
@@ -19,27 +17,26 @@ from lumen_plugin.report_form_saver import ReportFormSaver
 
 import logging
 
-
 # from flask_admin.form import BaseForm
-# from wtforms import widgets
-
-# class BS3TextFieldWidget(widgets.TextInput):
-#     def __call__(self, field, **kwargs):
-#         kwargs["class"] = u"form-control"
-#         if field.label:
-#             kwargs["placeholder"] = field.label.text
-#         if "name_" in kwargs:
-#             field.name = kwargs["name_"]
-#         return super(BS3TextFieldWidget, self).__call__(field, **kwargs)
 
 
-# class BS3TextAreaFieldWidget(widgets.TextArea):
-#     def __call__(self, field, **kwargs):
-#         kwargs["class"] = u"form-control"
-#         kwargs["rows"] = 3
-#         if field.label:
-#             kwargs["placeholder"] = field.label.text
-#         return super(BS3TextAreaFieldWidget, self).__call__(field, **kwargs)
+class BS3TextFieldWidget(widgets.TextInput):
+    def __call__(self, field, **kwargs):
+        kwargs["class"] = u"form-control"
+        if field.label:
+            kwargs["placeholder"] = field.label.text
+        if "name_" in kwargs:
+            field.name = kwargs["name_"]
+        return super(BS3TextFieldWidget, self).__call__(field, **kwargs)
+
+
+class BS3TextAreaFieldWidget(widgets.TextArea):
+    def __call__(self, field, **kwargs):
+        kwargs["class"] = u"form-control"
+        kwargs["rows"] = 3
+        if field.label:
+            kwargs["placeholder"] = field.label.text
+        return super(BS3TextAreaFieldWidget, self).__call__(field, **kwargs)
 
 
 class Select2Widget(widgets.Select):
@@ -146,12 +143,12 @@ class ReportModel(BaseModelView):
             report_title = StringField(
                 ("Title"),
                 description="Title will be used as the report's name",
-                # widget=BS3TextFieldWidget(),
+                widget=BS3TextFieldWidget(),
                 validators=[DataRequired()],
             )
             description = TextAreaField(
                 ("Description"),
-                # widget=BS3TextAreaFieldWidget(),
+                widget=BS3TextAreaFieldWidget(),
                 validators=[DataRequired()]
             )
             owner_name = StringField(
@@ -192,7 +189,7 @@ class ReportModel(BaseModelView):
                     ("weekly", "Weekly"),
                     ("custom", "Custom (Cron)"),
                 ],
-                widget=widgets.Select(),
+                widget=Select2Widget(),
                 validators=[DataRequired()],
             )
             schedule_time = TimeField(
