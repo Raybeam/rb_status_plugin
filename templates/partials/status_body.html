@@ -89,7 +89,7 @@
                     {% for error in report.errors %}
                         {% if error.test_status == None %}
                           <li>
-                            <a href= "{{ error.description }}">
+                            <a href= "{{ error.log_url }}">
                               {{ error.name }}
                             </a>
                           </li>
@@ -107,7 +107,7 @@
                     {% for error in report.errors %}
                         {% if error.test_status == False %}
                           <li>
-                            <a href= "{{ error.description }}">
+                            <a href= "{{ error.log_url }}">
                               {{ error.name }}
                             </a>
                           </li>

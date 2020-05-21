@@ -1,8 +1,9 @@
 from flask_admin.model import BaseModelView
-# from flask_admin.form import BaseForm
-# from wtforms import widgets
-from wtforms.form import Form
+from flask_admin import expose
 
+from wtforms.validators import DataRequired, Email
+from wtforms_components import TimeField
+from wtforms.form import Form
 from wtforms import (
     StringField,
     TextAreaField,
@@ -11,11 +12,15 @@ from wtforms import (
     HiddenField,
 )
 
-from wtforms.validators import DataRequired, Email
-from wtforms_components import TimeField
 from lumen_plugin.helpers.list_tasks_helper import get_all_test_choices
 from lumen_plugin.report_repo import VariablesReportRepo
+from lumen_plugin.report_form_saver import ReportFormSaver
 
+import logging
+
+
+# from flask_admin.form import BaseForm
+# from wtforms import widgets
 
 # class BS3TextFieldWidget(widgets.TextInput):
 #     def __call__(self, field, **kwargs):
@@ -190,7 +195,9 @@ class ReportModel(BaseModelView):
                 validators=[DataRequired()],
             )
             schedule_time = TimeField(
-                "Time", render_kw={"class": "form-control"}, validators=[DataRequired()]
+                "Time",
+                render_kw={"class": "form-control"},
+                validators=[DataRequired()]
             )
             schedule_week_day = SelectField(
                 ("Day of week"),
@@ -228,7 +235,15 @@ class ReportModel(BaseModelView):
         return report
 
     def create_model(self, form):
-        return None
+        form = self.scaffold_form()
+        logging.error("Creating model")
+        logging.info(form)
+        # report_saver = ReportFormSaver(form)
+        # form_submitted = report_saver.extract_report_data_into_airflow(
+        #     report_exists=False
+        # )
+        # if form_submitted:
+        #     return self
 
     def update_model(self, form, model):
         return None
