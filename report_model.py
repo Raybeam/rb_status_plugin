@@ -42,22 +42,22 @@ import logging
 #         return super(BS3TextAreaFieldWidget, self).__call__(field, **kwargs)
 
 
-# class Select2Widget(widgets.Select):
-#     extra_classes = None
+class Select2Widget(widgets.Select):
+    extra_classes = None
 
-#     def __init__(self, extra_classes=None, style=None):
-#         self.extra_classes = extra_classes
-#         self.style = style or u"width:250px"
-#         return super(Select2Widget, self).__init__()
+    def __init__(self, extra_classes=None, style=None):
+        self.extra_classes = extra_classes
+        self.style = style or u"width:250px"
+        return super(Select2Widget, self).__init__()
 
-#     def __call__(self, field, **kwargs):
-#         kwargs["class"] = u"my_select2 form-control"
-#         if self.extra_classes:
-#             kwargs["class"] = kwargs["class"] + " " + self.extra_classes
-#         kwargs["style"] = self.style
-#         if "name_" in kwargs:
-#             field.name = kwargs["name_"]
-#         return super(Select2Widget, self).__call__(field, **kwargs)
+    def __call__(self, field, **kwargs):
+        kwargs["class"] = u"my_select2 form-control"
+        if self.extra_classes:
+            kwargs["class"] = kwargs["class"] + " " + self.extra_classes
+        kwargs["style"] = self.style
+        if "name_" in kwargs:
+            field.name = kwargs["name_"]
+        return super(Select2Widget, self).__call__(field, **kwargs)
 
 
 class Select2ManyWidget(widgets.Select):
@@ -65,7 +65,7 @@ class Select2ManyWidget(widgets.Select):
 
     def __init__(self, extra_classes=None, style=None):
         self.extra_classes = extra_classes
-        self.style = style or u"width:250px"
+        self.style = style or u"width:350px"
         return super(Select2ManyWidget, self).__init__()
 
     def __call__(self, field, **kwargs):
@@ -192,7 +192,7 @@ class ReportModel(BaseModelView):
                     ("weekly", "Weekly"),
                     ("custom", "Custom (Cron)"),
                 ],
-                # widget=widgets.Select(),
+                widget=widgets.Select(),
                 validators=[DataRequired()],
             )
             schedule_time = TimeField(
@@ -212,7 +212,7 @@ class ReportModel(BaseModelView):
                     ("5", "Friday"),
                     ("6", "Saturday"),
                 ],
-                # widget=Select2Widget(),
+                widget=Select2Widget(),
                 validators=[DataRequired()],
             )
             schedule_custom = StringField(
