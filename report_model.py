@@ -1,7 +1,6 @@
 from flask_admin.model import BaseModelView
-from flask_admin import expose
 
-from wtforms.validators import DataRequired, Email
+from wtforms.validators import DataRequired, Email, Optional
 from wtforms_components import TimeField
 from wtforms.form import Form
 from wtforms import (
@@ -18,46 +17,6 @@ from lumen_plugin.report_repo import VariablesReportRepo
 from lumen_plugin.report_form_saver import ReportFormSaver
 
 import logging
-
-
-# from flask_admin.form import BaseForm
-# from wtforms import widgets
-
-# class BS3TextFieldWidget(widgets.TextInput):
-#     def __call__(self, field, **kwargs):
-#         kwargs["class"] = u"form-control"
-#         if field.label:
-#             kwargs["placeholder"] = field.label.text
-#         if "name_" in kwargs:
-#             field.name = kwargs["name_"]
-#         return super(BS3TextFieldWidget, self).__call__(field, **kwargs)
-
-
-# class BS3TextAreaFieldWidget(widgets.TextArea):
-#     def __call__(self, field, **kwargs):
-#         kwargs["class"] = u"form-control"
-#         kwargs["rows"] = 3
-#         if field.label:
-#             kwargs["placeholder"] = field.label.text
-#         return super(BS3TextAreaFieldWidget, self).__call__(field, **kwargs)
-
-
-# class Select2Widget(widgets.Select):
-#     extra_classes = None
-
-#     def __init__(self, extra_classes=None, style=None):
-#         self.extra_classes = extra_classes
-#         self.style = style or u"width:250px"
-#         return super(Select2Widget, self).__init__()
-
-#     def __call__(self, field, **kwargs):
-#         kwargs["class"] = u"my_select2 form-control"
-#         if self.extra_classes:
-#             kwargs["class"] = kwargs["class"] + " " + self.extra_classes
-#         kwargs["style"] = self.style
-#         if "name_" in kwargs:
-#             field.name = kwargs["name_"]
-#         return super(Select2Widget, self).__call__(field, **kwargs)
 
 
 class Select2ManyWidget(widgets.Select):
@@ -198,7 +157,7 @@ class ReportModel(BaseModelView):
             schedule_time = TimeField(
                 "Time",
                 render_kw={"class": "form-control"},
-                validators=[DataRequired()]
+                validators=[Optional()]
             )
             schedule_week_day = SelectField(
                 ("Day of week"),
@@ -236,15 +195,13 @@ class ReportModel(BaseModelView):
         return report
 
     def create_model(self, form):
-        form = self.scaffold_form()
-        logging.error("Creating model")
-        logging.info(form)
-        # report_saver = ReportFormSaver(form)
-        # form_submitted = report_saver.extract_report_data_into_airflow(
-        #     report_exists=False
-        # )
-        # if form_submitted:
-        #     return self
+        logging.info("Creating model")
+        report_saver = ReportFormSaver(form)
+        form_submitted = report_saver.extract_report_data_into_airflow(
+            report_exists=False
+        )
+        if form_submitted:
+            return self
 
     def update_model(self, form, model):
         return None
