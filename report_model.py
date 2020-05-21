@@ -142,7 +142,7 @@ class ReportModel(BaseModelView):
     def scaffold_form(self):
         class ReportForm(Form):
             report_id = HiddenField()
-            title = StringField(
+            report_title = StringField(
                 ("Title"),
                 description="Title will be used as the report's name",
                 # widget=BS3TextFieldWidget(),
