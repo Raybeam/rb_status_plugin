@@ -136,13 +136,14 @@ class LumenReportsView(AppBuilderBaseView):
     @expose("/paused", methods=["POST"])
     def pause_dag(self):
         r_args = request.args
-        report_name = r_args.get('report_name')
+        report_name = r_args.get("report_name")
         r = Report(report_name)
-        if r_args.get('is_paused') == 'true':
+        if r_args.get("is_paused") == "true":
             r.activate_dag()
         else:
             r.pause_dag()
         return "OK"
+
 
 class ReportForm(DynamicForm):
     report_id = HiddenField()
@@ -195,7 +196,10 @@ class ReportForm(DynamicForm):
         validators=[DataRequired()],
     )
     schedule_time = TimeField(
-        "Time", render_kw={"class": "form-control"}, validators=[DataRequired()]
+        "Time",
+        description="Note that time zone being used is UTC.",
+        render_kw={"class": "form-control"},
+        validators=[DataRequired()],
     )
     schedule_week_day = SelectField(
         ("Day of week"),
@@ -214,7 +218,10 @@ class ReportForm(DynamicForm):
     )
     schedule_custom = StringField(
         ("Cron schedule"),
-        description='Enter cron schedule (e.g. "0 0 * * *")',
+        description=(
+            'Enter cron schedule (e.g. "0 0 * * *").\
+         Note that time zone being used is UTC.'
+        ),
         widget=BS3TextFieldWidget(),
         validators=[DataRequired()],
     )

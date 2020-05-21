@@ -20,95 +20,116 @@
   </div>
   {% endif %}
 
-  <h2>Reports</h2>
-
-  {% for report in content.reports %}
-    <div class="report-base report 
-      {% if report.passed == True %}
-        passed
-      {% elif report.passed == False %}
-        failed
-      {% else %}
-        unknown
-      {% endif %}">
-      <div id="report-{{ loop.index }}-heading" class="report-header" role="tab">
-        <div class="report-highlights">
-          <div class="report-indicator"></div>
-          <div class="report-meta">
-            <span class="report-status">
-              {% if report.passed == True %}
-                Passed
-              {% elif report.passed == False %}
-                Failed
-              {% else %}
-                Unknown
-              {% endif %}
-            </span> /
-            Updated {{ report.updated.strftime('%b %d at %H:%M') }}
-            <h3>{{ report.title }}</h3>
+  {% if content.reports %}
+    <h2>Reports</h2>
+    {% for report in content.reports | sort(attribute='title')%}
+      <div class="report-base report 
+        {% if report.passed == True %}
+          passed
+        {% elif report.passed == False %}
+          failed
+        {% else %}
+          unknown
+        {% endif %}">
+        <div id="report-{{ loop.index }}-heading" class="report-header" role="tab">
+          <div class="report-highlights">
+            <div class="report-indicator"></div>
+            <div class="report-meta">
+              <span class="report-status">
+                {% if report.passed == True %}
+                  Passed
+                {% elif report.passed == False %}
+                  Failed
+                {% else %}
+                  Unknown
+                {% endif %}
+              </span> /
+              Updated {{ report.updated.strftime('%b %d at %H:%M') }}
+              <h3>{{ report.title }}</h3>
+            </div>
+          </div>
+          <div>
+            <button type="button" class="btn btn-link report-details-trigger collapsed" data-toggle="collapse"
+              data-target="#report-{{ loop.index }}-details" aria-expanded="false"
+              aria-controls="report-{{ loop.index }}-details">
+              Details
+              <i class="fa fa-angle-down" aria-hidden="true"></i>
+            </button>
           </div>
         </div>
-        <div>
-          <button type="button" class="btn btn-link report-details-trigger collapsed" data-toggle="collapse"
-            data-target="#report-{{ loop.index }}-details" aria-expanded="false"
-            aria-controls="report-{{ loop.index }}-details">
-            Details
-            <i class="fa fa-angle-down" aria-hidden="true"></i>
-          </button>
-        </div>
-      </div>
-      <div id="report-{{ loop.index }}-details" class="collapse" role="tabpanel"
-        aria-labelledby="report-{{ loop.index }}-heading">
-        <div class="report-details">
-          <p>
-            <strong>Report Owner:</strong>
-            {% if report.owner_name %}
-              {{ report.owner_name }}
-            {% endif %}
-            {% if report.owner_email %}
-              <a href="mailto:{{ report.owner_email}}">{{ report.owner_email }}</a>
-            {% endif %}
-          </p>
-          <p>
-            <strong>Description:</strong>
-            {% if report.description %}
-              {{ report.description }}
-            {% endif %}
-          </p>
-          <p>
-            <strong>Subscribers:</strong>
-            {% if report.subscribers %}
-              {{ ", ".join(report.subscribers) }}
-            {% endif %}
-          </p>
-          {% if report.passed == False %}
-            <div class="report-errors-list">
-              {% for error in report.errors %}
-                {% if error.test_status == False %}
-                  <div class="report-error">
-                    <h5>
-                      <strong>{{ error.name}} failed:</strong>
-                      <a href= "{{ error.description }}">
-                        Link to error log
-                      </a>
-                    </h5>
-                  </div>
-                {% endif %}
-              {% endfor %}
-            </div>
-          {% endif %}
-          {% if report.passed == None %}
-            <div class="report-warnings-list">
-              <div class="report-warning">
-                <h5>
-                  <strong>Warning:</strong> Report Failed to Run
-                </h5>
-                Report status is unknown because it failed to run
+        <div id="report-{{ loop.index }}-details" class="collapse" role="tabpanel"
+          aria-labelledby="report-{{ loop.index }}-heading">
+          <div class="report-details">
+            <p>
+              <strong>Report Owner:</strong>
+              {% if report.owner_name %}
+                {{ report.owner_name }}
+              {% endif %}
+              {% if report.owner_email %}
+                <a href="mailto:{{ report.owner_email}}">{{ report.owner_email }}</a>
+              {% endif %}
+            </p>
+            <p>
+              <strong>Description:</strong>
+              {% if report.description %}
+                {{ report.description }}
+              {% endif %}
+            </p>
+            <p>
+              <strong>Subscribers:</strong>
+              {% if report.subscribers %}
+                {{ ", ".join(report.subscribers) }}
+              {% endif %}
+            </p>
+            {% if None in report.errors|map(attribute="test_status") %}
+              <div class="report-warnings-list">
+                <div class="report-warning">
+                <strong>Unable to run:</strong>
+                  <ul>
+                    {% for error in report.errors %}
+                        {% if error.test_status == None %}
+                          <li>
+                            <a href= "{{ error.description }}">
+                              {{ error.name }}
+                            </a>
+                          </li>
+                        {% endif %}
+                    {% endfor %}
+                  </ul>
+                </div>
               </div>
-            </div>
-          {% endif %}
+            {% endif %}
+            {% if False in report.errors|map(attribute="test_status") %}
+              <div class="report-errors-list">
+                <div class="report-error">
+                <strong>Failed:</strong>
+                  <ul>
+                    {% for error in report.errors %}
+                        {% if error.test_status == False %}
+                          <li>
+                            <a href= "{{ error.description }}">
+                              {{ error.name }}
+                            </a>
+                          </li>
+                        {% endif %}
+                    {% endfor %}
+                  </ul>
+                </div>
+              </div>
+            {% endif %}
+          </div>
         </div>
       </div>
-    </div>
-  {% endfor %}
+    {% endfor %}
+  {% else %}
+    <h2>No reports have run yet!</h2>
+    <h4> Don't worry, here's some steps for creating a new report:</h4>
+    <ul>
+      <li>Create a new <a href="{{ url_for('NewReportFormView.this_form_get') }}">report</a>.</li>
+      <li>Turn on the new report on the <a href="{{ url_for('LumenReportsView.list') }}">reports</a> page.</li>
+      <li>Run the new report <a href="{{ url_for('LumenReportsView.list') }}"> manually</a> or let it run naturally on the schedule you provided.</li>
+      <li>Wait for the report to finish running.</li>
+      <li>This status page will now be populated with a new report.</li>
+    </ul>
+  {% endif %}
 </div>
