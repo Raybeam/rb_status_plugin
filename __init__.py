@@ -71,7 +71,7 @@ v_admin_my_model_view = LumenReportMgmtViewAdmin(
     Session,
     category="Lumen",
     name="Report Management View",
-    url="/lumen/report_mgmt",
+    url="lumen/report_mgmt",
 )
 
 class LumenPlugin(AirflowPlugin):
