@@ -146,8 +146,8 @@ deploy_plugin()
 ################################################################################
 start_airflow()
 {
-    echo -e "To start airflow webserver, please open a new tab and run:\n\tcd '$(pwd)'; source \"bin/activate\"; airflow webserver"
-    echo -e "To start airflow scheduler, please open a new tab and run:\n\tcd '$(pwd)'; source \"bin/activate\"; airflow scheduler"
+    echo -e "\n\n\n\nTo start airflow webserver, please open a new tab and run:\n\tcd '$(pwd)'; source \"bin/activate\"; airflow webserver"
+    echo -e "\n\nTo start airflow scheduler, please open a new tab and run:\n\tcd '$(pwd)'; source \"bin/activate\"; airflow scheduler"
 }
 
 
@@ -158,7 +158,7 @@ while [ $# -gt 0 ]; do
   case "$1" in
     --help)
       help
-      exit;;
+      exit 1;;
     --environment=*)
       environment="${1#*=}"
       ;;
@@ -178,7 +178,4 @@ if [ -z ${environment+x} ]; then
   environment="local"
 fi
 
-set -o noclobber
 deploy_plugin
-set +o noclobber
-printf "plugin has been deploy to %s.\n" "$environment"
