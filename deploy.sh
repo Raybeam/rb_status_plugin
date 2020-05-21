@@ -46,7 +46,8 @@ deploy_local()
 
   echo >> requirements.txt
   cat plugins/lumen_plugin/requirements.txt >> requirements.txt
-  sort -u requirements.txt | tee requirements.txt 
+  sort -u requirements.txt  > requirements2.txt
+  mv requirements2.txt requirements.txt 
   pip3 install -r requirements.txt
 
   plugins/lumen_plugin/bin/lumen init
