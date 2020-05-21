@@ -1,4 +1,5 @@
-from flask_admin.model import BaseModelView, Form
+from flask_admin.model import BaseModelView
+from wtforms.form import Form
 
 
 class ReportModel(BaseModelView):
