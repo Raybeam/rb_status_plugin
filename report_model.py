@@ -170,13 +170,13 @@ class ReportModel(BaseModelView):
                     ("6", "Saturday"),
                 ],
                 # widget=Select2Widget(),
-                validators=[DataRequired()],
+                # validators=[DataRequired()],
             )
             schedule_custom = StringField(
                 ("Cron schedule"),
                 description='Enter cron schedule (e.g. "0 0 * * *")',
                 # widget=BS3TextFieldWidget(),
-                validators=[DataRequired()],
+                # validators=[DataRequired()],
             )
 
         # Do something
@@ -193,7 +193,7 @@ class ReportModel(BaseModelView):
         return report
 
     def create_model(self, form):
-        logging.info("Creating model")
+        logging.error("Creating model")
         report_saver = ReportFormSaver(form)
         form_submitted = report_saver.extract_report_data_into_airflow(
             report_exists=False
