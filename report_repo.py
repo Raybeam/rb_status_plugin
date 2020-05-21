@@ -51,13 +51,13 @@ class VariablesReportRepo(ReportRepo):
     def get_report(cls, lookup_id, session=None):
         """ Return a list of all matching reports in variables """
         variable = session.query(Variable).filter(
-            Variable.id == lookup_id,
+            Variable.key == lookup_id,
         ).one()
 
         if not variable:
             return None
 
-        return cls.to_report(variable)
+        return cls.to_report(lookup_id, variable)
 
     @classmethod
     @provide_session
