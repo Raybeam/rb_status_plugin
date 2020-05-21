@@ -98,9 +98,9 @@ deploy_astronomer_local()
   deploy_local
 
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-   echo -e "To start astro-airflow instance, please run:\n\tsudo astro dev start"
+   echo -e "To start astro-airflow instance, please run:\n\tsudo astro dev init\n\tsudo astro dev start"
   else
-    echo -e "To start astro-airflow instance, please run:\n\tastro dev start"
+    echo -e "To start astro-airflow instance, please run:\n\tastro dev init\n\tastro dev start"
   fi
 }
 ################################################################################
@@ -116,8 +116,10 @@ deploy_astronomer_remote()
   deploy_local
 
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    sudo astro dev init
     sudo astro dev deploy
   else
+    astro dev init
     astro dev deploy
   fi
 }
