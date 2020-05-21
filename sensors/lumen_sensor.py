@@ -26,6 +26,10 @@ class LumenSensor(BaseSensorOperator):
         xcom_key = f"lumen_test_task_status"
         ti.xcom_push(key=xcom_key, value=test_status)
 
+    def push_task_url(self, ti, log_url):
+        xcom_key = f"lumen_task_log_url"
+        ti.xcom_push(key=xcom_key, value=log_url)
+
     @provide_session
     def poke(self, context, session=None):
         self.log.info(
@@ -54,10 +58,12 @@ class LumenSensor(BaseSensorOperator):
                 return True
             if state in terminal_failure_states:
                 self.push_test_status(ti=context['ti'], test_status=False)
+                self.push_task_url(ti=context['ti'], log_url=ti.log_url)
                 return True
 
             return False
 
         except Exception as e:
             self.push_test_status(ti=context['ti'], test_status=None)
+            self.push_task_url(ti=context['ti'], log_url="unknown")
             raise e
