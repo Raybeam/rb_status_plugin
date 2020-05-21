@@ -57,7 +57,7 @@ class VariablesReportRepo(ReportRepo):
         if not variable:
             return None
 
-        return cls.to_report(lookup_id, cls.parse_variable_val(var.val))
+        return cls.to_report(lookup_id, cls.parse_variable_val(variable.val))
 
     @classmethod
     @provide_session
