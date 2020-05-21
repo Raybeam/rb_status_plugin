@@ -85,7 +85,7 @@ class ReportInstance:
                 failed.append({
                     "id": ti.job_id,
                     "name": ti.task_id,
-                    "description": log_url,
+                    "log_url": log_url,
                     "test_status": test_status
                 })
         return failed
