@@ -33,7 +33,7 @@ form_fieldsets_config = [
         "General",
         {
             "fields": [
-                "title",
+                "report_title",
                 "description",
                 "owner_name",
                 "owner_email",
@@ -87,7 +87,7 @@ class LumenStatusView(AppBuilderBaseView):
                     "id": ri.id,
                     "passed": ri.passed,
                     "updated": ri.updated,
-                    "title": report.report_title,
+                    "report_title": report.report_title,
                     "owner_name": report.owner_name,
                     "owner_email": report.owner_email,
                     "description": report.description,
@@ -147,7 +147,7 @@ class LumenReportsView(AppBuilderBaseView):
 
 class ReportForm(DynamicForm):
     report_id = HiddenField()
-    title = StringField(
+    report_title = StringField(
         ("Title"),
         description="Title will be used as the report's name",
         widget=BS3TextFieldWidget(),

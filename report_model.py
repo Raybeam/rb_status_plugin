@@ -56,7 +56,7 @@ class ReportModel(BaseModelView):
         static_folder=None,
         menu_class_name=None,
         menu_icon_type=None,
-        menu_icon_value=None
+        menu_icon_value=None,
     ):
         self.session = session
         super().__init__(
@@ -68,7 +68,7 @@ class ReportModel(BaseModelView):
             static_folder,
             menu_class_name=menu_class_name,
             menu_icon_type=menu_icon_type,
-            menu_icon_value=menu_icon_value
+            menu_icon_value=menu_icon_value,
         )
 
     def get_pk_value(self, model):
@@ -90,7 +90,7 @@ class ReportModel(BaseModelView):
             "schedule_type",
             "schedule_time",
             "schedule_week_day",
-            "schedule"
+            "schedule",
         ]
 
     def scaffold_sortable_columns(self):
@@ -111,12 +111,12 @@ class ReportModel(BaseModelView):
             description = TextAreaField(
                 ("Description"),
                 # widget=BS3TextAreaFieldWidget(),
-                validators=[DataRequired()]
+                validators=[DataRequired()],
             )
             owner_name = StringField(
                 ("Owner Name"),
                 # widget=BS3TextFieldWidget(),
-                validators=[DataRequired()]
+                validators=[DataRequired()],
             )
             owner_email = StringField(
                 ("Owner Email"),
@@ -155,9 +155,7 @@ class ReportModel(BaseModelView):
                 validators=[DataRequired()],
             )
             schedule_time = TimeField(
-                "Time",
-                render_kw={"class": "form-control"},
-                validators=[Optional()]
+                "Time", render_kw={"class": "form-control"}, validators=[Optional()]
             )
             schedule_week_day = SelectField(
                 ("Day of week"),

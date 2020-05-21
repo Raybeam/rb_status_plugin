@@ -26,8 +26,8 @@ class ReportFormSaver:
         """
         self.form = form
         self.format_emails()
-        self.report_dict["report_title"] = self.form.title.data
-        self.report_dict["report_title_url"] = parameterize(self.form.title.data)
+        self.report_dict["report_title"] = self.form.report_title.data
+        self.report_dict["report_title_url"] = parameterize(self.form.report_title.data)
         self.report_dict["description"] = self.form.description.data
         self.report_dict["owner_name"] = self.form.owner_name.data
         self.report_dict["owner_email"] = self.form.owner_email.data
@@ -236,7 +236,7 @@ class ReportFormSaver:
         return form
         """
         form.report_id.data = requested_report.report_id
-        form.title.data = requested_report.report_title
+        form.report_title.data = requested_report.report_title
         form.description.data = requested_report.description
         form.owner_name.data = requested_report.owner_name
         form.owner_email.data = requested_report.owner_email
