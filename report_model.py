@@ -10,6 +10,7 @@ from wtforms import (
     SelectMultipleField,
     SelectField,
     HiddenField,
+    widgets,
 )
 
 from lumen_plugin.helpers.list_tasks_helper import get_all_test_choices
@@ -59,23 +60,23 @@ import logging
 #         return super(Select2Widget, self).__call__(field, **kwargs)
 
 
-# class Select2ManyWidget(widgets.Select):
-#     extra_classes = None
+class Select2ManyWidget(widgets.Select):
+    extra_classes = None
 
-#     def __init__(self, extra_classes=None, style=None):
-#         self.extra_classes = extra_classes
-#         self.style = style or u"width:250px"
-#         return super(Select2ManyWidget, self).__init__()
+    def __init__(self, extra_classes=None, style=None):
+        self.extra_classes = extra_classes
+        self.style = style or u"width:250px"
+        return super(Select2ManyWidget, self).__init__()
 
-#     def __call__(self, field, **kwargs):
-#         kwargs["class"] = u"my_select2 form-control"
-#         if self.extra_classes:
-#             kwargs["class"] = kwargs["class"] + " " + self.extra_classes
-#         kwargs["style"] = self.style
-#         kwargs["multiple"] = u"true"
-#         if "name_" in kwargs:
-#             field.name = kwargs["name_"]
-#         return super(Select2ManyWidget, self).__call__(field, **kwargs)
+    def __call__(self, field, **kwargs):
+        kwargs["class"] = u"my_select2 form-control"
+        if self.extra_classes:
+            kwargs["class"] = kwargs["class"] + " " + self.extra_classes
+        kwargs["style"] = self.style
+        kwargs["multiple"] = u"true"
+        if "name_" in kwargs:
+            field.name = kwargs["name_"]
+        return super(Select2ManyWidget, self).__call__(field, **kwargs)
 
 
 class ReportModel(BaseModelView):
@@ -179,7 +180,7 @@ class ReportModel(BaseModelView):
                  tasks that have ran in airflow."
                 ),
                 choices=get_all_test_choices(),
-                # widget=Select2ManyWidget(),
+                widget=Select2ManyWidget(),
                 validators=[DataRequired()],
             )
             schedule_type = SelectField(
