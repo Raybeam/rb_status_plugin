@@ -27,7 +27,7 @@ jobs:
           flake8
         name: Run flake8 linter
     - run:
-        command: git clone https://github.com/Raybeam/lumen-test-airflow /home/circleci/rb_test_airflow
+        command: git clone https://github.com/Raybeam/rb_test_airflow /home/circleci/rb_test_airflow
         name: Set up Airflow
     - run:
         command: |-
