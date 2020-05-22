@@ -6,8 +6,8 @@ import logging
 
 class ReportInstance:
     """
-    An instance of a rb Status report.  This is currently a basic wrapper for a DagRun
-    with a few rb Status-specific helpers
+    An instance of a Lumen report.  This is currently a basic wrapper for a DagRun
+    with a few Lumen-specific helpers
     """
 
     def __init__(self, dag_run):
@@ -33,7 +33,7 @@ class ReportInstance:
         return self.dag_run.execution_date
 
     def calculate_passed(self, errs):
-        """
+        '''
         Calculates the overall report status.
         True indicates all tests pass.
         False indicates at least one fail.
@@ -41,7 +41,7 @@ class ReportInstance:
 
         :return: returns whether all tasks failed or succeeded or unknown
         :rtype: boolean
-        """
+        '''
         if len(errs) == 0:
             return True
 
@@ -70,12 +70,10 @@ class ReportInstance:
         failed = []
         for ti in self.dag_run.get_task_instances():
             # We want to ignored removed tasks and non-test tasks
-            if (ti.operator != "RbStatusSensor") or ti.state == State.REMOVED:
+            if (ti.operator != 'LumenSensor') or ti.state == State.REMOVED:
                 continue
 
-            test_status = ti.xcom_pull(
-                key="lumen_test_task_status", task_ids=ti.task_id
-            )
+            test_status = ti.xcom_pull(key="lumen_test_task_status", task_ids=ti.task_id)
             log_url = ti.xcom_pull(key="lumen_task_log_url", task_ids=ti.task_id)
 
             # if error extracting state return error logs, else return underlying task
@@ -84,14 +82,12 @@ class ReportInstance:
             if not test_status:
                 ti.refresh_from_db()
 
-                failed.append(
-                    {
-                        "id": ti.job_id,
-                        "name": ti.task_id,
-                        "description": log_url,
-                        "test_status": test_status,
-                    }
-                )
+                failed.append({
+                    "id": ti.job_id,
+                    "name": ti.task_id,
+                    "description": log_url,
+                    "test_status": test_status
+                })
         return failed
 
     @classmethod

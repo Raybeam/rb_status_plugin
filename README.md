@@ -1,22 +1,22 @@
-# rb Status Plugin
+# Lumen
 
 <h1 align="center">
   <br>
-  <img src="https://i.imgur.com/mAyZh0q.png" alt="rb Status">
+  <img src="https://i.imgur.com/mAyZh0q.png" alt="Lumen">
   <br>
   Data confidence plugin for Airflow.
   <br>
   <br>
 </h1>
 
-The rb Status Airflow plugin makes it easy to communicate confidence about your data system to manager, executives and other stakeholders in your organization.  It improves trust in underlying data by increasing transparency.
+The Lumen Airflow plugin makes it easy to communicate confidence about your data system to manager, executives and other stakeholders in your organization.  It improves trust in underlying data by increasing transparency.
 
-# rb Status : Set up
+# Lumen : Set up
 These are instructions for importing this plugin into an existing airflow workspace.  
 To start, navigate to the root of your airflow workspace.  
 If you don't have an existing workspace, you can download the sample:  
 ```
->git clone https://github.com/Raybeam/rb-test-airflow/ sample_workspace
+>git clone https://github.com/Raybeam/lumen-test-airflow/ sample_workspace
 >cd sample_workspace
 ```
   
@@ -47,23 +47,23 @@ By putting the `AIRFLOW_HOME` env in the `bin/activate` file, you set the path e
 ### Set up a user (admin:admin)
 `> airflow create_user -r Admin -u admin -e admin@example.com -f admin -l user -p admin`
 
-### Clone rb Status into your plugins
-`> git clone https://github.com/Raybeam/rb_status_plugin plugins/rb_status_plugin`
+### Clone lumen into your plugins
+`> git clone https://github.com/Raybeam/lumen_plugin plugins/lumen_plugin`
 
-### Copy over rb Status requirements
-`> cat plugins/rb_status_plugin/requirements.txt >> requirements.txt`  
+### Copy over Lumen requirements
+`> cat plugins/lumen_plugin/requirements.txt >> requirements.txt`  
 `> pip install -r requirements.txt`
 
-### Set up rb Status plugin 
-Move over the main rb Status DAG and sample DAGs (if wanted)
+### Set up Lumen
+Move over the main Lumen DAG and sample DAGs (if wanted)
 
-`> plugins/rb_status_plugin/bin/rb_status init`
+`> plugins/lumen_plugin/bin/lumen init`
 
-`> plugins/rb_status_plugin/bin/rb_status add_samples`
+`> plugins/lumen_plugin/bin/lumen add_samples`
 
 Only the DAG works from the Lumen binary right now.
 
-`> plugins/rb_status_plugin/bin/rb_status add_samples --dag_only`
+`> plugins/lumen_plugin/bin/lumen add_samples --dag_only`
 
 ### Enable rbac
 In the root directory of your airflow workspace, open airflow.cfg and set `rbac=True`.
@@ -78,7 +78,7 @@ In a new terminal, navigate to the same directory.
 
 ### Interact with UI
 In a web brower, visit localhost:8080.  
-If you see a tab for "rb Status" in the header, then the installation was a success.
+If you see a tab for Lumen in the header, then the installation was a success.
 
 ## Set up : Astronomer Deploy
 ### Set up local environment
@@ -99,12 +99,12 @@ In your working directory
   
 ### Interact with UI
 In a web brower, visit localhost:8080.  
-If you see a tab for "rb Status" in the header, then the installation was a success.
+If you see a tab for Lumen in the header, then the installation was a success.
 
 ## Set up : Google Cloud Composer Deploy
 
-### Clone rb Status into your plugins
-`> git clone https://github.com/Raybeam/rb_status_plugin plugins/rb_status_plugin`
+### Clone lumen into your plugins
+`> git clone https://github.com/Raybeam/lumen_plugin plugins/lumen_plugin`
 
 ### Install gcloud 
 [Install](https://cloud.google.com/sdk/docs/quickstarts) the gcloud SDK and configure it to your Cloud Composer Environment.
@@ -114,7 +114,7 @@ If you see a tab for "rb Status" in the header, then the installation was a succ
 
 `>gcloud config set project <your Google Cloud project name>`  
 
-`>gcloud composer environments update ENVIRONMENT_NAME --location LOCATION --update-pypi-packages-from-file=plugins/rb_status_plugin/requirements.txt`  
+`>gcloud composer environments update ENVIRONMENT_NAME --location LOCATION --update-pypi-packages-from-file=plugins/lumen_plugin/requirements.txt`  
 
 `ENVIRONMENT_NAME` is the name of the environment.  
 `LOCATION` is the Compute Engine region where the environment is located.  

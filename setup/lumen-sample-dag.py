@@ -50,7 +50,7 @@ default_args = {
 
 # Using a DAG context manager, you don't have to specify the dag property of each task
 with DAG(
-    "rb-status-sample-dag",
+    "lumen-sample-dag",
     start_date=dt.days_ago(3),
     max_active_runs=3,
     schedule_interval=timedelta(
