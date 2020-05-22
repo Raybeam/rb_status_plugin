@@ -1,7 +1,7 @@
 <div id="reports-heading">
   <h2>Reports</h2>
 
-  {% set query_string = {'url': '/admin/lumen/reports/'} %}
+  {% set query_string = {'url': url_for('lumen/reports.list')} %}
   <a href="/admin/lumen/report_mgmt/new?{{query_string | urlencode}}" class="btn btn-sm btn-primary">
     <i class="fa fa-edit"></i>
     Create New Report
@@ -29,7 +29,7 @@
         <tr>
           <!-- Column 1: View Report -->
           <td class="text-center" style="width:10px;">
-            {% set query_string = {'url': '/admin/lumen/reports/', 'id': report.report_id } %}
+            {% set query_string = {'url': url_for('lumen/reports.list'), 'id': report.report_id } %}
             <a href="/admin/lumen/report_mgmt/edit?{{query_string | urlencode}}">
               <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
             </a>
