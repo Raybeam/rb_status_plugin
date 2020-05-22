@@ -34,6 +34,9 @@ class LumenReportMgmtViewAdmin(ReportModel):
     edit_template = 'no_rbac/report_edit_form.html'
     form_rules = [
         rules.FieldSet((
+            'report_id',
+        ), ''),
+        rules.FieldSet((
             'report_title',
             'description',
             'owner_name',

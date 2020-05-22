@@ -138,7 +138,7 @@ class ReportModel(BaseModelView):
 
     def scaffold_form(self):
         class ReportForm(Form):
-            report_id = HiddenField()
+            report_id = HiddenField("")
             report_title = StringField(
                 ("Title"),
                 description="Title will be used as the report's name",
@@ -242,7 +242,12 @@ class ReportModel(BaseModelView):
             return self
 
     def update_model(self, form, model):
-        return None
+        report_saver = ReportFormSaver(form)
+        form_submitted = report_saver.extract_report_data_into_airflow(
+            report_exists=True
+        )
+        if form_submitted:
+            return self
 
     def delete_model(self, model):
         return True
