@@ -143,10 +143,12 @@ class ReportSaveTest(unittest.TestCase):
         Test that the report's title attribute is correct
         """
         report_airflow_variable = Variable.get(
-            "lumen_report_" + self.report_form_sample.report_title.data, deserialize_json=True,
+            "lumen_report_" + self.report_form_sample.report_title.data,
+            deserialize_json=True,
         )
         self.assertEqual(
-            self.report_form_sample.report_title.data, report_airflow_variable["report_title"]
+            self.report_form_sample.report_title.data,
+            report_airflow_variable["report_title"],
         )
 
     def test_saved_description(self):
@@ -154,7 +156,8 @@ class ReportSaveTest(unittest.TestCase):
         Test that the report's description attribute is correct
         """
         report_airflow_variable = Variable.get(
-            "lumen_report_" + self.report_form_sample.report_title.data, deserialize_json=True,
+            "lumen_report_" + self.report_form_sample.report_title.data,
+            deserialize_json=True,
         )
         self.assertEqual(
             self.report_form_sample.description.data,
@@ -166,7 +169,8 @@ class ReportSaveTest(unittest.TestCase):
         Test that the report's owner_name attribute is correct
         """
         report_airflow_variable = Variable.get(
-            "lumen_report_" + self.report_form_sample.report_title.data, deserialize_json=True,
+            "lumen_report_" + self.report_form_sample.report_title.data,
+            deserialize_json=True,
         )
         self.assertEqual(
             self.report_form_sample.owner_name.data,
@@ -178,7 +182,8 @@ class ReportSaveTest(unittest.TestCase):
         Test that the report's owner_email attribute is correct
         """
         report_airflow_variable = Variable.get(
-            "lumen_report_" + self.report_form_sample.report_title.data, deserialize_json=True,
+            "lumen_report_" + self.report_form_sample.report_title.data,
+            deserialize_json=True,
         )
         self.assertEqual(
             self.report_form_sample.owner_email.data,
@@ -190,7 +195,8 @@ class ReportSaveTest(unittest.TestCase):
         Test that the report's subscribers attribute is correct
         """
         report_airflow_variable = Variable.get(
-            "lumen_report_" + self.report_form_sample.report_title.data, deserialize_json=True,
+            "lumen_report_" + self.report_form_sample.report_title.data,
+            deserialize_json=True,
         )
         self.assertEqual(
             report_airflow_variable["subscribers"],
@@ -214,8 +220,10 @@ class ReportSaveTest(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             ReportFormSaver.validate_email(ReportFormSaver, invalid_email)
             self.assertTrue(
-                (f"Email ({invalid_email}) is not valid."
-                 "Please enter a valid email address.")
+                (
+                    f"Email ({invalid_email}) is not valid."
+                    "Please enter a valid email address."
+                )
                 in str(context.exception)
             )
 
@@ -229,7 +237,9 @@ class ReportSaveTest(unittest.TestCase):
             "lumen_report_" + self.report_form_sample_daily.report_title.data,
             deserialize_json=True,
         )
-        Variable.delete("lumen_report_" + self.report_form_sample_daily.report_title.data)
+        Variable.delete(
+            "lumen_report_" + self.report_form_sample_daily.report_title.data
+        )
         self.assertEqual("00 05 * * *", report_airflow_variable["schedule"])
 
     def test_weekly_schedule_conversion(self):
@@ -242,7 +252,9 @@ class ReportSaveTest(unittest.TestCase):
             "lumen_report_" + self.report_form_sample_weekly.report_title.data,
             deserialize_json=True,
         )
-        Variable.delete("lumen_report_" + self.report_form_sample_weekly.report_title.data)
+        Variable.delete(
+            "lumen_report_" + self.report_form_sample_weekly.report_title.data
+        )
         self.assertEqual("30 03 * * 0", report_airflow_variable["schedule"])
 
     def test_duplicate_report(self):
