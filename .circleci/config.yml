@@ -27,12 +27,12 @@ jobs:
           flake8
         name: Run flake8 linter
     - run:
-        command: git clone https://github.com/Raybeam/rb-test-airflow /home/circleci/rb-test-airflow
+        command: git clone https://github.com/Raybeam/lumen-test-airflow /home/circleci/rb_test_airflow
         name: Set up Airflow
     - run:
         command: |-
           . ~/.venv/bin/activate
-          cd /home/circleci/rb-test-airflow
+          cd /home/circleci/rb_test_airflow
           export AIRFLOW_HOME=$PWD
           airflow initdb
           mkdir ./plugins/
