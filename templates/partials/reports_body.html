@@ -40,7 +40,6 @@
               type="checkbox"
               data-toggle="toggle"
               data-size="mini"
-              csrfToken='{{ csrf_token }}'
               data-pause-url="{{ url_for('lumen/reports.pause_dag')}}"
               data-report-name="{{ report.name }}"
               onchange="return lumen.triggerReportStartPause(this)"
