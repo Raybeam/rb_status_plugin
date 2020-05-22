@@ -9,7 +9,7 @@ from wtforms import (
     TextAreaField,
     SelectMultipleField,
     SelectField,
-    HiddenField
+    HiddenField,
 )
 
 from lumen_plugin.helpers.list_tasks_helper import get_all_test_choices
@@ -219,6 +219,7 @@ class ReportModel(BaseModelView):
         return ReportForm
 
     def get_list(self, page, sort_field, sort_desc, search, filters, page_size=None):
+        print(VariablesReportRepo.list()[0].subscribers)
         return None, VariablesReportRepo.list()
 
     def get_one(self, id):
@@ -226,6 +227,9 @@ class ReportModel(BaseModelView):
         if not report:
             return None
 
+        # We want subscribers to be a comma seperated
+        # string in the edit report form
+        report.subscribers = ','.join(report.subscribers)
         return report
 
     def create_model(self, form):
