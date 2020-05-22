@@ -28,7 +28,7 @@
         <tr>
           <!-- Column 1: View Report -->
           <td class="text-center" style="width:10px;">
-            <a href="#" title="Edit">
+            <a href="#">
               <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
             </a>
           </td>
@@ -40,7 +40,8 @@
               type="checkbox"
               data-toggle="toggle"
               data-size="mini"
-              data-pause-url="#"
+              csrfToken='{{ csrf_token }}'
+              data-pause-url="{{ url_for('lumen/reports.pause_dag')}}"
               data-report-name="{{ report.name }}"
               onchange="return lumen.triggerReportStartPause(this)"
               {% if report.is_paused == False %}checked{% endif%}
@@ -86,7 +87,7 @@
           <td class="text-center" >
               <!-- Trigger Report -->
             <a 
-              href="#"
+              href="{{ url_for('lumen/reports.trigger', report_name=report.name) }}"
               id="report-run-trigger"
             >
               <span 
@@ -97,7 +98,7 @@
             </a>
             <!-- Delete Report -->
             <a 
-              href="#" 
+              href="{{ url_for('lumen/reports.delete', report_name=report.name) }}" 
               onclick="return lumen.confirmDeleteReport(this)" 
               data-report-name="{{report.name}}"
             >

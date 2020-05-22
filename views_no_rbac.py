@@ -7,7 +7,8 @@ from lumen_plugin.views import (
     LumenReportsView,
 )
 from lumen_plugin.report_repo import VariablesReportRepo
-
+from lumen_plugin.report import Report
+from flask import flash, redirect, url_for, request
 
 lumen_status_view_rbac = LumenStatusView()
 lumen_reports_view_rbac = LumenReportsView()
@@ -24,8 +25,37 @@ class LumenStatusViewAdmin(BaseView):
 
 class LumenReportsViewAdmin(BaseView):
     @expose('/')
-    def test(self):
-        return self.render('no_rbac/reports.html', content=VariablesReportRepo.list())
+    def list(self):
+        return self.render(
+            'no_rbac/reports.html',
+            content=VariablesReportRepo.list()
+        )
+
+    @expose("/<string:report_name>/trigger/", methods=["GET"])
+    def trigger(self, report_name):
+        r = Report(report_name)
+        r.trigger_dag()
+        flash(f"Triggered report: {report_name}", "info")
+        return redirect(url_for("lumen/reports.list"))
+
+    @expose("/<string:report_name>/delete/", methods=["POST"])
+    def delete(self, report_name):
+        r = Report(report_name)
+        r.delete_report_variable(VariablesReportRepo.report_prefix)
+        r.delete_dag()
+        flash(f"Deleted report: {report_name}", "info")
+        return redirect(url_for("lumen/reports.list"))
+
+    @expose("/paused", methods=["POST"])
+    def pause_dag(self):
+        r_args = request.args
+        report_name = r_args.get("report_name")
+        r = Report(report_name)
+        if r_args.get("is_paused") == "true":
+            r.activate_dag()
+        else:
+            r.pause_dag()
+        return "OK"
 
 
 class LumenReportMgmtViewAdmin(ReportModel):
