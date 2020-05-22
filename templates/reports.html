@@ -1,40 +1,19 @@
 {% extends base_template %}
 
 {% block page_title %}
-<<<<<<< HEAD
-  {% include "partials/reports_title.html" with context %}
-{% endblock %}
-
-{% block head_css %}
-  {{ super() }}
-  <link href="{{ url_for_asset('dataTables.bootstrap.min.css') }}" rel="stylesheet" type="text/css" >
-  <link href="{{ url_for_asset('bootstrap-toggle.min.css') }}" rel="stylesheet" type="text/css">
-  <link href="{{ url_for('lumen.static', filename='mgmt.css') }}" rel="stylesheet" type="text/css">
-{% endblock %}
-
-{% block content %}
-  <div id="reports-heading">
-    <h2>Reports</h2>
-=======
-{% if search_query %}
-"{{ search_query }}" - Reports - rbStatus - Airflow
-{% else %}
-Reports - rbStatus - Airflow
-{% endif %}
+{% include "partials/reports_title.html" with context %}
 {% endblock %}
 
 {% block head_css %}
 {{ super() }}
 <link href="{{ url_for_asset('dataTables.bootstrap.min.css') }}" rel="stylesheet" type="text/css">
 <link href="{{ url_for_asset('bootstrap-toggle.min.css') }}" rel="stylesheet" type="text/css">
-<link href="{{ url_for('rb_status.static', filename='mgmt.css') }}" rel="stylesheet" type="text/css">
+<link href="{{ url_for('rb-status.static', filename='mgmt.css') }}" rel="stylesheet" type="text/css">
 {% endblock %}
 
 {% block content %}
-
 <div id="reports-heading">
   <h2>Reports</h2>
->>>>>>> parent of ca6afaf... Revert "first cut at rename"
 
   <a href="{{ url_for('NewReportFormView.this_form_get') }}" class="btn btn-sm btn-primary">
     <i class="fa fa-edit"></i>
@@ -136,5 +115,5 @@ Reports - rbStatus - Airflow
 <script src="{{ url_for_asset('jquery.dataTables.min.js') }}"></script>
 <script src="{{ url_for_asset('dataTables.bootstrap.min.js') }}"></script>
 <script src="{{ url_for_asset('bootstrap-toggle.min.js') }}"></script>
-<script src="{{ url_for('rb_status.static',filename='reports.js') }}"></script>
+<script src="{{ url_for('rb-status.static',filename='reports.js') }}"></script>
 {% endblock %}
