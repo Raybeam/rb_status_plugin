@@ -4,7 +4,6 @@ import logging
 import re
 from flask import flash
 from inflection import parameterize
-import datetime
 
 from lumen_plugin.report_repo import VariablesReportRepo
 
