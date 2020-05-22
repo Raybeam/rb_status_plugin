@@ -1,7 +1,8 @@
 <div id="reports-heading">
   <h2>Reports</h2>
 
-  <a href="#" class="btn btn-sm btn-primary">
+  {% set query_string = {'url': '/admin/lumen/reports/'} %}
+  <a href="/admin/lumen/report_mgmt/new?{{query_string | urlencode}}" class="btn btn-sm btn-primary">
     <i class="fa fa-edit"></i>
     Create New Report
   </a>
@@ -28,7 +29,8 @@
         <tr>
           <!-- Column 1: View Report -->
           <td class="text-center" style="width:10px;">
-            <a href="#">
+            {% set query_string = {'url': '/admin/lumen/reports/', 'id': report.report_id } %}
+            <a href="/admin/lumen/report_mgmt/edit?{{query_string | urlencode}}">
               <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
             </a>
           </td>
