@@ -1,4 +1,6 @@
 import inflection
+import datetime
+
 from airflow.utils.db import provide_session
 from airflow.configuration import conf
 from airflow.exceptions import DagNotFound, DagRunAlreadyExists
@@ -111,7 +113,7 @@ class Report:
 
     @schedule_time.setter
     def schedule_time(self, val):
-        self.__schedule_time = val
+        self.__schedule_time = datetime.datetime.strptime(val, "%H:%M")
 
     @property
     def schedule_week_day(self):
