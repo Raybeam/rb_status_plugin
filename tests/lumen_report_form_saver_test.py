@@ -193,17 +193,7 @@ class ReportSaveTest(unittest.TestCase):
             "lumen_report_" + self.report_form_sample.report_title.data, deserialize_json=True,
         )
         self.assertEqual(
-            self.report_form_sample.subscribers.data,
             report_airflow_variable["subscribers"],
-        )
-
-    def test_format_report(self):
-        """
-        Test that the subscribers was properly formatted.
-        This will also update the report_form_sample and airflow varible.
-        """
-        self.assertEqual(
-            self.report_form_sample.subscribers.data,
             ["email1@raybeam.com", "email2@raybeam.com", "jdoe@raybeam.com"],
         )
 

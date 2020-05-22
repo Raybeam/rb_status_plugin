@@ -26,7 +26,6 @@ class ReportFormSaver:
         """
         self.form = form
         self.format_emails()
-        self.report_dict["subscribers"] = self.form.subscribers.data
         self.report_dict["report_title"] = self.form.report_title.data
         self.report_dict["report_title_url"] = parameterize(self.form.report_title.data)
         self.report_dict["description"] = self.form.description.data
@@ -174,7 +173,7 @@ class ReportFormSaver:
 
         # add updated list to subscribers, only if valid
         if self.emails_formatted:
-            self.form.subscribers.data = emails
+            self.report_dict["subscribers"] = emails
 
     def validate_email(self, email):
         """
