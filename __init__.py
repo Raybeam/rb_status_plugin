@@ -16,7 +16,7 @@ v_appbuilder_status_package = {
     "view": v_appbuilder_status_view,
 }
 
-v_appbuilder_reports_view = StatusReportsView()
+v_appbuilder_reports_view = ReportsView()
 v_appbuilder_reports_package = {
     "name": "Reports",
     "category": "Status",
