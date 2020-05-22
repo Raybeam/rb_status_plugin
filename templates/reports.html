@@ -1,7 +1,7 @@
-
 {% extends base_template %}
 
 {% block page_title %}
+<<<<<<< HEAD
   {% include "partials/reports_title.html" with context %}
 {% endblock %}
 
@@ -15,125 +15,126 @@
 {% block content %}
   <div id="reports-heading">
     <h2>Reports</h2>
+=======
+{% if search_query %}
+"{{ search_query }}" - Reports - rbStatus - Airflow
+{% else %}
+Reports - rbStatus - Airflow
+{% endif %}
+{% endblock %}
 
-    <a href="{{ url_for('NewReportFormView.this_form_get') }}" class="btn btn-sm btn-primary">
-      <i class="fa fa-edit"></i>
-      Create New Report
-    </a>
-  </div>
+{% block head_css %}
+{{ super() }}
+<link href="{{ url_for_asset('dataTables.bootstrap.min.css') }}" rel="stylesheet" type="text/css">
+<link href="{{ url_for_asset('bootstrap-toggle.min.css') }}" rel="stylesheet" type="text/css">
+<link href="{{ url_for('rb_status.static', filename='mgmt.css') }}" rel="stylesheet" type="text/css">
+{% endblock %}
 
-  <div id="main_content">
-    <table id="reports" class="table table-striped table-bordered table-hover">
-      <thead>
-        <tr>
-          <th></th>
-          <th width="12">
-            <span id="pause_header" class="glyphicon glyphicon-info-sign" title="Use this toggle to pause a Report. The scheduler won't schedule new tasks instances for a paused Report. Tasks already running at pause time won't be affected."></span>
-          </th>
-          <th>Report</th>
-          <th>Schedule</th>
-          <th>Tests</th>
-          <th>Owner</th>
-          <th>Subscribers</th>
-          <th class="text-center">Links</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for report in content | sort(attribute='name') %}
-          <tr>
-            <!-- Column 1: View Report -->
-            <td class="text-center" style="width:10px;">
-              <a href="{{ url_for('EditReportFormView.this_form_get', report_title=report.report_title_url) }}" title="Edit">
-                <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-              </a>
-            </td>
+{% block content %}
 
-            <!-- Column 2: Turn report on/off -->
-            <td>
-              <input
-                id="toggle-{{ report.name }}"
-                type="checkbox"
-                data-toggle="toggle"
-                data-size="mini"
-                data-pause-url="{{ url_for('LumenReportsView.pause_dag')}}"
-                data-report-name="{{ report.name }}"
-                onchange="return lumen.triggerReportStartPause(this)"
-                {% if report.is_paused == False %}checked{% endif%}
-              />
-            </td>
+<div id="reports-heading">
+  <h2>Reports</h2>
+>>>>>>> parent of ca6afaf... Revert "first cut at rename"
 
-            <!-- Column 2: Name -->
-            <td>
-              {{ report.report_title }}
-            </td>
+  <a href="{{ url_for('NewReportFormView.this_form_get') }}" class="btn btn-sm btn-primary">
+    <i class="fa fa-edit"></i>
+    Create New Report
+  </a>
+</div>
 
-            <!-- Column 3: Report Schedule -->
-            <td>
-              {{ report.schedule }}
-            </td>
+<div id="main_content">
+  <table id="reports" class="table table-striped table-bordered table-hover">
+    <thead>
+      <tr>
+        <th></th>
+        <th width="12">
+          <span id="pause_header" class="glyphicon glyphicon-info-sign"
+            title="Use this toggle to pause a Report. The scheduler won't schedule new tasks instances for a paused Report. Tasks already running at pause time won't be affected."></span>
+        </th>
+        <th>Report</th>
+        <th>Schedule</th>
+        <th>Tests</th>
+        <th>Owner</th>
+        <th>Subscribers</th>
+        <th class="text-center">Links</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for report in content | sort(attribute='name') %}
+      <tr>
+        <!-- Column 1: View Report -->
+        <td class="text-center" style="width:10px;">
+          <a href="{{ url_for('EditReportFormView.this_form_get', report_title=report.report_title_url) }}"
+            title="Edit">
+            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+          </a>
+        </td>
 
-            <!-- Column 4: Report Tests -->
-            <td>
-              {% for test in report.tests %}
-                {{ test }}{% if not loop.last %}, <br>{% endif %}
-              {% endfor %}
-            </td>
+        <!-- Column 2: Turn report on/off -->
+        <td>
+          <input id="toggle-{{ report.name }}" type="checkbox" data-toggle="toggle" data-size="mini"
+            data-pause-url="{{ url_for('ReportsView.pause_dag')}}" data-report-name="{{ report.name }}"
+            onchange="return lumen.triggerReportStartPause(this)" {% if report.is_paused == False %}checked{% endif%} />
+        </td>
 
-            <!-- Column 5: Report Owner -->
-            <td>
-              {% if report.owner_email %}
-                <a href="mailto:{{ report.owner_email }}">
-                  {{ report.owner_name }}
-                </a> 
-              {% else %}
-                {{ report.owner_name }}
-              {% endif %}
-            </td>
+        <!-- Column 2: Name -->
+        <td>
+          {{ report.report_title }}
+        </td>
 
-            <!-- Column 6: Report Subscribers -->
-            <td>
-              {% for subscriber in report.subscribers %}
-                {{ subscriber }}{% if not loop.last %},{% endif %}
-              {% endfor %}
-            </td>
+        <!-- Column 3: Report Schedule -->
+        <td>
+          {{ report.schedule }}
+        </td>
 
-            <!-- Column 7: Links -->
-            <td class="text-center" >
-                <!-- Trigger Report -->
-              <a 
-                href="{{ url_for('LumenReportsView.trigger', report_name=report.name) }}"
-                id="report-run-trigger"
-              >
-                <span 
-                  class="glyphicon glyphicon-play-circle" 
-                  aria-hidden="true" 
-                  data-original-title="Trigger Dag"
-                ></span>
-              </a>
-              <!-- Delete Report -->
-              <a 
-                href="{{ url_for('LumenReportsView.delete', report_name=report.name) }}" 
-                onclick="return lumen.confirmDeleteReport(this)" 
-                data-report-name="{{report.name}}"
-              >
-                <span 
-                  class="glyphicon glyphicon-remove-circle" 
-                  style="color:red" 
-                  aria-hidden="true" 
-                  data-original-title="Delete Dag"
-                ></span>
-              </a>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
+        <!-- Column 4: Report Tests -->
+        <td>
+          {% for test in report.tests %}
+          {{ test }}{% if not loop.last %}, <br>{% endif %}
+          {% endfor %}
+        </td>
+
+        <!-- Column 5: Report Owner -->
+        <td>
+          {% if report.owner_email %}
+          <a href="mailto:{{ report.owner_email }}">
+            {{ report.owner_name }}
+          </a>
+          {% else %}
+          {{ report.owner_name }}
+          {% endif %}
+        </td>
+
+        <!-- Column 6: Report Subscribers -->
+        <td>
+          {% for subscriber in report.subscribers %}
+          {{ subscriber }}{% if not loop.last %},{% endif %}
+          {% endfor %}
+        </td>
+
+        <!-- Column 7: Links -->
+        <td class="text-center">
+          <!-- Trigger Report -->
+          <a href="{{ url_for('ReportsView.trigger', report_name=report.name) }}" id="report-run-trigger">
+            <span class="glyphicon glyphicon-play-circle" aria-hidden="true" data-original-title="Trigger Dag"></span>
+          </a>
+          <!-- Delete Report -->
+          <a href="{{ url_for('ReportsView.delete', report_name=report.name) }}"
+            onclick="return lumen.confirmDeleteReport(this)" data-report-name="{{report.name}}">
+            <span class="glyphicon glyphicon-remove-circle" style="color:red" aria-hidden="true"
+              data-original-title="Delete Dag"></span>
+          </a>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
 {% endblock %}
 
 {% block tail %}
-  {{ super() }}
-  <script src="{{ url_for_asset('jquery.dataTables.min.js') }}"></script>
-  <script src="{{ url_for_asset('dataTables.bootstrap.min.js') }}"></script>
-  <script src="{{ url_for_asset('bootstrap-toggle.min.js') }}"></script>
-  <script src="{{ url_for('lumen.static',filename='reports.js') }}"></script>
+{{ super() }}
+<script src="{{ url_for_asset('jquery.dataTables.min.js') }}"></script>
+<script src="{{ url_for_asset('dataTables.bootstrap.min.js') }}"></script>
+<script src="{{ url_for_asset('bootstrap-toggle.min.js') }}"></script>
+<script src="{{ url_for('rb_status.static',filename='reports.js') }}"></script>
 {% endblock %}

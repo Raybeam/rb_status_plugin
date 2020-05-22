@@ -6,7 +6,7 @@ from flask import flash
 from inflection import parameterize
 import datetime
 
-from lumen_plugin.report_repo import VariablesReportRepo
+from rb_status_plugin.report_repo import VariablesReportRepo
 
 
 class ReportFormSaver:
@@ -192,9 +192,7 @@ class ReportFormSaver:
             logging.info(
                 f"Email ({email}) is not valid. Please enter a valid email address."
             )
-            flash(
-                f"Email ({email}) is not valid. Please enter a valid email address."
-            )
+            flash(f"Email ({email}) is not valid. Please enter a valid email address.")
             return False
 
     def convert_schedule_to_cron_expression(self):
@@ -230,7 +228,7 @@ class ReportFormSaver:
         :param form: form to populate UI
         :type form: ReportForm
 
-        :param requested_report: contains a Lumen Report configuration.
+        :param requested_report: contains a rb Status Report configuration.
         :type requested_report: Report
 
         return form
