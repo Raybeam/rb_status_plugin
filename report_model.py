@@ -161,7 +161,7 @@ class ReportModel(BaseModelView):
                 # widget=BS3TextFieldWidget(),
                 validators=[DataRequired(), Email()],
             )
-            subscribers =StringField(
+            subscribers = StringField(
                 ("Subscribers"),
                 description=(
                     "List of comma separeted emails that should receive email\
