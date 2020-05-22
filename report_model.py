@@ -9,8 +9,7 @@ from wtforms import (
     TextAreaField,
     SelectMultipleField,
     SelectField,
-    HiddenField,
-    FieldList
+    HiddenField
 )
 
 from lumen_plugin.helpers.list_tasks_helper import get_all_test_choices
@@ -162,15 +161,12 @@ class ReportModel(BaseModelView):
                 # widget=BS3TextFieldWidget(),
                 validators=[DataRequired(), Email()],
             )
-            subscribers = FieldList(
-                StringField(
-                    ("Subscribers"),
-                    description=(
-                        "List of comma separeted emails that should receive email\
-                         notifications. Automatically adds owner email to this list."
-                    ),
-                    validators=[Email()]
-                )
+            subscribers =StringField(
+                ("Subscribers"),
+                description=(
+                    "List of comma separeted emails that should receive email\
+                     notifications. Automatically adds owner email to this list."
+                ),
             )
             tests = SelectMultipleField(
                 ("Tests"),
