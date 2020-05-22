@@ -2,22 +2,17 @@
 {% extends base_template %}
 
 {% block page_title %}
-  {% if search_query %}
-    "{{ search_query }}" - Reports - Lumen - Airflow
-  {% else %}
-    Reports - Lumen - Airflow
-  {% endif %}
+  {% include "partials/reports_title.html" with context %}
 {% endblock %}
 
 {% block head_css %}
-{{ super() }}
-<link href="{{ url_for_asset('dataTables.bootstrap.min.css') }}" rel="stylesheet" type="text/css" >
-<link href="{{ url_for_asset('bootstrap-toggle.min.css') }}" rel="stylesheet" type="text/css">
-<link href="{{ url_for('lumen.static', filename='mgmt.css') }}" rel="stylesheet" type="text/css">
+  {{ super() }}
+  <link href="{{ url_for_asset('dataTables.bootstrap.min.css') }}" rel="stylesheet" type="text/css" >
+  <link href="{{ url_for_asset('bootstrap-toggle.min.css') }}" rel="stylesheet" type="text/css">
+  <link href="{{ url_for('lumen.static', filename='mgmt.css') }}" rel="stylesheet" type="text/css">
 {% endblock %}
 
 {% block content %}
-
   <div id="reports-heading">
     <h2>Reports</h2>
 
