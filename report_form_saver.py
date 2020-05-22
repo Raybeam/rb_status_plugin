@@ -244,13 +244,9 @@ class ReportFormSaver:
         if form.schedule_type.data == "custom":
             form.schedule_custom.data = requested_report.schedule
         if form.schedule_type.data == "daily":
-            form.schedule_time.data = datetime.datetime.strptime(
-                requested_report.schedule_time, "%H:%M"
-            )
+            form.schedule_time.data = requested_report.schedule_time
         if form.schedule_type.data == "weekly":
-            form.schedule_time.data = datetime.datetime.strptime(
-                requested_report.schedule_time, "%H:%M"
-            )
+            form.schedule_time.data = requested_report.schedule_time
             form.schedule_week_day.data = requested_report.schedule_week_day
         form.tests.data = requested_report.tests
         return form
