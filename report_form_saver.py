@@ -31,7 +31,6 @@ class ReportFormSaver:
         self.report_dict["description"] = self.form.description.data
         self.report_dict["owner_name"] = self.form.owner_name.data
         self.report_dict["owner_email"] = self.form.owner_email.data
-        self.report_dict["subscribers"] = self.form.subscribers.data
         self.report_dict["tests"] = self.form.tests.data
         self.report_dict["schedule_type"] = self.form.schedule_type.data
         if self.report_dict["schedule_type"] == "custom":
@@ -174,7 +173,7 @@ class ReportFormSaver:
 
         # add updated list to subscribers, only if valid
         if self.emails_formatted:
-            self.form.subscribers.data = emails
+            self.report_dict["subscribers"] = emails
 
     def validate_email(self, email):
         """
