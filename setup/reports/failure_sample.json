@@ -11,10 +11,10 @@
   ],
   "tests": [
     "example_dag.bash_print_date1",
-    "rb-status-sample-dag.python_failing_0"
+    "lumen-sample-dag.python_failing_0"
   ],
   "schedule_type": "daily",
   "schedule_time": "07:00",
   "schedule": "00 07 * * *",
-  "report_id": "rb_status_failure_sample"
+  "report_id": "lumen_report_failure_sample"
 }

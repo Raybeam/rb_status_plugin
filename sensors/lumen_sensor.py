@@ -4,8 +4,7 @@ from airflow.models.taskinstance import TaskInstance
 from airflow.utils.state import State
 from airflow.utils.db import provide_session
 
-
-class StatusSensor(BaseSensorOperator):
+class LumenSensor(BaseSensorOperator):
     """
     This operator will check whether a test
     (task_instance) succeeded or failed, and
@@ -24,11 +23,11 @@ class StatusSensor(BaseSensorOperator):
         self.test_task_id = test_task_id
 
     def push_test_status(self, ti, test_status):
-        xcom_key = f"rb_status_test_task_status"
+        xcom_key = f"lumen_test_task_status"
         ti.xcom_push(key=xcom_key, value=test_status)
 
     def push_task_url(self, ti, log_url):
-        xcom_key = f"rb_status_task_log_url"
+        xcom_key = f"lumen_task_log_url"
         ti.xcom_push(key=xcom_key, value=log_url)
 
     @provide_session
@@ -37,15 +36,10 @@ class StatusSensor(BaseSensorOperator):
             f"Querying for {self.test_dag_id}.{self.test_task_id}'s result..."
         )
         try:
-            ti = (
-                session.query(TaskInstance)
-                .filter(
-                    TaskInstance.task_id == self.test_task_id,
-                    TaskInstance.dag_id == self.test_dag_id,
-                )
-                .order_by(TaskInstance.execution_date.desc())
-                .first()
-            )
+            ti = session.query(TaskInstance).filter(
+                TaskInstance.task_id == self.test_task_id,
+                TaskInstance.dag_id == self.test_dag_id,
+            ).order_by(TaskInstance.execution_date.desc()).first()
 
             terminal_failure_states = [
                 State.FAILED,
@@ -60,16 +54,16 @@ class StatusSensor(BaseSensorOperator):
                 f"{self.test_dag_id}.{self.test_task_id}'s state is {ti.state}"
             )
             if state in terminal_success_states:
-                self.push_test_status(ti=context["ti"], test_status=True)
+                self.push_test_status(ti=context['ti'], test_status=True)
                 return True
             if state in terminal_failure_states:
-                self.push_test_status(ti=context["ti"], test_status=False)
-                self.push_task_url(ti=context["ti"], log_url=ti.log_url)
+                self.push_test_status(ti=context['ti'], test_status=False)
+                self.push_task_url(ti=context['ti'], log_url=ti.log_url)
                 return True
 
             return False
 
         except Exception as e:
-            self.push_test_status(ti=context["ti"], test_status=None)
-            self.push_task_url(ti=context["ti"], log_url="unknown")
+            self.push_test_status(ti=context['ti'], test_status=None)
+            self.push_task_url(ti=context['ti'], log_url="unknown")
             raise e
