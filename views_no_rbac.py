@@ -83,3 +83,8 @@ class LumenReportMgmtViewAdmin(ReportModel):
             'tests',
         ), 'Tests')
     ]
+
+    # We're doing this to hide the view from the main
+    # menu and keep access in the /reports/ endpoint
+    def is_visible(self):
+        return False
