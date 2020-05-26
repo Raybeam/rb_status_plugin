@@ -25,6 +25,7 @@ from lumen_plugin.report_repo import VariablesReportRepo
 from lumen_plugin.report_instance import ReportInstance
 from lumen_plugin.report_form_saver import ReportFormSaver
 from lumen_plugin.helpers.list_tasks_helper import get_all_test_choices
+from airflow.configuration import conf
 import logging
 
 
@@ -103,7 +104,9 @@ class LumenStatusView(AppBuilderBaseView):
                 logging.error("Failed to generate report: " + str(e))
                 flash("Failed to generate report: " + str(e), "error")
 
-        data = {"summary": {"passed": passed, "updated": updated}, "reports": reports}
+        rbac_val = conf.getboolean('webserver', 'rbac')
+        data = {"summary": {"passed": passed, "updated": updated}, "reports": reports, "rbac": rbac_val}
+        print('rbac value is........' + str(rbac_val))
         return data
 
     @expose("/")
