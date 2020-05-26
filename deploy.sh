@@ -85,6 +85,7 @@ deploy_gcc()
   echo "setting RBAC=False..."
   gcloud composer environments update $ENVIRONMENT_NAME --location $LOCATION --update-airflow-configs webserver-rbac=False,core-store_serialized_dags=False,webserver-async_dagbag_loader=True,webserver-collect_dags_interval=10,webserver-dagbag_sync_interval=10,webserver-worker_refresh_interval=3600
   echo "installing rb-status plugin..."
+  gcloud composer environments storage dags import --environment=$ENVIRONMENT_NAME --location $LOCATION --source $(pwd)/plugins/lumen_plugin/setup/lumen.py
   gcloud composer environments storage plugins import --environment=$ENVIRONMENT_NAME --location $LOCATION --source $(pwd)/plugins/lumen_plugin/
 }
 
