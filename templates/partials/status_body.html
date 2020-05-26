@@ -125,9 +125,10 @@
     <h2>No reports have run yet!</h2>
     <h4> Don't worry, here's some steps for creating a new report:</h4>
     <ul>
-      <li>Create a new <a href="{{ url_for('NewReportFormView.this_form_get') }}">report</a>.</li>
-      <li>Turn on the new report on the <a href="{{ url_for('LumenReportsView.list') }}">reports</a> page.</li>
-      <li>Run the new report <a href="{{ url_for('LumenReportsView.list') }}"> manually</a> or let it run naturally on the schedule you provided.</li>
+      {% set query_string = {'url': url_for('lumen/status.test')} %}
+      <li>Create a new <a href="/admin/lumen/report_mgmt/new?{{query_string | urlencode}}">report</a>.</li>
+      <li>Turn on the new report on the <a href="{{ url_for('lumen/reports.list') }}">reports</a> page.</li>
+      <li>Run the new report <a href="{{ url_for('lumen/reports.list') }}"> manually</a> or let it run naturally on the schedule you provided.</li>
       <li>Wait for the report to finish running.</li>
       <li>This status page will now be populated with a new report.</li>
     </ul>
