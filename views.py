@@ -110,7 +110,6 @@ class LumenStatusView(AppBuilderBaseView):
             "reports": reports,
             "rbac": rbac_val,
         }
-        print("rbac value is........" + str(rbac_val))
         return data
 
     @expose("/")
