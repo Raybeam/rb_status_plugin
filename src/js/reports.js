@@ -39,7 +39,7 @@ function triggerReportStartPause(input) {
 
   url = `${url}?report_name=${reportName}&is_paused=${isPaused}`;
   const data = new FormData();
-  data.append("csrf_token", (typeof csrfToken !== 'undefined') ? CSRF : csrfToken);
+  data.append("csrf_token", (typeof csrfToken === 'undefined') ? CSRF : csrfToken);
 
   fetch(url, {
     method: "POST",
