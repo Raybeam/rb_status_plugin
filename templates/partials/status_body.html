@@ -22,7 +22,7 @@
 
   {% if content.reports %}
     <h2>Reports</h2>
-    {% for report in content.reports | sort(attribute='title')%}
+    {% for report in content.reports | sort(attribute='report_title')%}
       <div class="report-base report 
         {% if report.passed == True %}
           passed
