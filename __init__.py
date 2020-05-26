@@ -1,6 +1,5 @@
 from airflow.plugins_manager import AirflowPlugin
 from flask import Blueprint
-from airflow.settings import Session
 from lumen_plugin.views import (
     LumenStatusView,
     LumenReportsView,
@@ -8,13 +7,11 @@ from lumen_plugin.views import (
     EditReportFormView,
 )
 from lumen_plugin.sensors.lumen_sensor import LumenSensor
-from lumen_plugin.views_no_rbac import (
-    LumenStatusViewAdmin,
-    LumenReportsViewAdmin,
-    LumenReportMgmtViewAdmin,
+from lumen_plugin.flask_admin_packages import (
+    v_admin_status_package,
+    v_admin_reports_package,
+    v_admin_reports_mgmt_package
 )
-from lumen_plugin.report import Report
-
 
 v_appbuilder_status_view = LumenStatusView()
 v_appbuilder_status_package = {
@@ -54,25 +51,6 @@ bp = Blueprint(
     url_prefix="/lumen",
 )
 
-v_admin_status_package = LumenStatusViewAdmin(
-    category="Lumen",
-    name="Status Page",
-    endpoint='lumen/status'
-)
-
-v_admin_reports_package = LumenReportsViewAdmin(
-    category="Lumen",
-    name="Reports",
-    endpoint='lumen/reports'
-)
-
-v_admin_my_model_view = LumenReportMgmtViewAdmin(
-    Report,
-    Session,
-    category="Lumen",
-    name="Report Management View",
-    url="lumen/report_mgmt",
-)
 
 class LumenPlugin(AirflowPlugin):
     name = "lumen_plugin"
@@ -85,7 +63,7 @@ class LumenPlugin(AirflowPlugin):
     admin_views = [
         v_admin_status_package,
         v_admin_reports_package,
-        v_admin_my_model_view
+        v_admin_reports_mgmt_package
     ]
     menu_links = []
     appbuilder_views = [
