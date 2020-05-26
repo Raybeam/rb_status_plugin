@@ -126,7 +126,7 @@
     <h4> Don't worry, here's some steps for creating a new report:</h4>
     <ul>
       {% if content.rbac == True %}
-        {% set create_href = url_for('NewReportFormView.this_form_get') %}
+        {% set create_href = url_for('NewReportFormView.this_form_get', next='LumenStatusView.list') %}
         {% set list_href = url_for('LumenReportsView.list') %}
       {% else %}
         {% set query_string = {'url': url_for('lumen/status.test')} %}

@@ -104,9 +104,13 @@ class LumenStatusView(AppBuilderBaseView):
                 logging.error("Failed to generate report: " + str(e))
                 flash("Failed to generate report: " + str(e), "error")
 
-        rbac_val = conf.getboolean('webserver', 'rbac')
-        data = {"summary": {"passed": passed, "updated": updated}, "reports": reports, "rbac": rbac_val}
-        print('rbac value is........' + str(rbac_val))
+        rbac_val = conf.getboolean("webserver", "rbac")
+        data = {
+            "summary": {"passed": passed, "updated": updated},
+            "reports": reports,
+            "rbac": rbac_val,
+        }
+        print("rbac value is........" + str(rbac_val))
         return data
 
     @expose("/")
@@ -254,6 +258,8 @@ class NewReportFormView(SimpleFormView):
         # post process form
         if form_submitted:
             flash(self.message, "info")
+            if request.args.get("next"):
+                return redirect(url_for(request.args.get("next")))
             return redirect(url_for("LumenReportsView.list"))
         else:
             return self.this_form_get()
