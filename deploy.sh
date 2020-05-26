@@ -80,8 +80,11 @@ deploy_gcc()
   read ENVIRONMENT_NAME
 
   gcloud config set project $PROJECT_NAME
+  echo "updating requirements..."
   gcloud composer environments update $ENVIRONMENT_NAME --location $LOCATION --update-pypi-packages-from-file=plugins/lumen_plugin/requirements.txt
+  echo "setting RBAC=False..."
   gcloud composer environments update $ENVIRONMENT_NAME --location $LOCATION --update-env-variables rbac=False
+  echo "installing rb-status plugin..."
   gcloud composer environments storage plugins import --environment=$ENVIRONMENT_NAME --location $LOCATION --source $(pwd)/plugins/lumen_plugin/
 }
 
