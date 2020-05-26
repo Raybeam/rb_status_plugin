@@ -105,7 +105,11 @@ class LumenStatusView(AppBuilderBaseView):
                 flash("Failed to generate report: " + str(e), "error")
 
         rbac_val = conf.getboolean('webserver', 'rbac')
-        data = {"summary": {"passed": passed, "updated": updated}, "reports": reports, "rbac": rbac_val}
+        data = {
+            "summary": {"passed": passed, "updated": updated},
+            "reports": reports,
+            "rbac": rbac_val
+        }
         print('rbac value is........' + str(rbac_val))
         return data
 
