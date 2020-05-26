@@ -1,6 +1,6 @@
 import os
 from datetime import timedelta
-from airflow import DAG
+from airflow import DAG, configuration
 from airflow.operators.python_operator import PythonOperator
 from airflow.operators.latest_only_operator import LatestOnlyOperator
 
@@ -21,10 +21,10 @@ default_args = {
     "retry_delay": timedelta(minutes=5),
     "catchup": False,
 }
-airflow_home = os.environ["AIRFLOW_HOME"]
 
+plugin_path = configuration.get("core", "plugins_folder")
 # Consider moving these constants to an Airflow variable...
-EMAIL_TEMPLATE_LOCATION = f"{airflow_home}/plugins/lumen_plugin/templates/emails"
+EMAIL_TEMPLATE_LOCATION = f"{plugin_path}/lumen_plugin/templates/emails"
 SINGLE_EMAIL_TEMPLATE = f"{EMAIL_TEMPLATE_LOCATION}/single_report.html"
 
 
