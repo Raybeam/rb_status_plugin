@@ -10,7 +10,9 @@ from airflow.utils import timezone
 from airflow.utils.state import State
 from sqlalchemy import or_
 from airflow.models.serialized_dag import SerializedDagModel
-from airflow.settings import STORE_SERIALIZED_DAGS
+
+
+STORE_SERIALIZED_DAGS = conf.getboolean('core', 'store_serialized_dags', fallback=False)
 
 
 class Report:
