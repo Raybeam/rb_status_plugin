@@ -1,5 +1,4 @@
 from airflow.operators.email_operator import EmailOperator
-from airflow import configuration
 from lumen_plugin.report_instance import ReportInstance
 from lumen_plugin.views import LumenStatusView
 from airflow.configuration import conf
@@ -8,7 +7,7 @@ import logging
 
 
 def get_details_link():
-    base_url = configuration.get("webserver", "BASE_URL")
+    base_url = conf.get("webserver", "BASE_URL")
     # If you don't override route_base, Flask BaseView uses class name
     rbac = conf.getboolean('webserver', 'rbac')
     if rbac:
