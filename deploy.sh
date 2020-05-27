@@ -184,9 +184,11 @@ done
 if [ -z ${environment+x} ]; then
   environment="local"
 fi
-if [ -z "$(ls -A "$(pwd)")" ]; then
+
+if [ "$(ls -A $(pwd))" ]; then
   echo -e "Directory '$(pwd)' is not empty. Running this script may overwrite files in the directory.\n\nAre you sure you want to do this?(Y/n)"
   read run_script
+  echo -e "\n\n"
   if [ $run_script == "Y" ]; then 
     echo "Starting depoloy script..."
     deploy_plugin
@@ -196,5 +198,6 @@ if [ -z "$(ls -A "$(pwd)")" ]; then
   fi
 else
   echo "Starting depoloy script..."
+  exit 1
   deploy_plugin
 fi
