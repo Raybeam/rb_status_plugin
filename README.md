@@ -25,6 +25,28 @@ The deployment environments are:
 [Astronomer Deploy](#set-up--astronomer-deploy)  
 [Google Cloud Composer Deploy](#set-up--google-cloud-composer-deploy)  
 
+## Quick Setup
+Clone a sample airflow workspace (if you dont have an existing airflow repository).  
+```
+git clone https://github.com/Raybeam/lumen-test-airflow/ deploy_test
+cd deploy_test
+```
+Clone plugin into local workspace  
+```
+git clone https://github.com/Raybeam/lumen_plugin plugins/lumen_plugin
+```
+Run plugin's deploy script.  
+
+### macOS
+```
+. plugins/lumen_plugin/deploy.sh
+```
+
+### Ubuntu
+```
+./plugins/lumen_plugin/deploy.sh
+```
+
 ## Set up : Local Deploy
 
 ### Set up the Python virtual environment
@@ -120,14 +142,31 @@ If you see a tab for Lumen in the header, then the installation was a success.
 `LOCATION` is the Compute Engine region where the environment is located.  
 It may take a few minutes for cloud composer to finish updating after running this command.
 
-### Disable rbac
-`>gcloud composer environments update ENVIRONMENT_NAME --location LOCATION --update-env-variables[rbac=False]`  
+### Import Required Airflow Configurations
+```
+>gcloud composer environments update ENVIRONMENT_NAME --location LOCATION --update-airflow-configs \  
+	webserver-rbac=False,\  
+	core-store_serialized_dags=False,\  
+	webserver-async_dagbag_loader=True,\  
+	webserver-collect_dags_interval=10,\  
+	webserver-dagbag_sync_interval=10,\  
+	webserver-worker_refresh_interval=3600
+```  
 
 `ENVIRONMENT_NAME` is the name of the environment.  
 `LOCATION` is the Compute Engine region where the environment is located.  
 
 
 ### Uploading Plugin to Google Cloud Composer (CLI)
+Add Lumen dag to dags folder:  
+```
+ >gcloud composer environments storage dags import\  
+    --environment ENVIRONMENT_NAME \
+    --location LOCATION \
+    --source SOURCE/setup/lumen.py
+```  
+
+Add Lumen plugin to plugins folder:  
 ```
 >gcloud composer environments storage plugins import\
     --environment ENVIRONMENT_NAME \
@@ -137,4 +176,4 @@ It may take a few minutes for cloud composer to finish updating after running th
 
 `ENVIRONMENT_NAME` is the name of the environment.  
 `LOCATION` is the Compute Engine region where the environment is located.  
-`SOURCE` is the absolute path to the local diretory/file to upload.  
+`SOURCE` is the absolute path to the local directory (full-path/plugins/lumen_plugin/).  
