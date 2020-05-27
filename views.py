@@ -241,6 +241,12 @@ class NewReportFormView(SimpleFormView):
     form_fieldsets = form_fieldsets_config
     message = "Report submitted"
 
+    # We're going to override form_get to preprocess
+    # the form and refresh all its test choices
+    def form_get(self, form):
+        form.tests.choices = get_all_test_choices()
+        return form
+
     @expose("/", methods=["GET"])
     @has_access
     def this_form_get(self):
@@ -277,8 +283,8 @@ class EditReportFormView(SimpleFormView):
     def this_form_get(self, report_title):
         self._init_vars()
         form = self.form.refresh()
-
         form = self.form_get(form, report_title)
+        form.tests.choices = get_all_test_choices()
         if form:
             widgets = self._get_edit_widget(form=form)
             self.update_redirect()
