@@ -33,7 +33,7 @@ cd deploy_test
 ```
 Clone plugin into local workspace  
 ```
-git clone -b deploy_script https://github.com/Raybeam/lumen_plugin plugins/lumen_plugin
+git clone https://github.com/Raybeam/lumen_plugin plugins/lumen_plugin
 ```
 Run plugin's deploy script.  
 
