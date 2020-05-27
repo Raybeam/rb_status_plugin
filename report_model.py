@@ -11,7 +11,7 @@ from wtforms import (
     SelectField,
     HiddenField,
 )
-
+from flask_admin.helpers import get_form_data
 from lumen_plugin.helpers.list_tasks_helper import get_all_test_choices
 from lumen_plugin.report_repo import VariablesReportRepo
 from lumen_plugin.report_form_saver import ReportFormSaver
@@ -231,6 +231,26 @@ class ReportModel(BaseModelView):
         # string in the edit report form
         report.subscribers = ','.join(report.subscribers)
         return report
+
+    def create_form(self, obj=None):
+        """
+            Instantiate model creation form and return it.
+
+            Override to implement custom behavior.
+        """
+        form_obj = self._create_form_class(get_form_data(), obj=obj)
+        form_obj.tests.choices = get_all_test_choices()
+        return form_obj
+
+    def edit_form(self, obj=None):
+        """
+            Instantiate model editing form and return it.
+
+            Override to implement custom behavior.
+        """
+        form_obj = self._edit_form_class(get_form_data(), obj=obj)
+        form_obj.tests.choices = get_all_test_choices()
+        return form_obj
 
     def create_model(self, form):
         logging.error("Creating model")
