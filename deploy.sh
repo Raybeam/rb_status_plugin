@@ -81,10 +81,14 @@ deploy_gcc()
 
   gcloud config set project $PROJECT_NAME
   echo "updating requirements..."
-  gcloud composer environments update $ENVIRONMENT_NAME --location $LOCATION --update-pypi-packages-from-file=plugins/lumen_plugin/requirements.txt
-  echo "setting RBAC=False..."
+  cat $(pwd)/plugins/lumen_plugin/requirements.txt | while read requirement 
+  do
+    echo -e "installing python package: $requirement.."
+    gcloud beta composer environments update $ENVIRONMENT_NAME --location $LOCATION --update-pypi-package=$requirement
+  done
+  echo -e "\n\nsetting airflow configurations..."
   gcloud composer environments update $ENVIRONMENT_NAME --location $LOCATION --update-airflow-configs webserver-rbac=False,core-store_serialized_dags=False,webserver-async_dagbag_loader=True,webserver-collect_dags_interval=10,webserver-dagbag_sync_interval=10,webserver-worker_refresh_interval=3600
-  echo "installing rb-status plugin..."
+  echo -e "\n\ninstalling rb-status plugin..."
   gcloud composer environments storage dags import --environment=$ENVIRONMENT_NAME --location $LOCATION --source $(pwd)/plugins/lumen_plugin/setup/lumen.py
   gcloud composer environments storage plugins import --environment=$ENVIRONMENT_NAME --location $LOCATION --source $(pwd)/plugins/lumen_plugin/
 }
