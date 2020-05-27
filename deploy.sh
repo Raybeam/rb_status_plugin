@@ -161,6 +161,40 @@ start_airflow()
     echo -e "\n\nTo start airflow scheduler, please open a new tab and run:\n\tcd '$(pwd)'; source \"bin/activate\"; airflow scheduler"
 }
 
+################################################################################
+#  Prompt user asking where they wish to deploy.                               #
+################################################################################
+prompt_deploy() {
+    while true; do
+      echo -e "Environment not specified. Please select one of the following choices:\n\t[1] local\n\t[2]astronomer_local\n\t[3]astronomer_remote\n\t[4]google_cloud_composer\n\n"
+      read user_input_environment 
+      echo
+      case $user_input_environment in
+        "1"|"local")
+          echo "Environment set to: local"
+          environment="local"
+          break
+          ;;
+        "2"|"astronomer_local")
+          echo "Environment set to: astronomer_local"
+          environment="astronomer_local"
+          break
+          ;;
+        "3"|"astronomer_remote")
+          echo "Environment set to: astronomer_remote"
+          environment="astronomer_remote"
+          break
+          ;;
+        "4"|"google_cloud_composer")
+          echo "Environment set to: google_cloud_composer"
+          environment="google_cloud_composer"
+          break
+          ;;
+        *)
+          echo -e "Invalid choice...\n\n"
+      esac
+    done
+}
 
 ################################################################################
 #  Main Code.                                                                  #
@@ -186,20 +220,22 @@ while [ $# -gt 0 ]; do
 done
 
 if [ -z ${environment+x} ]; then
-  environment="local"
+  prompt_deploy
 fi
 
 if [ "$(ls -A $(pwd))" ]; then
   echo -e "Directory '$(pwd)' is not empty. Running this script may overwrite files in the directory.\n\nAre you sure you want to do this?(Y/n)"
-  read run_script
-  echo -e "\n\n"
-  if [ $run_script == "Y" ]; then 
-    echo "Starting depoloy script..."
-    deploy_plugin
-  else
-    echo "Exiting deploy script..."
-    exit 1
-  fi
+  read boolean_run_script
+  echo
+  case $boolean_run_script in
+    [yY])
+      echo "Starting depoloy script..."
+      deploy_plugin
+      ;;
+    *)
+      echo "Exiting deploy script..."
+      exit 1
+  esac
 else
   echo "Starting depoloy script..."
   exit 1
