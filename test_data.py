@@ -19,7 +19,7 @@ dummy_reports = [
         "id": 1,
         "passed": False,
         "updated": datetime.datetime.now(),
-        "title": "Diary of a Madman",
+        "report_title": "Diary of a Madman",
         "description": (
             "Donec posuere tincidunt metus sed dictum. Proin commodo nibh ",
             "magna, vitae tristique ex rhoncus vitae.",
@@ -46,7 +46,7 @@ dummy_reports = [
         "id": 2,
         "passed": True,
         "updated": datetime.datetime.now(),
-        "title": "Atragon (Kaitei Gunkan)",
+        "report_title": "Atragon (Kaitei Gunkan)",
         "description": (
             "Morbi eget diam porta, auctor est a, hendrerit lorem. Nulla sit ",
             "amet tincidunt lacus, id varius tellus.",
@@ -58,7 +58,7 @@ dummy_reports = [
         "id": 3,
         "passed": None,
         "updated": datetime.datetime.now(),
-        "title": "Sweet Mud (Adama Meshuga'at)",
+        "report_title": "Sweet Mud (Adama Meshuga'at)",
         "description": (
             "Nunc augue nulla, imperdiet eu ornare a, dignissim convallis ",
             "ipsum. Praesent tellus ipsum, malesuada at neque id, scelerisque consequat ",
@@ -71,7 +71,7 @@ dummy_reports = [
         "id": 4,
         "passed": False,
         "updated": datetime.datetime.now(),
-        "title": "Say It Isn't So",
+        "report_title": "Say It Isn't So",
         "description": "Nam hendrerit mauris est, laoreet pulvinar elit laoreet vel.",
         "owner_name": "Ian Iskower",
         "owner_email": "iiskower3@yahoo.com",
@@ -87,7 +87,7 @@ dummy_reports = [
         "id": 5,
         "passed": True,
         "updated": datetime.datetime.now(),
-        "title": "Soldier of Orange (a.k.a. Survival Run) (Soldaat van Oranje)",
+        "report_title": "Soldier of Orange (a.k.a. Survival Run) (Soldaat van Oranje)",
         "description": (
             "Ut semper dolor sit amet diam ultrices, nec porttitor erat ",
             "viverra. Lorem ipsum dolor sit amet, consectetur adipiscing elit.",

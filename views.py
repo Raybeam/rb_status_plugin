@@ -25,14 +25,16 @@ from lumen_plugin.report_repo import VariablesReportRepo
 from lumen_plugin.report_instance import ReportInstance
 from lumen_plugin.report_form_saver import ReportFormSaver
 from lumen_plugin.helpers.list_tasks_helper import get_all_test_choices
+from airflow.configuration import conf
 import logging
+
 
 form_fieldsets_config = [
     (
         "General",
         {
             "fields": [
-                "title",
+                "report_title",
                 "description",
                 "owner_name",
                 "owner_email",
@@ -86,7 +88,7 @@ class LumenStatusView(AppBuilderBaseView):
                     "id": ri.id,
                     "passed": ri.passed,
                     "updated": ri.updated,
-                    "title": report.report_title,
+                    "report_title": report.report_title,
                     "owner_name": report.owner_name,
                     "owner_email": report.owner_email,
                     "description": report.description,
@@ -102,7 +104,12 @@ class LumenStatusView(AppBuilderBaseView):
                 logging.error("Failed to generate report: " + str(e))
                 flash("Failed to generate report: " + str(e), "error")
 
-        data = {"summary": {"passed": passed, "updated": updated}, "reports": reports}
+        rbac_val = conf.getboolean("webserver", "rbac")
+        data = {
+            "summary": {"passed": passed, "updated": updated},
+            "reports": reports,
+            "rbac": rbac_val,
+        }
         return data
 
     @expose("/")
@@ -146,7 +153,7 @@ class LumenReportsView(AppBuilderBaseView):
 
 class ReportForm(DynamicForm):
     report_id = HiddenField()
-    title = StringField(
+    report_title = StringField(
         ("Title"),
         description="Title will be used as the report's name",
         widget=BS3TextFieldWidget(),
@@ -234,6 +241,12 @@ class NewReportFormView(SimpleFormView):
     form_fieldsets = form_fieldsets_config
     message = "Report submitted"
 
+    # We're going to override form_get to preprocess
+    # the form and refresh all its test choices
+    def form_get(self, form):
+        form.tests.choices = get_all_test_choices()
+        return form
+
     @expose("/", methods=["GET"])
     @has_access
     def this_form_get(self):
@@ -250,6 +263,8 @@ class NewReportFormView(SimpleFormView):
         # post process form
         if form_submitted:
             flash(self.message, "info")
+            if request.args.get("next"):
+                return redirect(url_for(request.args.get("next")))
             return redirect(url_for("LumenReportsView.list"))
         else:
             return self.this_form_get()
@@ -268,8 +283,8 @@ class EditReportFormView(SimpleFormView):
     def this_form_get(self, report_title):
         self._init_vars()
         form = self.form.refresh()
-
         form = self.form_get(form, report_title)
+        form.tests.choices = get_all_test_choices()
         if form:
             widgets = self._get_edit_widget(form=form)
             self.update_redirect()

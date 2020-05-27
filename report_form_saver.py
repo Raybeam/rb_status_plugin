@@ -4,7 +4,6 @@ import logging
 import re
 from flask import flash
 from inflection import parameterize
-import datetime
 
 from lumen_plugin.report_repo import VariablesReportRepo
 
@@ -26,12 +25,11 @@ class ReportFormSaver:
         """
         self.form = form
         self.format_emails()
-        self.report_dict["report_title"] = self.form.title.data
-        self.report_dict["report_title_url"] = parameterize(self.form.title.data)
+        self.report_dict["report_title"] = self.form.report_title.data
+        self.report_dict["report_title_url"] = parameterize(self.form.report_title.data)
         self.report_dict["description"] = self.form.description.data
         self.report_dict["owner_name"] = self.form.owner_name.data
         self.report_dict["owner_email"] = self.form.owner_email.data
-        self.report_dict["subscribers"] = self.form.subscribers.data
         self.report_dict["tests"] = self.form.tests.data
         self.report_dict["schedule_type"] = self.form.schedule_type.data
         if self.report_dict["schedule_type"] == "custom":
@@ -174,7 +172,7 @@ class ReportFormSaver:
 
         # add updated list to subscribers, only if valid
         if self.emails_formatted:
-            self.form.subscribers.data = emails
+            self.report_dict["subscribers"] = emails
 
     def validate_email(self, email):
         """
@@ -236,7 +234,7 @@ class ReportFormSaver:
         return form
         """
         form.report_id.data = requested_report.report_id
-        form.title.data = requested_report.report_title
+        form.report_title.data = requested_report.report_title
         form.description.data = requested_report.description
         form.owner_name.data = requested_report.owner_name
         form.owner_email.data = requested_report.owner_email
@@ -245,13 +243,9 @@ class ReportFormSaver:
         if form.schedule_type.data == "custom":
             form.schedule_custom.data = requested_report.schedule
         if form.schedule_type.data == "daily":
-            form.schedule_time.data = datetime.datetime.strptime(
-                requested_report.schedule_time, "%H:%M"
-            )
+            form.schedule_time.data = requested_report.schedule_time
         if form.schedule_type.data == "weekly":
-            form.schedule_time.data = datetime.datetime.strptime(
-                requested_report.schedule_time, "%H:%M"
-            )
+            form.schedule_time.data = requested_report.schedule_time
             form.schedule_week_day.data = requested_report.schedule_week_day
         form.tests.data = requested_report.tests
         return form

@@ -1,6 +1,5 @@
 from airflow.plugins_manager import AirflowPlugin
 from flask import Blueprint
-
 from lumen_plugin.views import (
     LumenStatusView,
     LumenReportsView,
@@ -8,6 +7,11 @@ from lumen_plugin.views import (
     EditReportFormView,
 )
 from lumen_plugin.sensors.lumen_sensor import LumenSensor
+from lumen_plugin.flask_admin_packages import (
+    v_admin_status_package,
+    v_admin_reports_package,
+    v_admin_reports_mgmt_package
+)
 
 v_appbuilder_status_view = LumenStatusView()
 v_appbuilder_status_package = {
@@ -56,7 +60,11 @@ class LumenPlugin(AirflowPlugin):
     hooks = []
     executors = []
     macros = []
-    admin_views = []
+    admin_views = [
+        v_admin_status_package,
+        v_admin_reports_package,
+        v_admin_reports_mgmt_package
+    ]
     menu_links = []
     appbuilder_views = [
         v_appbuilder_status_package,

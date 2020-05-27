@@ -25,7 +25,7 @@ class ReportSaveTest(unittest.TestCase):
 
     report_form_sample = AttributeDict(
         {
-            "title": AttributeDict({"data": "test report title"}),
+            "report_title": AttributeDict({"data": "test report title"}),
             "description": AttributeDict({"data": "test description"}),
             "owner_name": AttributeDict({"data": "John Doe"}),
             "owner_email": AttributeDict({"data": "jdoe@raybeam.com"}),
@@ -47,7 +47,7 @@ class ReportSaveTest(unittest.TestCase):
 
     report_form_sample_duplicate = AttributeDict(
         {
-            "title": AttributeDict({"data": "new test report title"}),
+            "report_title": AttributeDict({"data": "new test report title"}),
             "description": AttributeDict({"data": "new test description"}),
             "owner_name": AttributeDict({"data": "Jake Doe"}),
             "owner_email": AttributeDict({"data": "jakedoe@raybeam.com"}),
@@ -70,7 +70,7 @@ class ReportSaveTest(unittest.TestCase):
 
     report_form_sample_daily = AttributeDict(
         {
-            "title": AttributeDict({"data": "test report title daily"}),
+            "report_title": AttributeDict({"data": "test report title daily"}),
             "description": AttributeDict({"data": "test description"}),
             "owner_name": AttributeDict({"data": "John Doe"}),
             "owner_email": AttributeDict({"data": "jdoe@raybeam.com"}),
@@ -94,7 +94,7 @@ class ReportSaveTest(unittest.TestCase):
 
     report_form_sample_weekly = AttributeDict(
         {
-            "title": AttributeDict({"data": "test report title weekly"}),
+            "report_title": AttributeDict({"data": "test report title weekly"}),
             "description": AttributeDict({"data": "test description"}),
             "owner_name": AttributeDict({"data": "John Doe"}),
             "owner_email": AttributeDict({"data": "jdoe@raybeam.com"}),
@@ -136,17 +136,19 @@ class ReportSaveTest(unittest.TestCase):
         Delete the airflow variable.
         """
         print("Removing airflow variable...")
-        Variable.delete("lumen_report_" + self.report_form_sample.title.data)
+        Variable.delete("lumen_report_" + self.report_form_sample.report_title.data)
 
     def test_saved_title(self):
         """
         Test that the report's title attribute is correct
         """
         report_airflow_variable = Variable.get(
-            "lumen_report_" + self.report_form_sample.title.data, deserialize_json=True,
+            "lumen_report_" + self.report_form_sample.report_title.data,
+            deserialize_json=True,
         )
         self.assertEqual(
-            self.report_form_sample.title.data, report_airflow_variable["report_title"]
+            self.report_form_sample.report_title.data,
+            report_airflow_variable["report_title"],
         )
 
     def test_saved_description(self):
@@ -154,7 +156,8 @@ class ReportSaveTest(unittest.TestCase):
         Test that the report's description attribute is correct
         """
         report_airflow_variable = Variable.get(
-            "lumen_report_" + self.report_form_sample.title.data, deserialize_json=True,
+            "lumen_report_" + self.report_form_sample.report_title.data,
+            deserialize_json=True,
         )
         self.assertEqual(
             self.report_form_sample.description.data,
@@ -166,7 +169,8 @@ class ReportSaveTest(unittest.TestCase):
         Test that the report's owner_name attribute is correct
         """
         report_airflow_variable = Variable.get(
-            "lumen_report_" + self.report_form_sample.title.data, deserialize_json=True,
+            "lumen_report_" + self.report_form_sample.report_title.data,
+            deserialize_json=True,
         )
         self.assertEqual(
             self.report_form_sample.owner_name.data,
@@ -178,7 +182,8 @@ class ReportSaveTest(unittest.TestCase):
         Test that the report's owner_email attribute is correct
         """
         report_airflow_variable = Variable.get(
-            "lumen_report_" + self.report_form_sample.title.data, deserialize_json=True,
+            "lumen_report_" + self.report_form_sample.report_title.data,
+            deserialize_json=True,
         )
         self.assertEqual(
             self.report_form_sample.owner_email.data,
@@ -190,20 +195,11 @@ class ReportSaveTest(unittest.TestCase):
         Test that the report's subscribers attribute is correct
         """
         report_airflow_variable = Variable.get(
-            "lumen_report_" + self.report_form_sample.title.data, deserialize_json=True,
+            "lumen_report_" + self.report_form_sample.report_title.data,
+            deserialize_json=True,
         )
         self.assertEqual(
-            self.report_form_sample.subscribers.data,
             report_airflow_variable["subscribers"],
-        )
-
-    def test_format_report(self):
-        """
-        Test that the subscribers was properly formatted.
-        This will also update the report_form_sample and airflow varible.
-        """
-        self.assertEqual(
-            self.report_form_sample.subscribers.data,
             ["email1@raybeam.com", "email2@raybeam.com", "jdoe@raybeam.com"],
         )
 
@@ -224,8 +220,10 @@ class ReportSaveTest(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             ReportFormSaver.validate_email(ReportFormSaver, invalid_email)
             self.assertTrue(
-                (f"Email ({invalid_email}) is not valid."
-                 "Please enter a valid email address.")
+                (
+                    f"Email ({invalid_email}) is not valid."
+                    "Please enter a valid email address."
+                )
                 in str(context.exception)
             )
 
@@ -236,10 +234,12 @@ class ReportSaveTest(unittest.TestCase):
         report_saver = ReportFormSaver(self.report_form_sample_daily)
         report_saver.extract_report_data_into_airflow(report_exists=False)
         report_airflow_variable = Variable.get(
-            "lumen_report_" + self.report_form_sample_daily.title.data,
+            "lumen_report_" + self.report_form_sample_daily.report_title.data,
             deserialize_json=True,
         )
-        Variable.delete("lumen_report_" + self.report_form_sample_daily.title.data)
+        Variable.delete(
+            "lumen_report_" + self.report_form_sample_daily.report_title.data
+        )
         self.assertEqual("00 05 * * *", report_airflow_variable["schedule"])
 
     def test_weekly_schedule_conversion(self):
@@ -249,10 +249,12 @@ class ReportSaveTest(unittest.TestCase):
         report_saver = ReportFormSaver(self.report_form_sample_weekly)
         report_saver.extract_report_data_into_airflow(report_exists=False)
         report_airflow_variable = Variable.get(
-            "lumen_report_" + self.report_form_sample_weekly.title.data,
+            "lumen_report_" + self.report_form_sample_weekly.report_title.data,
             deserialize_json=True,
         )
-        Variable.delete("lumen_report_" + self.report_form_sample_weekly.title.data)
+        Variable.delete(
+            "lumen_report_" + self.report_form_sample_weekly.report_title.data
+        )
         self.assertEqual("30 03 * * 0", report_airflow_variable["schedule"])
 
     def test_duplicate_report(self):
@@ -275,7 +277,7 @@ class ReportSaveTest(unittest.TestCase):
         """
         updated_report = copy.deepcopy(self.report_form_sample_duplicate)
         report_airflow_variable = Variable.get(
-            "lumen_report_" + self.report_form_sample_duplicate.title.data,
+            "lumen_report_" + self.report_form_sample_duplicate.report_title.data,
             deserialize_json=True,
         )
         report_saver = ReportFormSaver(updated_report)

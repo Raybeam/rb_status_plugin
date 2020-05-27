@@ -1,18 +1,24 @@
 from airflow.operators.email_operator import EmailOperator
-from airflow import configuration
 from lumen_plugin.report_instance import ReportInstance
 from lumen_plugin.views import LumenStatusView
+from airflow.configuration import conf
+from lumen_plugin.flask_admin_packages import v_admin_status_package
 import logging
 
 
 def get_details_link():
-    base_url = configuration.get("webserver", "BASE_URL")
+    base_url = conf.get("webserver", "BASE_URL")
     # If you don't override route_base, Flask BaseView uses class name
-    if LumenStatusView.route_base:
+    rbac = conf.getboolean('webserver', 'rbac')
+    if rbac:
         route_base = LumenStatusView.route_base
+        if not route_base:
+            route_base = LumenStatusView.__name__.lower()
     else:
-        route_base = LumenStatusView.__name__.lower()
-    return base_url + route_base
+        route_base = f"/admin/{v_admin_status_package.endpoint}"
+        logging.info('url.......' + str(base_url + route_base))
+
+    return base_url + str(route_base)
 
 
 def get_status(passed):
