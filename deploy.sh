@@ -229,7 +229,7 @@ if [ "$(ls -A $(pwd))" ]; then
   echo
   case $boolean_run_script in
     [yY])
-      echo "Starting depoloy script..."
+      echo "Starting deploy script..."
       deploy_plugin
       ;;
     *)
@@ -237,7 +237,7 @@ if [ "$(ls -A $(pwd))" ]; then
       exit 1
   esac
 else
-  echo "Starting depoloy script..."
+  echo "Starting deploy script..."
   exit 1
   deploy_plugin
 fi
