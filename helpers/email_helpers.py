@@ -12,9 +12,8 @@ def get_details_link():
     # If you don't override route_base, Flask BaseView uses class name
     rbac = conf.getboolean('webserver', 'rbac')
     if rbac:
-        if LumenStatusView.route_base:
-            route_base = LumenStatusView.route_base
-        else:
+        route_base = LumenStatusView.route_base
+        if not route_base:
             route_base = LumenStatusView.__name__.lower()
     else:
         route_base = f"/admin/{v_admin_status_package.endpoint}"
