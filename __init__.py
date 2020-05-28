@@ -16,14 +16,14 @@ from rb_status_plugin.flask_admin_packages import (
 v_appbuilder_status_view = StatusView()
 v_appbuilder_status_package = {
     "name": "Status Page",
-    "category": "rb Status",
+    "category": "Status",
     "view": v_appbuilder_status_view,
 }
 
 v_appbuilder_reports_view = ReportsView()
 v_appbuilder_reports_package = {
     "name": "Reports",
-    "category": "rb Status",
+    "category": "Status",
     "view": v_appbuilder_reports_view,
 }
 

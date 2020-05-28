@@ -72,12 +72,12 @@ By putting the `AIRFLOW_HOME` env in the `bin/activate` file, you set the path e
 ### Clone the status plugin into your plugins
 `> git clone https://github.com/Raybeam/rb_status_plugin plugins/rb_status_plugin`
 
-### Copy over rb Status requirements
+### Copy over rb status requirements
 `> cat plugins/rb_status_plugin/requirements.txt >> requirements.txt`  
 `> pip install -r requirements.txt`
 
-### Set up rb Status
-Move over the main rb Status DAG and sample DAGs (if wanted)
+### Set up rb status
+Move over the main rb status DAG and sample DAGs (if wanted)
 
 `> plugins/rb_status_plugin/bin/rb_status init`
 
@@ -100,7 +100,7 @@ In a new terminal, navigate to the same directory.
 
 ### Interact with UI
 In a web brower, visit localhost:8080.  
-If you see a tab for "rb Status" in the header, then the installation was a success.
+If you see a tab for "Status" in the header, then the installation was a success.
 
 ## Set up : Astronomer Deploy
 ### Set up local environment
@@ -121,7 +121,7 @@ In your working directory
   
 ### Interact with UI
 In a web brower, visit localhost:8080.  
-If you see a tab for "rb Status" in the header, then the installation was a success.
+If you see a tab for "Status" in the header, then the installation was a success.
 
 ## Set up : Google Cloud Composer Deploy
 
