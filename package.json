@@ -1,5 +1,5 @@
 {
-  "name": "lumen_plugin",
+  "name": "rb_status_plugin",
   "version": "1.0.0",
   "description": "Data confidence tool for Airflow",
   "private": true,
@@ -11,17 +11,19 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Raybeam/lumen.git"
+    "url": "git+https://github.com/Raybeam/rb_status_plugin.git"
   },
   "keywords": [
-    "lumen"
+    "airflow",
+    "raybeam",
+    "status"
   ],
   "author": "Raybeam",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Raybeam/lumen/issues"
+    "url": "https://github.com/Raybeam/rb_status_plugin/issues"
   },
-  "homepage": "https://github.com/Raybeam/lumen#readme",
+  "homepage": "https://github.com/Raybeam/rb_status_plugin#readme",
   "devDependencies": {
     "@babel/core": "^7.9.0",
     "@babel/preset-env": "^7.9.5",

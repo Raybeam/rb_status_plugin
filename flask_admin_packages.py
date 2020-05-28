@@ -1,27 +1,23 @@
-from lumen_plugin.views_no_rbac import (
-    LumenStatusViewAdmin,
-    LumenReportsViewAdmin,
-    LumenReportMgmtViewAdmin,
+from rb_status_plugin.views_no_rbac import (
+    StatusViewAdmin,
+    ReportsViewAdmin,
+    ReportMgmtViewAdmin,
 )
-from lumen_plugin.report import Report
+from rb_status_plugin.report import Report
 from airflow.settings import Session
 
-v_admin_status_package = LumenStatusViewAdmin(
-    category="Lumen",
-    name="Status Page",
-    endpoint='lumen/status'
+v_admin_status_package = StatusViewAdmin(
+    category="Status", name="Status Page", endpoint="rb/status"
 )
 
-v_admin_reports_package = LumenReportsViewAdmin(
-    category="Lumen",
-    name="Reports",
-    endpoint='lumen/reports'
+v_admin_reports_package = ReportsViewAdmin(
+    category="Status", name="Reports", endpoint="rb/reports"
 )
 
-v_admin_reports_mgmt_package = LumenReportMgmtViewAdmin(
+v_admin_reports_mgmt_package = ReportMgmtViewAdmin(
     Report,
     Session,
-    category="Lumen",
+    category="Status",
     name="Report Management View",
-    url="lumen/report_mgmt",
+    url="rb/report_mgmt",
 )

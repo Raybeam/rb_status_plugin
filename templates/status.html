@@ -1,14 +1,14 @@
 {% extends base_template %}
 
 {% block page_title %}
-  {% include "partials/status_title.html" %}
+{% include "partials/status_title.html" %}
 {% endblock %}
 
 {% block head_css %}
 {{ super() }}
-<link href="{{ url_for('lumen.static', filename='status.css') }}" rel="stylesheet" type="text/css">
+<link href="{{ url_for('rb_status.static', filename='status.css') }}" rel="stylesheet" type="text/css">
 {% endblock %}
 
 {% block content %}
-  {% include "partials/status_body.html" %}
+{% include "partials/status_body.html" %}
 {% endblock %}

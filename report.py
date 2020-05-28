@@ -12,13 +12,13 @@ from sqlalchemy import or_
 from airflow.models.serialized_dag import SerializedDagModel
 
 
-STORE_SERIALIZED_DAGS = conf.getboolean('core', 'store_serialized_dags', fallback=False)
+STORE_SERIALIZED_DAGS = conf.getboolean("core", "store_serialized_dags", fallback=False)
 
 
 class Report:
     """
-    Report holds a Lumen report configuration.  It is used to build
-    Lumen report DAGs
+    Report holds a status report configuration.  It is used to build
+    status report DAGs
     """
 
     def __init__(self, name):
@@ -138,7 +138,7 @@ class Report:
     @property
     def dag_id(self):
         """ Returns a DAG ID based on the name of this report """
-        return inflection.underscore(inflection.parameterize(f"lumen {self.name}"))
+        return inflection.underscore(inflection.parameterize(f"rb status {self.name}"))
 
     @property
     def tests(self):
@@ -159,12 +159,7 @@ class Report:
     def pause_dag(self):
         models.DagModel.get_dagmodel(self.dag_id).set_is_paused(True)
 
-    def _trigger_dag(
-        self,
-        dag_id: str,
-        dag_bag: DagBag,
-        dag_run: DagRun
-    ):
+    def _trigger_dag(self, dag_id: str, dag_bag: DagBag, dag_run: DagRun):
         dag = dag_bag.get_dag(dag_id)  # prefetch dag if it is stored serialized
 
         if dag_id not in dag_bag.dags:
@@ -172,7 +167,7 @@ class Report:
 
         execution_date = timezone.utcnow()
 
-        run_id = f"lumen_manual__{execution_date.isoformat()}"
+        run_id = f"rb_status_manual__{execution_date.isoformat()}"
         dag_run_id = dag_run.find(dag_id=dag_id, run_id=run_id)
         if dag_run_id:
             raise DagRunAlreadyExists(
@@ -204,21 +199,13 @@ class Report:
 
         dagbag = DagBag(
             dag_folder=dag_model.fileloc,
-            store_serialized_dags=conf.getboolean('core', 'store_serialized_dags')
+            store_serialized_dags=conf.getboolean("core", "store_serialized_dags"),
         )
         dag_run = DagRun()
-        self._trigger_dag(
-            dag_id=self.dag_id,
-            dag_bag=dagbag,
-            dag_run=dag_run
-        )
+        self._trigger_dag(dag_id=self.dag_id, dag_bag=dagbag, dag_run=dag_run)
 
     @provide_session
-    def delete_dag(
-        self,
-        keep_records_in_log: bool = True,
-        session=None
-    ):
+    def delete_dag(self, keep_records_in_log: bool = True, session=None):
         dag = session.query(DagModel).filter(DagModel.dag_id == self.dag_id).first()
         if dag is None:
             raise DagNotFound(f"Dag id {self.dag_id} not found")
@@ -234,21 +221,18 @@ class Report:
             if hasattr(model, "dag_id"):
                 if model.__name__:
                     print(model.__name__)
-                if keep_records_in_log and model.__name__ == 'Log':
+                if keep_records_in_log and model.__name__ == "Log":
                     continue
                 cond = or_(
-                    model.dag_id == self.dag_id,
-                    model.dag_id.like(self.dag_id + ".%")
+                    model.dag_id == self.dag_id, model.dag_id.like(self.dag_id + ".%")
                 )
-                session.query(model).filter(cond).delete(
-                    synchronize_session='fetch'
-                )
+                session.query(model).filter(cond).delete(synchronize_session="fetch")
 
         # Delete entries in Import Errors table for a deleted DAG
         # This handles the case when the dag_id is changed in the file
         session.query(models.ImportError).filter(
             models.ImportError.filename == dag.fileloc
-        ).delete(synchronize_session='fetch')
+        ).delete(synchronize_session="fetch")
 
     @provide_session
     def delete_report_variable(self, report_prefix, session=None):
@@ -257,4 +241,4 @@ class Report:
         """
         session.query(Variable).filter(
             Variable.key == (report_prefix + self.name)
-        ).delete(synchronize_session='fetch')
+        ).delete(synchronize_session="fetch")
