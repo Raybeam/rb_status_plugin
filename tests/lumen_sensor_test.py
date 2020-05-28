@@ -20,7 +20,9 @@ default_args = {
 
 
 class LumenSensorTest(unittest.TestCase):
-    lumen_dag = DAG("lumen_dag", schedule_interval=None, default_args=default_args)
+    rb_status_dag = DAG(
+        "rb_status_dag", schedule_interval=None, default_args=default_args
+    )
     test_dag = DAG("test_dag", schedule_interval=None, default_args=default_args)
 
     def __create_dummy_op(self, state, dag):
@@ -55,53 +57,53 @@ class LumenSensorTest(unittest.TestCase):
         return ti
 
     def test_successful(self):
-        # test that LumenSensor processes a successful test operation
+        # test that StatusSensor processes a successful test operation
         # and returns an operational success and test success
         expected_test_response = True
         expected_operational_response = True
         state = State.SUCCESS
 
         dummy_success = self.__create_dummy_op(state, self.test_dag)
-        sensor = self.__create_sensor(dummy_success, self.lumen_dag)
+        sensor = self.__create_sensor(dummy_success, self.rb_status_dag)
 
         self.__create_task_instance_with_state(dummy_success, state)
         sensor_ti = self.__create_task_instance(sensor)
 
         op_result = sensor.poke(context=sensor_ti.get_template_context())
 
-        test_result = sensor_ti.xcom_pull(key="lumen_test_task_status")
+        test_result = sensor_ti.xcom_pull(key="rb_status_test_task_status")
 
         self.assertEqual(expected_test_response, test_result)
         self.assertEqual(expected_operational_response, op_result)
 
     def test_failure(self):
-        # test that LumenSensor processes a failed test operation
+        # test that StatusSensor processes a failed test operation
         # and returns an operational success and test failure
         expected_test_response = False
         expected_operational_response = True
         state = State.FAILED
 
         dummy_success = self.__create_dummy_op(state, self.test_dag)
-        sensor = self.__create_sensor(dummy_success, self.lumen_dag)
+        sensor = self.__create_sensor(dummy_success, self.rb_status_dag)
 
         self.__create_task_instance_with_state(dummy_success, state)
         sensor_ti = self.__create_task_instance(sensor)
 
         op_result = sensor.poke(context=sensor_ti.get_template_context())
-        test_result = sensor_ti.xcom_pull(key="lumen_test_task_status")
+        test_result = sensor_ti.xcom_pull(key="rb_status_test_task_status")
 
         self.assertEqual(expected_test_response, test_result)
         self.assertEqual(expected_operational_response, op_result)
 
     def test_intermittant_state(self):
-        # tests that LumenSensor processes a test with
+        # tests that StatusSensor processes a test with
         # an intermittant state and will continue poking
         # until test is terminal
         expected_response = False
         state = State.RUNNING
 
         dummy_success = self.__create_dummy_op(state, self.test_dag)
-        sensor = self.__create_sensor(dummy_success, self.lumen_dag)
+        sensor = self.__create_sensor(dummy_success, self.rb_status_dag)
 
         self.__create_task_instance_with_state(dummy_success, state)
         sensor_ti = self.__create_task_instance(sensor)
@@ -116,10 +118,10 @@ class LumenSensorTest(unittest.TestCase):
         # (returning exception for operator and Unknown for test)
         expected_test_response = None
 
-        sensor = self.__create_invalid_test_sensor(self.lumen_dag)
+        sensor = self.__create_invalid_test_sensor(self.rb_status_dag)
         sensor_ti = self.__create_task_instance(sensor)
 
-        test_result = sensor_ti.xcom_pull(key="lumen_test_task_status")
+        test_result = sensor_ti.xcom_pull(key="rb_status_test_task_status")
 
         self.assertRaises(AttributeError, sensor.poke, sensor_ti.get_template_context())
         self.assertEqual(expected_test_response, test_result)
