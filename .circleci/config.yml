@@ -7,9 +7,9 @@ jobs:
     - checkout
     - restore_cache:
         keys:
-          - lumen-dependencies-{{ checksum "requirements.txt" }}
+          - rb-dependencies-{{ checksum "requirements.txt" }}
           # fallback to using the latest cache if no exact match is found
-          - lumen-dependencies-
+          - rb-dependencies-
     - run:
         command: |-
           python -m venv ~/.venv
@@ -20,25 +20,25 @@ jobs:
     - save_cache:
         paths:
           - ~/.venv
-        key: lumen-dependencies-{{ checksum "requirements.txt" }}
+        key: rb-dependencies-{{ checksum "requirements.txt" }}
     - run:
         command: |-
           . ~/.venv/bin/activate
           flake8
         name: Run flake8 linter
     - run:
-        command: git clone https://github.com/Raybeam/lumen-test-airflow /home/circleci/lumen-test-airflow
+        command: git clone https://github.com/Raybeam/rb-test-airflow /home/circleci/rb-test-airflow
         name: Set up Airflow
     - run:
         command: |-
           . ~/.venv/bin/activate
-          cd /home/circleci/lumen-test-airflow
+          cd /home/circleci/rb-test-airflow
           export AIRFLOW_HOME=$PWD
           airflow initdb
           mkdir ./plugins/
-          ln -s /home/circleci/project ./plugins/lumen_plugin
+          ln -s /home/circleci/project ./plugins/rb_status_plugin
           airflow create_user -r Admin -u admin -e admin@example.com -f admin -l user -p admin
-          python -m unittest discover -s plugins/lumen_plugin/tests/ -p '*_test.py'
+          python -m unittest discover -s plugins/rb_status_plugin/tests/ -p '*_test.py'
     - run:
         command: |-
           echo "TRIGGERER: ${CIRCLE_USERNAME}"

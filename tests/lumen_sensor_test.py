@@ -19,7 +19,7 @@ default_args = {
 }
 
 
-class LumenSensorTest(unittest.TestCase):
+class SensorTest(unittest.TestCase):
     rb_status_dag = DAG(
         "rb_status_dag", schedule_interval=None, default_args=default_args
     )
