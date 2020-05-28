@@ -32,7 +32,7 @@ class ReportsViewAdmin(BaseView):
         r = Report(report_name)
         r.trigger_dag()
         flash(f"Triggered report: {report_name}", "info")
-        return redirect(url_for("rb_status/reports.list"))
+        return redirect(url_for("rb/reports.list"))
 
     @expose("/<string:report_name>/delete/", methods=["POST"])
     def delete(self, report_name):
@@ -40,7 +40,7 @@ class ReportsViewAdmin(BaseView):
         r.delete_report_variable(VariablesReportRepo.report_prefix)
         r.delete_dag()
         flash(f"Deleted report: {report_name}", "info")
-        return redirect(url_for("rb_status/reports.list"))
+        return redirect(url_for("rb/reports.list"))
 
     @expose("/paused", methods=["POST"])
     def pause_dag(self):
