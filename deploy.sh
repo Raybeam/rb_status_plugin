@@ -21,6 +21,44 @@ help()
 }
 
 ################################################################################
+# Prompt for local deploy, whether to include samples                          #
+################################################################################
+prompt_local_install_type()
+{
+  while true; do
+    echo -e "\n\nPlease select which type of deployment you would like:\n\t[1] basic plugin install\n\t[2] plugin install and sample dags\n\t[3] plugin install and all samples"
+    read user_input_environment 
+    echo
+    case $user_input_environment in
+      "1"|"basic plugin install")
+        echo -e "\nInstalling plugin...\n"
+        plugins/rb_status_plugin/bin/rb_status init
+        break
+        ;;
+      "2"|"plugin install and sample dags")
+        echo -e "\nInstalling plugin with sample dags...\n"
+        plugins/rb_status_plugin/bin/rb_status init
+        plugins/rb_status_plugin/bin/rb_status add_samples --dag_only
+        break
+        ;;
+      "3"|"plugin install and all samples")
+        echo -e "\nInstalling plugin with all samples...\n"
+        plugins/rb_status_plugin/bin/rb_status init
+        plugins/rb_status_plugin/bin/rb_status add_samples
+        break
+        ;;
+      "4"|"google_cloud_composer")
+        echo -e "\nEnvironment set to: google_cloud_composer\n"
+        environment="google_cloud_composer"
+        break
+        ;;
+      *)
+        echo -e "\nInvalid choice...\n"
+    esac
+  done
+}
+
+################################################################################
 # Deploy Locally                                                               #
 ################################################################################
 deploy_local()
@@ -51,10 +89,8 @@ deploy_local()
   airflow initdb
   airflow create_user -r Admin -u admin -e admin@example.com -f admin -l user -p admin
 
-
-  plugins/rb_status_plugin/bin/rb_status init
-  plugins/rb_status_plugin/bin/rb_status add_samples
-  plugins/rb_status_plugin/bin/rb_status add_samples --dag_only
+  echo -e "\n\nInstalling rb_status_plugin..."
+  prompt_local_install_type
 }
 
 ################################################################################
@@ -159,43 +195,44 @@ deploy_plugin()
 ################################################################################
 start_airflow()
 {
-    echo -e "\n\n\n\nTo start airflow webserver, please open a new tab and run:\n\tcd '$(pwd)'; source \"bin/activate\"; airflow webserver"
+    echo -e "\n\nTo start airflow webserver, please open a new tab and run:\n\tcd '$(pwd)'; source \"bin/activate\"; airflow webserver"
     echo -e "\n\nTo start airflow scheduler, please open a new tab and run:\n\tcd '$(pwd)'; source \"bin/activate\"; airflow scheduler"
 }
 
 ################################################################################
 #  Prompt user asking where they wish to deploy.                               #
 ################################################################################
-prompt_deploy() {
-    while true; do
-      echo -e "Environment not specified. Please select one of the following choices:\n\t[1] local\n\t[2]astronomer_local\n\t[3]astronomer_remote\n\t[4]google_cloud_composer\n\n"
-      read user_input_environment 
-      echo
-      case $user_input_environment in
-        "1"|"local")
-          echo "Environment set to: local"
-          environment="local"
-          break
-          ;;
-        "2"|"astronomer_local")
-          echo "Environment set to: astronomer_local"
-          environment="astronomer_local"
-          break
-          ;;
-        "3"|"astronomer_remote")
-          echo "Environment set to: astronomer_remote"
-          environment="astronomer_remote"
-          break
-          ;;
-        "4"|"google_cloud_composer")
-          echo "Environment set to: google_cloud_composer"
-          environment="google_cloud_composer"
-          break
-          ;;
-        *)
-          echo -e "Invalid choice...\n\n"
-      esac
-    done
+prompt_deploy()
+{
+  while true; do
+    echo -e "\n\nEnvironment not specified. Please select one of the following choices:\n\t[1] local\n\t[2] astronomer_local\n\t[3] astronomer_remote\n\t[4] google_cloud_composer"
+    read user_input_environment 
+    echo
+    case $user_input_environment in
+      "1"|"local")
+        echo -e "\nEnvironment set to: local\n"
+        environment="local"
+        break
+        ;;
+      "2"|"astronomer_local")
+        echo -e "\nEnvironment set to: astronomer_local\n"
+        environment="astronomer_local"
+        break
+        ;;
+      "3"|"astronomer_remote")
+        echo -e "\nEnvironment set to: astronomer_remote\n"
+        environment="astronomer_remote"
+        break
+        ;;
+      "4"|"google_cloud_composer")
+        echo -e "\nEnvironment set to: google_cloud_composer\n"
+        environment="google_cloud_composer"
+        break
+        ;;
+      *)
+        echo -e "\nInvalid choice...\n"
+    esac
+  done
 }
 
 ################################################################################
@@ -226,20 +263,20 @@ if [ -z ${environment+x} ]; then
 fi
 
 if [ "$(ls -A $(pwd))" ]; then
-  echo -e "Directory '$(pwd)' is not empty. Running this script may overwrite files in the directory.\n\nAre you sure you want to do this?(Y/n)"
+  echo -e "Directory '$(pwd)' is not empty. Running this script may overwrite files in the directory.\nAre you sure you want to do this?(Y/n)"
   read boolean_run_script
   echo
   case $boolean_run_script in
     [yY])
-      echo "Starting deploy script..."
+      echo -e "\n\nStarting deploy script..."
       deploy_plugin
       ;;
     *)
-      echo "Exiting deploy script..."
+      echo -e "\n\nExiting deploy script..."
       exit 1
   esac
 else
-  echo "Starting deploy script..."
+  echo -e "\n\nStarting deploy script..."
   exit 1
   deploy_plugin
 fi
