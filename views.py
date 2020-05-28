@@ -20,11 +20,11 @@ from wtforms import (
 from wtforms.validators import DataRequired, Email
 from wtforms_components import TimeField
 
-from lumen_plugin.report import Report
-from lumen_plugin.report_repo import VariablesReportRepo
-from lumen_plugin.report_instance import ReportInstance
-from lumen_plugin.report_form_saver import ReportFormSaver
-from lumen_plugin.helpers.list_tasks_helper import get_all_test_choices
+from rb_status_plugin.report import Report
+from rb_status_plugin.report_repo import VariablesReportRepo
+from rb_status_plugin.report_instance import ReportInstance
+from rb_status_plugin.report_form_saver import ReportFormSaver
+from rb_status_plugin.helpers.list_tasks_helper import get_all_test_choices
 from airflow.configuration import conf
 import logging
 
@@ -57,12 +57,12 @@ form_fieldsets_config = [
 ]
 
 # Creating a flask appbuilder BaseView
-class LumenStatusView(AppBuilderBaseView):
+class StatusView(AppBuilderBaseView):
     """
-    LumenStatusView is responsible for Lumen Status Page
+    StatusView is responsible for Status Page
     """
 
-    route_base = "/lumen/status"
+    route_base = "/rb/status"
 
     def reports_data(self):
         """
@@ -117,8 +117,8 @@ class LumenStatusView(AppBuilderBaseView):
         return self.render_template("status.html", content=self.reports_data())
 
 
-class LumenReportsView(AppBuilderBaseView):
-    route_base = "/lumen/reports"
+class ReportsView(AppBuilderBaseView):
+    route_base = "/rb/reports"
 
     @expose("/")
     def list(self):
@@ -129,7 +129,7 @@ class LumenReportsView(AppBuilderBaseView):
         r = Report(report_name)
         r.trigger_dag()
         flash(f"Triggered report: {report_name}", "info")
-        return redirect(url_for("LumenReportsView.list"))
+        return redirect(url_for("ReportsView.list"))
 
     @expose("/<string:report_name>/delete/", methods=["POST"])
     def delete(self, report_name):
@@ -137,7 +137,7 @@ class LumenReportsView(AppBuilderBaseView):
         r.delete_report_variable(VariablesReportRepo.report_prefix)
         r.delete_dag()
         flash(f"Deleted report: {report_name}", "info")
-        return redirect(url_for("LumenReportsView.list"))
+        return redirect(url_for("ReportsView.list"))
 
     @expose("/paused", methods=["POST"])
     def pause_dag(self):
@@ -234,7 +234,7 @@ class ReportForm(DynamicForm):
 
 
 class NewReportFormView(SimpleFormView):
-    route_base = "/lumen/report/new"
+    route_base = "/rb/report/new"
     form_template = "report_form.html"
     form = ReportForm
     form_title = "New Report"
@@ -265,13 +265,13 @@ class NewReportFormView(SimpleFormView):
             flash(self.message, "info")
             if request.args.get("next"):
                 return redirect(url_for(request.args.get("next")))
-            return redirect(url_for("LumenReportsView.list"))
+            return redirect(url_for("ReportsView.list"))
         else:
             return self.this_form_get()
 
 
 class EditReportFormView(SimpleFormView):
-    route_base = "/lumen/report"
+    route_base = "/rb/report"
     form_template = "report_form.html"
     form = ReportForm
     form_title = "Edit Report"
@@ -295,7 +295,7 @@ class EditReportFormView(SimpleFormView):
                 appbuilder=self.appbuilder,
             )
         flash(f"report title ({report_title}) not found.", "error")
-        return redirect(url_for("LumenReportsView.list"))
+        return redirect(url_for("ReportsView.list"))
 
     def form_get(self, form, report_title):
         # !get report by report_title and prefill form with its values
@@ -320,6 +320,6 @@ class EditReportFormView(SimpleFormView):
         # post process form
         if form_submitted:
             flash(self.message, "info")
-            return redirect(url_for("LumenReportsView.list", filename="reports"))
+            return redirect(url_for("ReportsView.list", filename="reports"))
         else:
             return self.this_form_get(report_title)

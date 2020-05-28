@@ -1,16 +1,13 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;500&display=swap"
-      rel="stylesheet"
-    />
-  </head>
 
-  <body
-    style="
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;500&display=swap" rel="stylesheet" />
+</head>
+
+<body style="
       -moz-box-sizing: border-box;
       -ms-text-size-adjust: 100%;
       -webkit-box-sizing: border-box;
@@ -26,284 +23,324 @@
       padding: 0;
       text-align: left;
       width: 100% !important;
-    "
-  >
-    <style>
-      @media only screen {
-        html {
-          min-height: 100%;
-        }
+    ">
+  <style>
+    @media only screen {
+      html {
+        min-height: 100%;
+      }
+    }
+
+    @media only screen and (max-width: 596px) {
+      .small-float-center {
+        margin: 0 auto !important;
+        float: none !important;
+        text-align: center !important;
       }
 
-      @media only screen and (max-width: 596px) {
-        .small-float-center {
-          margin: 0 auto !important;
-          float: none !important;
-          text-align: center !important;
-        }
-        .small-text-center {
-          text-align: center !important;
-        }
-        .small-text-left {
-          text-align: left !important;
-        }
-        .small-text-right {
-          text-align: right !important;
-        }
+      .small-text-center {
+        text-align: center !important;
       }
 
-      @media only screen and (max-width: 596px) {
-        .hide-for-large {
-          display: block !important;
-          width: auto !important;
-          overflow: visible !important;
-          max-height: none !important;
-          font-size: inherit !important;
-          line-height: inherit !important;
-        }
+      .small-text-left {
+        text-align: left !important;
       }
 
-      @media only screen and (max-width: 596px) {
-        table.body table.container .hide-for-large,
-        table.body table.container .row.hide-for-large {
-          display: table !important;
-          width: 100% !important;
-        }
+      .small-text-right {
+        text-align: right !important;
+      }
+    }
+
+    @media only screen and (max-width: 596px) {
+      .hide-for-large {
+        display: block !important;
+        width: auto !important;
+        overflow: visible !important;
+        max-height: none !important;
+        font-size: inherit !important;
+        line-height: inherit !important;
+      }
+    }
+
+    @media only screen and (max-width: 596px) {
+
+      table.body table.container .hide-for-large,
+      table.body table.container .row.hide-for-large {
+        display: table !important;
+        width: 100% !important;
+      }
+    }
+
+    @media only screen and (max-width: 596px) {
+      table.body table.container .callout-inner.hide-for-large {
+        display: table-cell !important;
+        width: 100% !important;
+      }
+    }
+
+    @media only screen and (max-width: 596px) {
+      table.body table.container .show-for-large {
+        display: none !important;
+        width: 0;
+        mso-hide: all;
+        overflow: hidden;
+      }
+    }
+
+    @media only screen and (max-width: 596px) {
+      table.body img {
+        width: auto;
+        height: auto;
       }
 
-      @media only screen and (max-width: 596px) {
-        table.body table.container .callout-inner.hide-for-large {
-          display: table-cell !important;
-          width: 100% !important;
-        }
+      table.body center {
+        min-width: 0 !important;
       }
 
-      @media only screen and (max-width: 596px) {
-        table.body table.container .show-for-large {
-          display: none !important;
-          width: 0;
-          mso-hide: all;
-          overflow: hidden;
-        }
+      table.body .container {
+        width: 95% !important;
       }
 
-      @media only screen and (max-width: 596px) {
-        table.body img {
-          width: auto;
-          height: auto;
-        }
-        table.body center {
-          min-width: 0 !important;
-        }
-        table.body .container {
-          width: 95% !important;
-        }
-        table.body .columns,
-        table.body .column {
-          height: auto !important;
-          -moz-box-sizing: border-box;
-          -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-          padding-left: 16px !important;
-          padding-right: 16px !important;
-        }
-        table.body .columns .column,
-        table.body .columns .columns,
-        table.body .column .column,
-        table.body .column .columns {
-          padding-left: 0 !important;
-          padding-right: 0 !important;
-        }
-        table.body .collapse .columns,
-        table.body .collapse .column {
-          padding-left: 0 !important;
-          padding-right: 0 !important;
-        }
-        td.small-1,
-        th.small-1 {
-          display: inline-block !important;
-          width: 8.33333% !important;
-        }
-        td.small-2,
-        th.small-2 {
-          display: inline-block !important;
-          width: 16.66667% !important;
-        }
-        td.small-3,
-        th.small-3 {
-          display: inline-block !important;
-          width: 25% !important;
-        }
-        td.small-4,
-        th.small-4 {
-          display: inline-block !important;
-          width: 33.33333% !important;
-        }
-        td.small-5,
-        th.small-5 {
-          display: inline-block !important;
-          width: 41.66667% !important;
-        }
-        td.small-6,
-        th.small-6 {
-          display: inline-block !important;
-          width: 50% !important;
-        }
-        td.small-7,
-        th.small-7 {
-          display: inline-block !important;
-          width: 58.33333% !important;
-        }
-        td.small-8,
-        th.small-8 {
-          display: inline-block !important;
-          width: 66.66667% !important;
-        }
-        td.small-9,
-        th.small-9 {
-          display: inline-block !important;
-          width: 75% !important;
-        }
-        td.small-10,
-        th.small-10 {
-          display: inline-block !important;
-          width: 83.33333% !important;
-        }
-        td.small-11,
-        th.small-11 {
-          display: inline-block !important;
-          width: 91.66667% !important;
-        }
-        td.small-12,
-        th.small-12 {
-          display: inline-block !important;
-          width: 100% !important;
-        }
-        .columns td.small-12,
-        .column td.small-12,
-        .columns th.small-12,
-        .column th.small-12 {
-          display: block !important;
-          width: 100% !important;
-        }
-        table.body td.small-offset-1,
-        table.body th.small-offset-1 {
-          margin-left: 8.33333% !important;
-          margin-left: 8.33333% !important;
-        }
-        table.body td.small-offset-2,
-        table.body th.small-offset-2 {
-          margin-left: 16.66667% !important;
-          margin-left: 16.66667% !important;
-        }
-        table.body td.small-offset-3,
-        table.body th.small-offset-3 {
-          margin-left: 25% !important;
-          margin-left: 25% !important;
-        }
-        table.body td.small-offset-4,
-        table.body th.small-offset-4 {
-          margin-left: 33.33333% !important;
-          margin-left: 33.33333% !important;
-        }
-        table.body td.small-offset-5,
-        table.body th.small-offset-5 {
-          margin-left: 41.66667% !important;
-          margin-left: 41.66667% !important;
-        }
-        table.body td.small-offset-6,
-        table.body th.small-offset-6 {
-          margin-left: 50% !important;
-          margin-left: 50% !important;
-        }
-        table.body td.small-offset-7,
-        table.body th.small-offset-7 {
-          margin-left: 58.33333% !important;
-          margin-left: 58.33333% !important;
-        }
-        table.body td.small-offset-8,
-        table.body th.small-offset-8 {
-          margin-left: 66.66667% !important;
-          margin-left: 66.66667% !important;
-        }
-        table.body td.small-offset-9,
-        table.body th.small-offset-9 {
-          margin-left: 75% !important;
-          margin-left: 75% !important;
-        }
-        table.body td.small-offset-10,
-        table.body th.small-offset-10 {
-          margin-left: 83.33333% !important;
-          margin-left: 83.33333% !important;
-        }
-        table.body td.small-offset-11,
-        table.body th.small-offset-11 {
-          margin-left: 91.66667% !important;
-          margin-left: 91.66667% !important;
-        }
-        table.body table.columns td.expander,
-        table.body table.columns th.expander {
-          display: none !important;
-        }
-        table.body .right-text-pad,
-        table.body .text-pad-right {
-          padding-left: 10px !important;
-        }
-        table.body .left-text-pad,
-        table.body .text-pad-left {
-          padding-right: 10px !important;
-        }
-        table.menu {
-          width: 100% !important;
-        }
-        table.menu td,
-        table.menu th {
-          width: auto !important;
-          display: inline-block !important;
-        }
-        table.menu.vertical td,
-        table.menu.vertical th,
-        table.menu.small-vertical td,
-        table.menu.small-vertical th {
-          display: block !important;
-        }
-        table.menu[align="center"] {
-          width: auto !important;
-        }
-        table.button.small-expand,
-        table.button.small-expanded {
-          width: 100% !important;
-        }
-        table.button.small-expand table,
-        table.button.small-expanded table {
-          width: 100%;
-        }
-        table.button.small-expand table a,
-        table.button.small-expanded table a {
-          text-align: center !important;
-          width: 100% !important;
-          padding-left: 0 !important;
-          padding-right: 0 !important;
-        }
-        table.button.small-expand center,
-        table.button.small-expanded center {
-          min-width: 0;
-        }
+      table.body .columns,
+      table.body .column {
+        height: auto !important;
+        -moz-box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        padding-left: 16px !important;
+        padding-right: 16px !important;
       }
 
-      @media only screen and (max-width: 596px) {
-        .report > tbody > tr > th > div {
-          border: 1px solid #dedede;
-          border-radius: 6px;
-          background-color: #f0f4f5;
-          padding: 15px 0 0 0;
-        }
+      table.body .columns .column,
+      table.body .columns .columns,
+      table.body .column .column,
+      table.body .column .columns {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
       }
-    </style>
-    <table
-      class="body"
-      data-made-with-foundation=""
-      style="
+
+      table.body .collapse .columns,
+      table.body .collapse .column {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+      }
+
+      td.small-1,
+      th.small-1 {
+        display: inline-block !important;
+        width: 8.33333% !important;
+      }
+
+      td.small-2,
+      th.small-2 {
+        display: inline-block !important;
+        width: 16.66667% !important;
+      }
+
+      td.small-3,
+      th.small-3 {
+        display: inline-block !important;
+        width: 25% !important;
+      }
+
+      td.small-4,
+      th.small-4 {
+        display: inline-block !important;
+        width: 33.33333% !important;
+      }
+
+      td.small-5,
+      th.small-5 {
+        display: inline-block !important;
+        width: 41.66667% !important;
+      }
+
+      td.small-6,
+      th.small-6 {
+        display: inline-block !important;
+        width: 50% !important;
+      }
+
+      td.small-7,
+      th.small-7 {
+        display: inline-block !important;
+        width: 58.33333% !important;
+      }
+
+      td.small-8,
+      th.small-8 {
+        display: inline-block !important;
+        width: 66.66667% !important;
+      }
+
+      td.small-9,
+      th.small-9 {
+        display: inline-block !important;
+        width: 75% !important;
+      }
+
+      td.small-10,
+      th.small-10 {
+        display: inline-block !important;
+        width: 83.33333% !important;
+      }
+
+      td.small-11,
+      th.small-11 {
+        display: inline-block !important;
+        width: 91.66667% !important;
+      }
+
+      td.small-12,
+      th.small-12 {
+        display: inline-block !important;
+        width: 100% !important;
+      }
+
+      .columns td.small-12,
+      .column td.small-12,
+      .columns th.small-12,
+      .column th.small-12 {
+        display: block !important;
+        width: 100% !important;
+      }
+
+      table.body td.small-offset-1,
+      table.body th.small-offset-1 {
+        margin-left: 8.33333% !important;
+        margin-left: 8.33333% !important;
+      }
+
+      table.body td.small-offset-2,
+      table.body th.small-offset-2 {
+        margin-left: 16.66667% !important;
+        margin-left: 16.66667% !important;
+      }
+
+      table.body td.small-offset-3,
+      table.body th.small-offset-3 {
+        margin-left: 25% !important;
+        margin-left: 25% !important;
+      }
+
+      table.body td.small-offset-4,
+      table.body th.small-offset-4 {
+        margin-left: 33.33333% !important;
+        margin-left: 33.33333% !important;
+      }
+
+      table.body td.small-offset-5,
+      table.body th.small-offset-5 {
+        margin-left: 41.66667% !important;
+        margin-left: 41.66667% !important;
+      }
+
+      table.body td.small-offset-6,
+      table.body th.small-offset-6 {
+        margin-left: 50% !important;
+        margin-left: 50% !important;
+      }
+
+      table.body td.small-offset-7,
+      table.body th.small-offset-7 {
+        margin-left: 58.33333% !important;
+        margin-left: 58.33333% !important;
+      }
+
+      table.body td.small-offset-8,
+      table.body th.small-offset-8 {
+        margin-left: 66.66667% !important;
+        margin-left: 66.66667% !important;
+      }
+
+      table.body td.small-offset-9,
+      table.body th.small-offset-9 {
+        margin-left: 75% !important;
+        margin-left: 75% !important;
+      }
+
+      table.body td.small-offset-10,
+      table.body th.small-offset-10 {
+        margin-left: 83.33333% !important;
+        margin-left: 83.33333% !important;
+      }
+
+      table.body td.small-offset-11,
+      table.body th.small-offset-11 {
+        margin-left: 91.66667% !important;
+        margin-left: 91.66667% !important;
+      }
+
+      table.body table.columns td.expander,
+      table.body table.columns th.expander {
+        display: none !important;
+      }
+
+      table.body .right-text-pad,
+      table.body .text-pad-right {
+        padding-left: 10px !important;
+      }
+
+      table.body .left-text-pad,
+      table.body .text-pad-left {
+        padding-right: 10px !important;
+      }
+
+      table.menu {
+        width: 100% !important;
+      }
+
+      table.menu td,
+      table.menu th {
+        width: auto !important;
+        display: inline-block !important;
+      }
+
+      table.menu.vertical td,
+      table.menu.vertical th,
+      table.menu.small-vertical td,
+      table.menu.small-vertical th {
+        display: block !important;
+      }
+
+      table.menu[align="center"] {
+        width: auto !important;
+      }
+
+      table.button.small-expand,
+      table.button.small-expanded {
+        width: 100% !important;
+      }
+
+      table.button.small-expand table,
+      table.button.small-expanded table {
+        width: 100%;
+      }
+
+      table.button.small-expand table a,
+      table.button.small-expanded table a {
+        text-align: center !important;
+        width: 100% !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+      }
+
+      table.button.small-expand center,
+      table.button.small-expanded center {
+        min-width: 0;
+      }
+    }
+
+    @media only screen and (max-width: 596px) {
+      .report>tbody>tr>th>div {
+        border: 1px solid #dedede;
+        border-radius: 6px;
+        background-color: #f0f4f5;
+        padding: 15px 0 0 0;
+      }
+    }
+  </style>
+  <table class="body" data-made-with-foundation="" style="
         border-collapse: collapse;
         border-spacing: 0;
         color: #0a0a0a;
@@ -318,15 +355,10 @@
         text-align: left;
         vertical-align: top;
         width: 100%;
-      "
-    >
-      <tbody>
-        <tr style="padding: 0; text-align: left; vertical-align: top;">
-          <td
-            class="float-center"
-            align="center"
-            valign="top"
-            style="
+      ">
+    <tbody>
+      <tr style="padding: 0; text-align: left; vertical-align: top;">
+        <td class="float-center" align="center" valign="top" style="
               -moz-hyphens: auto;
               -webkit-hyphens: auto;
               border-collapse: collapse !important;
@@ -342,12 +374,9 @@
               text-align: center;
               vertical-align: top;
               word-wrap: break-word;
-            "
-          >
-            <center style="min-width: 580px; width: 100%;">
-              <table
-                class="container"
-                style="
+            ">
+          <center style="min-width: 580px; width: 100%;">
+            <table class="container" style="
                   border-collapse: collapse;
                   border-spacing: 0;
                   margin: 0 auto;
@@ -355,14 +384,10 @@
                   text-align: inherit;
                   vertical-align: top;
                   width: 580px;
-                "
-              >
-                <tbody>
-                  <tr
-                    style="padding: 0; text-align: left; vertical-align: top;"
-                  >
-                    <td
-                      style="
+                ">
+              <tbody>
+                <tr style="padding: 0; text-align: left; vertical-align: top;">
+                  <td style="
                         -moz-hyphens: auto;
                         -webkit-hyphens: auto;
                         border-collapse: collapse !important;
@@ -377,10 +402,8 @@
                         text-align: left;
                         vertical-align: top;
                         word-wrap: break-word;
-                      "
-                    >
-                      <p
-                        style="
+                      ">
+                    <p style="
                           color: #0a0a0a;
                           font-family: 'Roboto', sans-serif;
                           font-size: 16px;
@@ -390,15 +413,12 @@
                           margin-bottom: 10px;
                           padding: 0;
                           text-align: left;
-                        "
-                      >
-                        New status update on the "{{ title }}" report you
-                        subscribed to
-                      </p>
+                        ">
+                      New status update on the "{{ title }}" report you
+                      subscribed to
+                    </p>
 
-                      <table
-                        class="row report"
-                        style="
+                    <table class="row report" style="
                           border-collapse: collapse;
                           border-spacing: 0;
                           display: table;
@@ -409,18 +429,14 @@
                           text-align: left;
                           vertical-align: top;
                           width: 100%;
-                        "
-                      >
-                        <tbody>
-                          <tr
-                            style="
+                        ">
+                      <tbody>
+                        <tr style="
                               padding: 0;
                               text-align: left;
                               vertical-align: top;
-                            "
-                          >
-                            <th
-                              style="
+                            ">
+                          <th style="
                                 color: #0a0a0a;
                                 font-family: 'Roboto', sans-serif;
                                 font-size: 16px;
@@ -430,19 +446,14 @@
                                 padding: 0;
                                 text-align: left;
                                 vertical-align: middle;
-                              "
-                            >
-                              <div
-                                style="
+                              ">
+                            <div style="
                                   background-color: #f0f4f5;
                                   border: 1px solid #dedede;
                                   border-radius: 6px;
                                   padding: 15px 12px 0 12px;
-                                "
-                              >
-                                <table
-                                  class="row"
-                                  style="
+                                ">
+                              <table class="row" style="
                                     border-collapse: collapse;
                                     border-spacing: 0;
                                     display: table;
@@ -451,19 +462,14 @@
                                     text-align: left;
                                     vertical-align: top;
                                     width: 100%;
-                                  "
-                                >
-                                  <tbody>
-                                    <tr
-                                      style="
+                                  ">
+                                <tbody>
+                                  <tr style="
                                         padding: 0;
                                         text-align: left;
                                         vertical-align: top;
-                                      "
-                                    >
-                                      <th
-                                        class="large-10 small-12 columns"
-                                        style="
+                                      ">
+                                    <th class="large-10 small-12 columns" style="
                                           color: #0a0a0a;
                                           font-family: 'Roboto', sans-serif;
                                           font-size: 16px;
@@ -477,29 +483,22 @@
                                           text-align: left;
                                           vertical-align: middle;
                                           width: 467.33333px;
-                                        "
-                                      >
-                                        <table
-                                          style="
+                                        ">
+                                      <table style="
                                             border-collapse: collapse;
                                             border-spacing: 0;
                                             padding: 0;
                                             text-align: left;
                                             vertical-align: top;
                                             width: 100%;
-                                          "
-                                        >
-                                          <tbody>
-                                            <tr
-                                              style="
+                                          ">
+                                        <tbody>
+                                          <tr style="
                                                 padding: 0;
                                                 text-align: left;
                                                 vertical-align: top;
-                                              "
-                                            >
-                                              <td
-                                                class="status-indicator"
-                                                style="
+                                              ">
+                                            <td class="status-indicator" style="
                                                   -moz-hyphens: auto;
                                                   -webkit-hyphens: auto;
                                                   border-collapse: collapse !important;
@@ -516,11 +515,9 @@
                                                   vertical-align: middle;
                                                   width: 1%;
                                                   word-wrap: break-word;
-                                                "
-                                              >
-                                                {% if passed %}
-                                                  <div
-                                                    style="
+                                                ">
+                                              {% if passed %}
+                                              <div style="
                                                       background-color: #00c853;
                                                       background-image: radial-gradient(
                                                         #00fb68 40%,
@@ -531,11 +528,9 @@
                                                       height: 20px;
                                                       margin-right: 10px;
                                                       width: 20px;
-                                                    "
-                                                  ></div>
-                                                {% elif passed == False %}
-                                                  <div
-                                                    style="
+                                                    "></div>
+                                              {% elif passed == False %}
+                                              <div style="
                                                       background-color: #dd2c00;
                                                       background-image: radial-gradient(
                                                         #ff4011 40%,
@@ -546,12 +541,10 @@
                                                       height: 20px;
                                                       margin-right: 10px;
                                                       width: 20px;
-                                                    "
-                                                  ></div>
+                                                    "></div>
 
-                                                {% else %}
-                                                  <div
-                                                    style="
+                                              {% else %}
+                                              <div style="
                                                       background-color: #ffab00;
                                                           background-image: radial-gradient(
                                                             #ffbc33 40%,
@@ -562,13 +555,11 @@
                                                       height: 20px;
                                                       margin-right: 10px;
                                                       width: 20px;
-                                                    "
-                                                  ></div>
-                                                {% endif %}
-                                                
-                                              </td>
-                                              <td
-                                                style="
+                                                    "></div>
+                                              {% endif %}
+
+                                            </td>
+                                            <td style="
                                                   -moz-hyphens: auto;
                                                   -webkit-hyphens: auto;
                                                   border-collapse: collapse !important;
@@ -584,24 +575,16 @@
                                                   text-align: left;
                                                   vertical-align: middle;
                                                   word-wrap: break-word;
-                                                "
-                                              >
-                                                {% if passed %}
-                                                  <span style="color: #00c853;"
-                                                    >Passed</span
-                                                  >
-                                                {% elif passed == False %}
-                                                  <span style="color: #dd2c00;"
-                                                    >Failed</span
-                                                  >
-                                                {% else %}
-                                                  <span style="color: #ffab00;"
-                                                    >Unknown</span
-                                                  >
-                                                {% endif %}
-                                                / Updated {{ updated.strftime('%b %d at %H:%M') }}
-                                                <h4
-                                                  style="
+                                                ">
+                                              {% if passed %}
+                                              <span style="color: #00c853;">Passed</span>
+                                              {% elif passed == False %}
+                                              <span style="color: #dd2c00;">Failed</span>
+                                              {% else %}
+                                              <span style="color: #ffab00;">Unknown</span>
+                                              {% endif %}
+                                              / Updated {{ updated.strftime('%b %d at %H:%M') }}
+                                              <h4 style="
                                                     color: #0a0a0a;
                                                     font-family: Helvetica,
                                                       Arial, sans-serif;
@@ -614,18 +597,15 @@
                                                     padding: 0;
                                                     text-align: left;
                                                     word-wrap: normal;
-                                                  "
-                                                >
-                                                  {{ title }}
-                                                </h4>
-                                              </td>
-                                            </tr>
-                                          </tbody>
-                                        </table>
-                                      </th>
-                                      <th
-                                        class="large-2 small-12 columns details-link"
-                                        style="
+                                                  ">
+                                                {{ title }}
+                                              </h4>
+                                            </td>
+                                          </tr>
+                                        </tbody>
+                                      </table>
+                                    </th>
+                                    <th class="large-2 small-12 columns details-link" style="
                                           color: #0a0a0a;
                                           font-family: 'Roboto', sans-serif;
                                           font-size: 16px;
@@ -639,11 +619,8 @@
                                           text-align: right;
                                           vertical-align: middle;
                                           width: 80.66667px;
-                                        "
-                                      >
-                                        <a
-                                          href="{{ details_link }}"
-                                          style="
+                                        ">
+                                      <a href="{{ details_link }}" style="
                                             color: #0a0a0a;
                                             font-family: 'Roboto', sans-serif;
                                             font-weight: 300;
@@ -652,35 +629,29 @@
                                             padding: 0;
                                             text-align: left;
                                             text-decoration: underline;
-                                          "
-                                          >Details</a
-                                        >
-                                      </th>
-                                    </tr>
-                                  </tbody>
-                                </table>
-                              </div>
-                            </th>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+                                          ">Details</a>
+                                    </th>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                          </th>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
 
-              <hr
-                style="
+            <hr style="
                   background-color: #dedede;
                   border: none;
                   height: 1px;
                   margin-bottom: 30px;
-                "
-              />
+                " />
 
-              <table
-                class="container"
-                style="
+            <table class="container" style="
                   border-collapse: collapse;
                   border-spacing: 0;
                   margin: 0 auto;
@@ -688,14 +659,10 @@
                   text-align: inherit;
                   vertical-align: top;
                   width: 580px;
-                "
-              >
-                <tbody>
-                  <tr
-                    style="padding: 0; text-align: left; vertical-align: top;"
-                  >
-                    <td
-                      style="
+                ">
+              <tbody>
+                <tr style="padding: 0; text-align: left; vertical-align: top;">
+                  <td style="
                         -moz-hyphens: auto;
                         -webkit-hyphens: auto;
                         border-collapse: collapse !important;
@@ -710,10 +677,8 @@
                         text-align: left;
                         vertical-align: top;
                         word-wrap: break-word;
-                      "
-                    >
-                      <p
-                        style="
+                      ">
+                    <p style="
                           color: #0a0a0a;
                           font-family: 'Roboto', sans-serif;
                           font-size: 16px;
@@ -723,19 +688,19 @@
                           margin-bottom: 10px;
                           padding: 0;
                           text-align: center;
-                        "
-                      >
-                        This report was generated by Lumen<br />
-                        &copy; 1997 - 2020 Raybeam, Inc. All Rights Reserved
-                      </p>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </center>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </body>
+                        ">
+                      This report was generated by rb status<br />
+                      &copy; 1997 - 2020 Raybeam, Inc. All Rights Reserved
+                    </p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </center>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</body>
+
 </html>

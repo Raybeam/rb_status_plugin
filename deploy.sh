@@ -6,7 +6,7 @@
 help()
 {
    # Display help
-   echo "This script will deploy the lumen plugin to an environment, using the instructions listed in the README.md file."
+   echo "This script will deploy the rb Status plugin to an environment, using the instructions listed in the README.md file."
    echo
    echo
    echo "Required parameters:"
@@ -16,7 +16,7 @@ help()
    echo
    echo
    echo "Example:"
-   echo -e "\t./plugins/lumen_plugin/deploy.sh --environment=local"
+   echo -e "\t./plugins/rb_status_plugin/deploy.sh --environment=local"
    echo
 }
 
@@ -38,21 +38,23 @@ deploy_local()
   source "bin/activate"
   echo "export AIRFLOW_HOME=$PWD" >> bin/activate
 
+  echo -e "\n\n\nInstalling required python packages..."
+  echo >> requirements.txt
+  cat plugins/rb_status_plugin/requirements.txt >> requirements.txt
+  sort -u requirements.txt  > requirements2.txt
+  mv requirements2.txt requirements.txt 
+  pip3 install -r requirements.txt
+
   echo -e "\n\n\nInstalling and configuring airflow in virtual environment..."
   pip3 install apache-airflow
   pip3 install psycopg2
   airflow initdb
   airflow create_user -r Admin -u admin -e admin@example.com -f admin -l user -p admin
 
-  echo >> requirements.txt
-  cat plugins/lumen_plugin/requirements.txt >> requirements.txt
-  sort -u requirements.txt  > requirements2.txt
-  mv requirements2.txt requirements.txt 
-  pip3 install -r requirements.txt
 
-  plugins/lumen_plugin/bin/lumen init
-  plugins/lumen_plugin/bin/lumen add_samples
-  plugins/lumen_plugin/bin/lumen add_samples --dag_only
+  plugins/rb_status_plugin/bin/rb_status init
+  plugins/rb_status_plugin/bin/rb_status add_samples
+  plugins/rb_status_plugin/bin/rb_status add_samples --dag_only
 }
 
 ################################################################################
@@ -81,7 +83,7 @@ deploy_gcc()
 
   gcloud config set project $PROJECT_NAME
   echo "updating requirements..."
-  cat $(pwd)/plugins/lumen_plugin/requirements.txt | while read requirement 
+  cat $(pwd)/plugins/rb_status_plugin/requirements.txt | while read requirement 
   do
     echo -e "installing python package: $requirement.."
     gcloud beta composer environments update $ENVIRONMENT_NAME --location $LOCATION --update-pypi-package=$requirement
@@ -89,8 +91,8 @@ deploy_gcc()
   echo -e "\n\nsetting airflow configurations..."
   gcloud composer environments update $ENVIRONMENT_NAME --location $LOCATION --update-airflow-configs webserver-rbac=False,core-store_serialized_dags=False,webserver-async_dagbag_loader=True,webserver-collect_dags_interval=10,webserver-dagbag_sync_interval=10,webserver-worker_refresh_interval=3600
   echo -e "\n\ninstalling rb-status plugin..."
-  gcloud composer environments storage dags import --environment=$ENVIRONMENT_NAME --location $LOCATION --source $(pwd)/plugins/lumen_plugin/setup/lumen.py
-  gcloud composer environments storage plugins import --environment=$ENVIRONMENT_NAME --location $LOCATION --source $(pwd)/plugins/lumen_plugin/
+  gcloud composer environments storage dags import --environment=$ENVIRONMENT_NAME --location $LOCATION --source $(pwd)/plugins/rb_status_plugin/setup/rb_status.py
+  gcloud composer environments storage plugins import --environment=$ENVIRONMENT_NAME --location $LOCATION --source $(pwd)/plugins/rb_status_plugin/
 }
 
 ################################################################################

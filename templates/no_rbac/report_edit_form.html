@@ -3,26 +3,26 @@
 {% from 'admin/lib.html' import extra with context %} {# backward compatible #}
 
 {% block head %}
-  {{ super() }}
-  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
-  {{ lib.form_css() }}
+{{ super() }}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+{{ lib.form_css() }}
 {% endblock %}
 
 {% block body %}
-  <h2 class="text-center">Edit Report</h2>
-  {% block edit_form %}
-    {{ lib.render_form(form, return_url, extra(), form_opts) }}
-  {% endblock %}
+<h2 class="text-center">Edit Report</h2>
+{% block edit_form %}
+{{ lib.render_form(form, return_url, extra(), form_opts) }}
+{% endblock %}
 {% endblock %}
 
 {% block tail %}
-  {{ super() }}
-  {{ lib.form_js() }}
-  <script src="{{url_for('lumen.static',filename='report_form.js')}}"></script>
-  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
-  <script>
-  	$(document).ready(function() {
-    	$('.my_select2').select2();
-	});
-  </script>
+{{ super() }}
+{{ lib.form_js() }}
+<script src="{{url_for('rb_status.static',filename='report_form.js')}}"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+<script>
+  $(document).ready(function () {
+    $('.my_select2').select2();
+  });
+</script>
 {% endblock %}

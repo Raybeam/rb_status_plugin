@@ -1,5 +1,5 @@
-from lumen_plugin.report_repo import VariablesReportRepo
-from lumen_plugin.report import Report
+from rb_status_plugin.report_repo import VariablesReportRepo
+from rb_status_plugin.report import Report
 
 import json
 import unittest
@@ -26,7 +26,7 @@ class VariablesReportRepoTest(unittest.TestCase):
                 ],
                 "schedule_type": "custom",
                 "schedule": "* * * 1 *",
-                "report_id": "lumen_report_my report title"
+                "report_id": "rb_status_my report title"
             }
             """
 
@@ -42,11 +42,11 @@ class VariablesReportRepoTest(unittest.TestCase):
         self.assertIsNone(parsed)
 
     def test_parse_variable_name(self):
-        parsed = VariablesReportRepo.parse_variable_name("lumen_report_bob")
+        parsed = VariablesReportRepo.parse_variable_name("rb_status_bob")
         self.assertEqual(parsed, "bob")
 
     def test_parse_variable_name_ci(self):
-        parsed = VariablesReportRepo.parse_variable_name("LUMEN_REPORT_BOB")
+        parsed = VariablesReportRepo.parse_variable_name("RB_STATUS_BOB")
         self.assertEqual(parsed, "BOB")
 
     def test_parse_variable_name_none(self):

@@ -17,14 +17,14 @@ manual_instructions = f"""
     For one reason or another we couldn't set up your system for you.  Have
     no fear, it's easy to do it yourself.
 
-    Just copy the lumen.py file from the lumen_plugin/setup directory into
-    your DAGs folder.  That's it.  Lumen will take care of the rest.
+    Just copy the rb_status.py file from the rb_status_plugin/setup directory into
+    your DAGs folder.  That's it.  The rb status plugin will take care of the rest.
 
     It might be something like:
-    > cp $AIRFLOW_HOME/plugins/lumen_plugin/setup/lumen.py $AIRFLOW_HOME/dags/
+    > cp $AIRFLOW_HOME/plugins/rb_status_plugin/setup/rb_status.py $AIRFLOW_HOME/dags/
 
-    If you'd like a sample DAG that fails and succeeds randomly to test our Lumen,
-    copy the lumen-sample-dag.py into your DAGs folder.
+    If you'd like a sample DAG that fails and succeeds randomly to test our sample,
+    copy the rb_status_sample_dag.py into your DAGs folder.
     """
 
 
@@ -54,42 +54,34 @@ def find_dags_folder():
     raise OSError(f"Could not find DAGs folder path")
 
 
-def find_lumen_setup_path():
+def find_setup_path():
     plugins_folder = conf.get("core", "plugins_folder")
-    lumen_setup_path = os.path.join(plugins_folder, "lumen_plugin", "setup")
-    if lumen_setup_path and os.path.isdir(lumen_setup_path):
-        logging.info(f"Assuming Lumen setup path at {lumen_setup_path}")
-        return lumen_setup_path
-    logging.warning(
-        f"Could not find Lumen setup path at {lumen_setup_path}, trying $AIRFLOW_HOME."
-    )
+    setup_path = os.path.join(plugins_folder, "rb_status_plugin", "setup")
+    if setup_path and os.path.isdir(setup_path):
+        logging.info(f"Assuming setup path at {setup_path}")
+        return setup_path
+    logging.warning(f"Could not find setup path at {setup_path}, trying $AIRFLOW_HOME.")
 
     airflow_home = os.environ.get("AIRFLOW_HOME")
     if airflow_home:
-        lumen_setup_path = os.path.join(
-            airflow_home, "plugins", "lumen_plugin", "setup"
-        )
-        if lumen_setup_path and os.path.isdir(lumen_setup_path):
-            logging.info(f"Assuming Lumen setup path at {lumen_setup_path}")
-            return lumen_setup_path
-        logging.warning(
-            f"Could not find Lumen setup path at {lumen_setup_path}, trying $PWD"
-        )
+        setup_path = os.path.join(airflow_home, "plugins", "rb_status_plugin", "setup")
+        if setup_path and os.path.isdir(setup_path):
+            logging.info(f"Assuming setup path at {setup_path}")
+            return setup_path
+        logging.warning(f"Could not find setup path at {setup_path}, trying $PWD")
 
-    lumen_setup_path = os.path.join(
-        os.environ["PWD"], "plugins", "lumen_plugin", "setup"
-    )
-    if lumen_setup_path and os.path.isdir(lumen_setup_path):
-        logging.info(f"Assuming Lumen setup path at {lumen_setup_path}")
-        return lumen_setup_path
-    logging.warning(f"Could not find Lumen setup path at {lumen_setup_path}.")
+    setup_path = os.path.join(os.environ["PWD"], "plugins", "rb_status_plugin", "setup")
+    if setup_path and os.path.isdir(setup_path):
+        logging.info(f"Assuming setup path at {setup_path}")
+        return setup_path
+    logging.warning(f"Could not find setup path at {setup_path}.")
 
-    raise OSError(f"Could not find Lumen setup path")
+    raise OSError(f"Could not find setup path")
 
 
-def find_sample_reports(lumen_setup_path):
+def find_sample_reports(setup_path):
     report_files = {}
-    for root, _, files in os.walk(os.path.join(lumen_setup_path, "reports")):
+    for root, _, files in os.walk(os.path.join(setup_path, "reports")):
         for name in files:
             fname, ext = os.path.splitext(name)
             if ext == ".json":
@@ -101,19 +93,19 @@ def find_sample_reports(lumen_setup_path):
 def init(args):
     logging.info(args.dry)
     try:
-        logging.info("Starting Lumen initialization")
+        logging.info("Starting initialization")
 
         dags_folder = find_dags_folder()
-        lumen_setup_path = find_lumen_setup_path()
+        setup_path = find_setup_path()
 
-        logging.info(f"Copying lumen.py from {lumen_setup_path} to {dags_folder}")
+        logging.info(f"Copying rb_status.py from {setup_path} to {dags_folder}")
         if not args.dry:
-            shutil.copy(os.path.join(lumen_setup_path, "lumen.py"), dags_folder)
+            shutil.copy(os.path.join(setup_path, "rb_status.py"), dags_folder)
 
-        if not os.path.isfile(os.path.join(lumen_setup_path, "lumen.py")):
+        if not os.path.isfile(os.path.join(setup_path, "rb_status.py")):
             err = (
                 "Could not find file after copying, "
-                + "check that lumen.py exists in your DAGs folder"  # noqa: W503
+                + "check that rb_status.py exists in your DAGs folder"  # noqa: W503
             )
             raise OSError(err)
     except Exception:
@@ -123,15 +115,15 @@ def init(args):
 
 def add_samples(args):
     try:
-        lumen_setup_path = find_lumen_setup_path()
+        setup_path = find_setup_path()
 
-        add_sample_dag(lumen_setup_path, args)
+        add_sample_dag(setup_path, args)
         if args.dag_only:
             return
 
-        report_files = find_sample_reports(lumen_setup_path)
+        report_files = find_sample_reports(setup_path)
         for fname, path in report_files.items():
-            report_name = f"lumen_report_{fname}"
+            report_name = f"rb_status_{fname}"
             logging.info(f"Adding report {report_name} with json at {path}")
             if not args.dry:
                 with open(path) as f:
@@ -142,17 +134,17 @@ def add_samples(args):
         raise
 
 
-def add_sample_dag(lumen_setup_path, args):
+def add_sample_dag(setup_path, args):
     dags_folder = find_dags_folder()
 
-    logging.info("Adding Lumen sample DAG to DAGs folder")
+    logging.info("Adding sample DAG to DAGs folder")
     if not args.dry:
-        shutil.copy(os.path.join(lumen_setup_path, "lumen-sample-dag.py"), dags_folder)
+        shutil.copy(os.path.join(setup_path, "rb_status_sample_dag.py"), dags_folder)
 
-    if not os.path.isfile(os.path.join(lumen_setup_path, "lumen-sample-dag.py")):
+    if not os.path.isfile(os.path.join(setup_path, "rb_status_sample_dag.py")):
         err = (
             "Could not find file after copying, check "
-            + "that lumen-sample-dag.py exists in your DAGs folder"  # noqa: W503
+            + "that rb_status_sample_dag.py exists in your DAGs folder"  # noqa: W503
         )
         raise OSError(err)
 
@@ -165,14 +157,16 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(
         description="""
-    Lumen is a plugin for Airflow that handles data confidence.  To operate, it needs
+    rb status is a plugin for Airflow that handles data confidence.  To operate, it needs
     to include a file in the DAGs folder.  A sample DAG is also provided if you'd like
-    to get some sample data in the Airflow DB in order to try Lumen out.
+    to get some sample data in the Airflow DB in order to try the plugin out.
     """
     )
     subparsers = parser.add_subparsers()
 
-    parser_init = subparsers.add_parser("init", help="Add Lumen to the DAGs folder")
+    parser_init = subparsers.add_parser(
+        "init", help="Add rb status plugin to the DAGs folder"
+    )
     parser_init.add_argument(
         "--dry", action="store_true", help="Do a dry run.  No files are moved."
     )

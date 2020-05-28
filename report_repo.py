@@ -3,7 +3,7 @@ import re
 import abc
 from airflow.utils.db import provide_session
 from airflow.models import Variable
-from lumen_plugin.report import Report
+from rb_status_plugin.report import Report
 
 
 class ReportRepo(abc.ABC):
@@ -33,7 +33,7 @@ class VariablesReportRepo(ReportRepo):
     """
 
     # Only variables with this prefix will be parsed
-    report_prefix = "lumen_report_"
+    report_prefix = "rb_status_"
 
     @classmethod
     @provide_session
@@ -50,9 +50,7 @@ class VariablesReportRepo(ReportRepo):
     @provide_session
     def get_report(cls, lookup_id, session=None):
         """ Return a list of all matching reports in variables """
-        variable = session.query(Variable).filter(
-            Variable.key == lookup_id,
-        ).one()
+        variable = session.query(Variable).filter(Variable.key == lookup_id,).one()
 
         if not variable:
             return None
@@ -92,9 +90,9 @@ class VariablesReportRepo(ReportRepo):
         r.subscribers = v["subscribers"]
         r.tests = v["tests"]
         r.schedule_type = v["schedule_type"]
-        if ("daily" in r.schedule_type):
+        if "daily" in r.schedule_type:
             r.schedule_time = v["schedule_time"]
-        if ("weekly" in r.schedule_type):
+        if "weekly" in r.schedule_type:
             r.schedule_time = v["schedule_time"]
             r.schedule_week_day = v["schedule_week_day"]
         r.schedule = v["schedule"]
@@ -104,7 +102,7 @@ class VariablesReportRepo(ReportRepo):
     def parse_variable_name(key):
         """
         Returns a parsed variable name.  Returns None if the
-        variable is not a Lumen report variable
+        variable is not a status report variable
         """
         m = re.search(r"^%s(.*)$" % VariablesReportRepo.report_prefix, key, re.I)
         if m is None:
@@ -115,7 +113,7 @@ class VariablesReportRepo(ReportRepo):
 
     @staticmethod
     def parse_variable_val(json_val):
-        """ Returns JSON from a Lumen report variable """
+        """ Returns JSON from a status report variable """
         try:
             return json.loads(json_val)
         except json.decoder.JSONDecodeError:

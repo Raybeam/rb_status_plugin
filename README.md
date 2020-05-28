@@ -1,22 +1,22 @@
-# Lumen
+# Raybeam Status Plugin 
 
 <h1 align="center">
   <br>
-  <img src="https://i.imgur.com/mAyZh0q.png" alt="Lumen">
+  <img src="https://i.imgur.com/mAyZh0q.png" alt="Raybeam Status Plugin">
   <br>
   Data confidence plugin for Airflow.
   <br>
   <br>
 </h1>
 
-The Lumen Airflow plugin makes it easy to communicate confidence about your data system to manager, executives and other stakeholders in your organization.  It improves trust in underlying data by increasing transparency.
+The Status Airflow plugin makes it easy to communicate confidence about your data system to manager, executives and other stakeholders in your organization.  It improves trust in underlying data by increasing transparency.
 
-# Lumen : Set up
+# Set up
 These are instructions for importing this plugin into an existing airflow workspace.  
 To start, navigate to the root of your airflow workspace.  
 If you don't have an existing workspace, you can download the sample:  
 ```
->git clone https://github.com/Raybeam/lumen-test-airflow/ sample_workspace
+>git clone https://github.com/Raybeam/rb-test-airflow/ sample_workspace
 >cd sample_workspace
 ```
   
@@ -28,23 +28,23 @@ The deployment environments are:
 ## Quick Setup
 Clone a sample airflow workspace (if you dont have an existing airflow repository).  
 ```
-git clone https://github.com/Raybeam/lumen-test-airflow/ deploy_test
+git clone https://github.com/Raybeam/rb-test-airflow/ deploy_test
 cd deploy_test
 ```
 Clone plugin into local workspace  
 ```
-git clone https://github.com/Raybeam/lumen_plugin plugins/lumen_plugin
+git clone https://github.com/Raybeam/rb_status_plugin plugins/rb_status_plugin
 ```
 Run plugin's deploy script.  
 
 ### macOS
 ```
-. plugins/lumen_plugin/deploy.sh
+. plugins/rb_status_plugin/deploy.sh
 ```
 
 ### Ubuntu
 ```
-./plugins/lumen_plugin/deploy.sh
+./plugins/rb_status_plugin/deploy.sh
 ```
 
 ## Set up : Local Deploy
@@ -69,23 +69,23 @@ By putting the `AIRFLOW_HOME` env in the `bin/activate` file, you set the path e
 ### Set up a user (admin:admin)
 `> airflow create_user -r Admin -u admin -e admin@example.com -f admin -l user -p admin`
 
-### Clone lumen into your plugins
-`> git clone https://github.com/Raybeam/lumen_plugin plugins/lumen_plugin`
+### Clone the status plugin into your plugins
+`> git clone https://github.com/Raybeam/rb_status_plugin plugins/rb_status_plugin`
 
-### Copy over Lumen requirements
-`> cat plugins/lumen_plugin/requirements.txt >> requirements.txt`  
+### Copy over rb status requirements
+`> cat plugins/rb_status_plugin/requirements.txt >> requirements.txt`  
 `> pip install -r requirements.txt`
 
-### Set up Lumen
-Move over the main Lumen DAG and sample DAGs (if wanted)
+### Set up rb status
+Move over the main rb status DAG and sample DAGs (if wanted)
 
-`> plugins/lumen_plugin/bin/lumen init`
+`> plugins/rb_status_plugin/bin/rb_status init`
 
-`> plugins/lumen_plugin/bin/lumen add_samples`
+`> plugins/rb_status_plugin/bin/rb_status add_samples`
 
-Only the DAG works from the Lumen binary right now.
+Only the DAG works from the rb status plugin binary right now.
 
-`> plugins/lumen_plugin/bin/lumen add_samples --dag_only`
+`> plugins/rb_status_plugin/bin/rb_status add_samples --dag_only`
 
 ### Enable rbac
 In the root directory of your airflow workspace, open airflow.cfg and set `rbac=True`.
@@ -100,7 +100,7 @@ In a new terminal, navigate to the same directory.
 
 ### Interact with UI
 In a web brower, visit localhost:8080.  
-If you see a tab for Lumen in the header, then the installation was a success.
+If you see a tab for "Status" in the header, then the installation was a success.
 
 ## Set up : Astronomer Deploy
 ### Set up local environment
@@ -121,12 +121,12 @@ In your working directory
   
 ### Interact with UI
 In a web brower, visit localhost:8080.  
-If you see a tab for Lumen in the header, then the installation was a success.
+If you see a tab for "Status" in the header, then the installation was a success.
 
 ## Set up : Google Cloud Composer Deploy
 
-### Clone lumen into your plugins
-`> git clone https://github.com/Raybeam/lumen_plugin plugins/lumen_plugin`
+### Clone the status plugin into your plugins
+`> git clone https://github.com/Raybeam/rb_status_plugin plugins/rb_status_plugin`
 
 ### Install gcloud 
 [Install](https://cloud.google.com/sdk/docs/quickstarts) the gcloud SDK and configure it to your Cloud Composer Environment.
@@ -136,7 +136,7 @@ If you see a tab for Lumen in the header, then the installation was a success.
 
 `>gcloud config set project <your Google Cloud project name>`  
 
-`>gcloud composer environments update ENVIRONMENT_NAME --location LOCATION --update-pypi-packages-from-file=plugins/lumen_plugin/requirements.txt`  
+`>gcloud composer environments update ENVIRONMENT_NAME --location LOCATION --update-pypi-packages-from-file=plugins/rb_status_plugin/requirements.txt`  
 
 `ENVIRONMENT_NAME` is the name of the environment.  
 `LOCATION` is the Compute Engine region where the environment is located.  
@@ -158,15 +158,15 @@ It may take a few minutes for cloud composer to finish updating after running th
 
 
 ### Uploading Plugin to Google Cloud Composer (CLI)
-Add Lumen dag to dags folder:  
+Add rb_status dag to dags folder:  
 ```
  >gcloud composer environments storage dags import\  
     --environment ENVIRONMENT_NAME \
     --location LOCATION \
-    --source SOURCE/setup/lumen.py
+    --source SOURCE/setup/rb_status.py
 ```  
 
-Add Lumen plugin to plugins folder:  
+Add rb_status plugin to plugins folder:  
 ```
 >gcloud composer environments storage plugins import\
     --environment ENVIRONMENT_NAME \
@@ -176,4 +176,4 @@ Add Lumen plugin to plugins folder:
 
 `ENVIRONMENT_NAME` is the name of the environment.  
 `LOCATION` is the Compute Engine region where the environment is located.  
-`SOURCE` is the absolute path to the local directory (full-path/plugins/lumen_plugin/).  
+`SOURCE` is the absolute path to the local directory (full-path/plugins/rb_status_plugin/).  
