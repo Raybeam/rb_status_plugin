@@ -24,11 +24,11 @@ class StatusSensor(BaseSensorOperator):
         self.test_task_id = test_task_id
 
     def push_test_status(self, ti, test_status):
-        xcom_key = f"rb_status_test_task_status"
+        xcom_key = "rb_status_test_task_status"
         ti.xcom_push(key=xcom_key, value=test_status)
 
     def push_task_url(self, ti, log_url):
-        xcom_key = f"rb_status_task_log_url"
+        xcom_key = "rb_status_task_log_url"
         ti.xcom_push(key=xcom_key, value=log_url)
 
     @provide_session

@@ -40,9 +40,9 @@ class SensorTest(unittest.TestCase):
 
     def __create_invalid_test_sensor(self, dag):
         sensor = StatusSensor(
-            task_id=f"test_does_not_exist.imaginary_task",
-            test_dag_id=f"does_not_exist",
-            test_task_id=f"imaginary_task",
+            task_id="test_does_not_exist.imaginary_task",
+            test_dag_id="does_not_exist",
+            test_task_id="imaginary_task",
             dag=dag,
         )
         return sensor
