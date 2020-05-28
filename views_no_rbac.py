@@ -1,42 +1,38 @@
 from flask_admin import BaseView, expose
 from flask_admin.form import rules
-from lumen_plugin.report_model import ReportModel
+from rb_status_plugin.report_model import ReportModel
 
-from lumen_plugin.views import (
-    LumenStatusView,
-    LumenReportsView,
+from rb_status_plugin.views import (
+    StatusView,
+    ReportsView,
 )
-from lumen_plugin.report_repo import VariablesReportRepo
-from lumen_plugin.report import Report
+from rb_status_plugin.report_repo import VariablesReportRepo
+from rb_status_plugin.report import Report
 from flask import flash, redirect, url_for, request
 
-lumen_status_view_rbac = LumenStatusView()
-lumen_reports_view_rbac = LumenReportsView()
+status_view_rbac = StatusView()
+reports_view_rbac = ReportsView()
 
 
-class LumenStatusViewAdmin(BaseView):
-    @expose('/')
+class StatusViewAdmin(BaseView):
+    @expose("/")
     def test(self):
         return self.render(
-            "no_rbac/status.html",
-            content=lumen_status_view_rbac.reports_data()
+            "no_rbac/status.html", content=status_view_rbac.reports_data()
         )
 
 
-class LumenReportsViewAdmin(BaseView):
-    @expose('/')
+class ReportsViewAdmin(BaseView):
+    @expose("/")
     def list(self):
-        return self.render(
-            'no_rbac/reports.html',
-            content=VariablesReportRepo.list()
-        )
+        return self.render("no_rbac/reports.html", content=VariablesReportRepo.list())
 
     @expose("/<string:report_name>/trigger/", methods=["GET"])
     def trigger(self, report_name):
         r = Report(report_name)
         r.trigger_dag()
         flash(f"Triggered report: {report_name}", "info")
-        return redirect(url_for("lumen/reports.list"))
+        return redirect(url_for("rb_status/reports.list"))
 
     @expose("/<string:report_name>/delete/", methods=["POST"])
     def delete(self, report_name):
@@ -44,7 +40,7 @@ class LumenReportsViewAdmin(BaseView):
         r.delete_report_variable(VariablesReportRepo.report_prefix)
         r.delete_dag()
         flash(f"Deleted report: {report_name}", "info")
-        return redirect(url_for("lumen/reports.list"))
+        return redirect(url_for("rb_status/reports.list"))
 
     @expose("/paused", methods=["POST"])
     def pause_dag(self):
@@ -58,30 +54,21 @@ class LumenReportsViewAdmin(BaseView):
         return "OK"
 
 
-class LumenReportMgmtViewAdmin(ReportModel):
+class ReportMgmtViewAdmin(ReportModel):
     can_delete = False
-    create_template = 'no_rbac/report_create_form.html'
-    edit_template = 'no_rbac/report_edit_form.html'
+    create_template = "no_rbac/report_create_form.html"
+    edit_template = "no_rbac/report_edit_form.html"
     form_rules = [
-        rules.FieldSet((
-            'report_id',
-        ), ''),
-        rules.FieldSet((
-            'report_title',
-            'description',
-            'owner_name',
-            'owner_email',
-            'subscribers'
-        ), 'General'),
-        rules.FieldSet((
-            'schedule_type',
-            'schedule_time',
-            'schedule_week_day',
-            'schedule_custom'
-        ), 'Schedule'),
-        rules.FieldSet((
-            'tests',
-        ), 'Tests')
+        rules.FieldSet(("report_id",), ""),
+        rules.FieldSet(
+            ("report_title", "description", "owner_name", "owner_email", "subscribers"),
+            "General",
+        ),
+        rules.FieldSet(
+            ("schedule_type", "schedule_time", "schedule_week_day", "schedule_custom"),
+            "Schedule",
+        ),
+        rules.FieldSet(("tests",), "Tests"),
     ]
 
     # We're doing this to hide the view from the main

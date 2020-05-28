@@ -1,29 +1,29 @@
 from airflow.plugins_manager import AirflowPlugin
 from flask import Blueprint
-from lumen_plugin.views import (
-    LumenStatusView,
-    LumenReportsView,
+from rb_status_plugin.views import (
+    StatusView,
+    ReportsView,
     NewReportFormView,
     EditReportFormView,
 )
-from lumen_plugin.sensors.lumen_sensor import LumenSensor
-from lumen_plugin.flask_admin_packages import (
+from rb_status_plugin.sensors.status_sensor import StatusSensor
+from rb_status_plugin.flask_admin_packages import (
     v_admin_status_package,
     v_admin_reports_package,
-    v_admin_reports_mgmt_package
+    v_admin_reports_mgmt_package,
 )
 
-v_appbuilder_status_view = LumenStatusView()
+v_appbuilder_status_view = StatusView()
 v_appbuilder_status_package = {
     "name": "Status Page",
-    "category": "Lumen",
+    "category": "rb Status",
     "view": v_appbuilder_status_view,
 }
 
-v_appbuilder_reports_view = LumenReportsView()
+v_appbuilder_reports_view = ReportsView()
 v_appbuilder_reports_package = {
     "name": "Reports",
-    "category": "Lumen",
+    "category": "rb Status",
     "view": v_appbuilder_reports_view,
 }
 
@@ -44,18 +44,18 @@ v_appbuilder_edit_report_form_package = {
 
 # Creating a flask blueprint to intergrate the templates and static folder
 bp = Blueprint(
-    "lumen",
+    "rb_status",
     __name__,
     template_folder="templates",
     static_folder="static",
-    url_prefix="/lumen",
+    url_prefix="/rb",
 )
 
 
-class LumenPlugin(AirflowPlugin):
-    name = "lumen_plugin"
+class RbStatusPlugin(AirflowPlugin):
+    name = "rb_status_plugin"
     operators = []
-    sensors = [LumenSensor]
+    sensors = [StatusSensor]
     flask_blueprints = [bp]
     hooks = []
     executors = []
@@ -63,7 +63,7 @@ class LumenPlugin(AirflowPlugin):
     admin_views = [
         v_admin_status_package,
         v_admin_reports_package,
-        v_admin_reports_mgmt_package
+        v_admin_reports_mgmt_package,
     ]
     menu_links = []
     appbuilder_views = [

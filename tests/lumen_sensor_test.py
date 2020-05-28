@@ -1,4 +1,4 @@
-from lumen_plugin.sensors.lumen_sensor import LumenSensor
+from rb_status_plugin.sensors.status_sensor import StatusSensor
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.models.taskinstance import TaskInstance
 from datetime import datetime, timedelta
@@ -28,7 +28,7 @@ class LumenSensorTest(unittest.TestCase):
         return dummy
 
     def __create_sensor(self, test, dag):
-        sensor = LumenSensor(
+        sensor = StatusSensor(
             task_id=f"test_{test.dag_id}.{test.task_id}",
             test_dag_id=f"{test.dag_id}",
             test_task_id=f"{test.task_id}",
@@ -37,7 +37,7 @@ class LumenSensorTest(unittest.TestCase):
         return sensor
 
     def __create_invalid_test_sensor(self, dag):
-        sensor = LumenSensor(
+        sensor = StatusSensor(
             task_id=f"test_does_not_exist.imaginary_task",
             test_dag_id=f"does_not_exist",
             test_task_id=f"imaginary_task",

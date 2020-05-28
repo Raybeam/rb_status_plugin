@@ -3,9 +3,9 @@ from airflow import DAG, configuration
 from airflow.operators.python_operator import PythonOperator
 from airflow.operators.latest_only_operator import LatestOnlyOperator
 
-from lumen_plugin.report_repo import VariablesReportRepo
-from lumen_plugin.sensors.lumen_sensor import LumenSensor
-from lumen_plugin.helpers.email_helpers import report_notify_email
+from rb_status_plugin.report_repo import VariablesReportRepo
+from rb_status_plugin.sensors.status_sensor import StatusSensor
+from rb_status_plugin.helpers.email_helpers import report_notify_email
 import airflow.utils.dates as dt
 
 
@@ -23,7 +23,7 @@ default_args = {
 
 plugin_path = configuration.get("core", "plugins_folder")
 # Consider moving these constants to an Airflow variable...
-EMAIL_TEMPLATE_LOCATION = f"{plugin_path}/lumen_plugin/templates/emails"
+EMAIL_TEMPLATE_LOCATION = f"{plugin_path}/rb_status_plugin/templates/emails"
 SINGLE_EMAIL_TEMPLATE = f"{EMAIL_TEMPLATE_LOCATION}/single_report.html"
 
 
@@ -47,7 +47,7 @@ def create_dag(report, default_args):
             provide_context=True,
         )
         for test in report.tests:
-            t1 = LumenSensor(
+            t1 = StatusSensor(
                 task_id=test_prefix + test,
                 test_dag_id=test.split(".")[0],
                 test_task_id=test.split(".")[1],

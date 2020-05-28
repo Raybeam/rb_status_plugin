@@ -10,11 +10,11 @@
     "person3@raybeam.com"
   ],
   "tests": [
-    "lumen-sample-dag.bash_print_date2",
-    "lumen-sample-dag.python_print_date_1"
+    "rb-status-sample-dag.bash_print_date2",
+    "rb-status-sample-dag.python_print_date_1"
   ],
   "schedule_type": "daily",
   "schedule_time": "07:00",
   "schedule": "00 07 * * *",
-  "report_id": "lumen_report_success_sample"
+  "report_id": "rb_status_success_sample"
 }

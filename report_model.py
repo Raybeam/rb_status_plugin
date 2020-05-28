@@ -12,9 +12,9 @@ from wtforms import (
     HiddenField,
 )
 from flask_admin.helpers import get_form_data
-from lumen_plugin.helpers.list_tasks_helper import get_all_test_choices
-from lumen_plugin.report_repo import VariablesReportRepo
-from lumen_plugin.report_form_saver import ReportFormSaver
+from rb_status_plugin.helpers.list_tasks_helper import get_all_test_choices
+from rb_status_plugin.report_repo import VariablesReportRepo
+from rb_status_plugin.report_form_saver import ReportFormSaver
 
 import logging
 
@@ -148,7 +148,7 @@ class ReportModel(BaseModelView):
             description = TextAreaField(
                 ("Description"),
                 widget=BS3TextAreaFieldWidget(),
-                validators=[DataRequired()]
+                validators=[DataRequired()],
             )
             owner_name = StringField(
                 ("Owner Name"),
@@ -229,7 +229,7 @@ class ReportModel(BaseModelView):
 
         # We want subscribers to be a comma seperated
         # string in the edit report form
-        report.subscribers = ','.join(report.subscribers)
+        report.subscribers = ",".join(report.subscribers)
         return report
 
     def create_form(self, obj=None):
