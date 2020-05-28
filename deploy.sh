@@ -38,17 +38,19 @@ deploy_local()
   source "bin/activate"
   echo "export AIRFLOW_HOME=$PWD" >> bin/activate
 
+  echo -e "\n\n\nInstalling required python packages..."
+  echo >> requirements.txt
+  cat plugins/rb_status_plugin/requirements.txt >> requirements.txt
+  sort -u requirements.txt  > requirements2.txt
+  mv requirements2.txt requirements.txt 
+  pip3 install -r requirements.txt
+
   echo -e "\n\n\nInstalling and configuring airflow in virtual environment..."
   pip3 install apache-airflow
   pip3 install psycopg2
   airflow initdb
   airflow create_user -r Admin -u admin -e admin@example.com -f admin -l user -p admin
 
-  echo >> requirements.txt
-  cat plugins/rb_status_plugin/requirements.txt >> requirements.txt
-  sort -u requirements.txt  > requirements2.txt
-  mv requirements2.txt requirements.txt 
-  pip3 install -r requirements.txt
 
   plugins/rb_status_plugin/bin/rb_status init
   plugins/rb_status_plugin/bin/rb_status add_samples
