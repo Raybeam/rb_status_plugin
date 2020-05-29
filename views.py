@@ -26,7 +26,6 @@ from rb_status_plugin.report_instance import ReportInstance
 from rb_status_plugin.report_form_saver import ReportFormSaver
 from rb_status_plugin.helpers.list_tasks_helper import get_all_test_choices
 from airflow.configuration import conf
-from airflow.utils import timezone
 import logging
 
 
@@ -204,10 +203,7 @@ class ReportForm(DynamicForm):
     )
     schedule_time = TimeField(
         "Time",
-        description=(
-            "Note that time zone being used is UTC."
-            f"It is currently {timezone.utcnow().strftime('%H:%M:%S')} in UTC now"
-        ),
+        description="Note that time zone being used is UTC.",
         render_kw={"class": "form-control"},
         validators=[DataRequired()],
     )
