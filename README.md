@@ -36,17 +36,10 @@ Clone plugin into local workspace
 git clone https://github.com/Raybeam/rb_status_plugin plugins/rb_status_plugin
 ```
 Run plugin's deploy script.  
-
-### macOS
-```
-. plugins/rb_status_plugin/deploy.sh
-```
-
-### Ubuntu
 ```
 ./plugins/rb_status_plugin/deploy.sh
 ```
-
+  
 ## Set up : Local Deploy
 
 ### Set up the Python virtual environment
