@@ -129,7 +129,7 @@
     {% set create_href = url_for('NewReportFormView.this_form_get', next='StatusView.list') %}
     {% set list_href = url_for('ReportsView.list') %}
     {% else %}
-    {% set query_string = {'url': url_for('rb_status/status.test')} %}
+    {% set query_string = {'url': url_for('rb/status.test')} %}
     {% set create_href = "/admin/rb/report_mgmt/new?" + query_string | urlencode %}
     {% set list_href = url_for('rb/reports.list') %}
     {% endif %}
