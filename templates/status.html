@@ -22,15 +22,16 @@
 		for(var id in reports){
 		  report_id = `report-${ reports[id].report_title_url }-heading .report-highlights .report-meta`;
 		  g = d3.select('div#' + report_id).selectAll('a')
-		  g.insert(isoDateToTimeEl.bind(null, reports[id].updated, {title: false}))
-		}
+		  g.insert( () => {
+		  	elem = isoDateToTimeEl(reports[id].updated, {title: false})
+		  	elem.innerHTML = moment(elem.innerHTML).format('MMMM Do [at] HH:mm')
+		  	return elem
+		  })
+		}	
 	}
 	getReportTime(content)
-
-	// We need this part because Airflow rerenders the timestamps
-	// with the defaultFormat in initializeUITimezone
 	$(document).ready(() => {
-		$('.time').html( function(i, content) {
+		$('time').html( function(i, content) {
 			return moment(content).format('MMMM Do [at] HH:mm')
 		})
 	})
