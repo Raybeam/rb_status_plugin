@@ -27,7 +27,7 @@ from rb_status_plugin.report_form_saver import ReportFormSaver
 from rb_status_plugin.helpers.list_tasks_helper import get_all_test_choices
 from airflow.configuration import conf
 import logging
-
+import pendulum
 
 form_fieldsets_config = [
     (
@@ -49,6 +49,7 @@ form_fieldsets_config = [
                 "schedule_type",
                 "schedule_week_day",
                 "schedule_time",
+                "schedule_timezone",
                 "schedule_custom",
             ]
         },
@@ -87,8 +88,9 @@ class StatusView(AppBuilderBaseView):
                 r = {
                     "id": ri.id,
                     "passed": ri.passed,
-                    "updated": ri.updated,
+                    "updated": ri.updated.isoformat(),
                     "report_title": report.report_title,
+                    "report_title_url": report.report_title_url,
                     "owner_name": report.owner_name,
                     "owner_email": report.owner_email,
                     "description": report.description,
@@ -106,7 +108,7 @@ class StatusView(AppBuilderBaseView):
 
         rbac_val = conf.getboolean("webserver", "rbac")
         data = {
-            "summary": {"passed": passed, "updated": updated},
+            "summary": {"passed": passed, "updated": updated.isoformat()},
             "reports": reports,
             "rbac": rbac_val,
         }
@@ -207,6 +209,13 @@ class ReportForm(DynamicForm):
         render_kw={"class": "form-control"},
         validators=[DataRequired()],
     )
+    schedule_timezone = SelectField(
+        "Timezone",
+        description="Note that time zone being used is UTC.",
+        choices=list(pendulum.timezones),
+        widget=Select2Widget(),
+        validators=[DataRequired()],
+    )
     schedule_week_day = SelectField(
         ("Day of week"),
         description=("Select day of a week you want to schedule the report"),
@@ -245,6 +254,7 @@ class NewReportFormView(SimpleFormView):
     # the form and refresh all its test choices
     def form_get(self, form):
         form.tests.choices = get_all_test_choices()
+        form.schedule_timezone.default = pendulum()
         return form
 
     @expose("/", methods=["GET"])
