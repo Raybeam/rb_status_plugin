@@ -212,7 +212,7 @@ class ReportForm(DynamicForm):
     schedule_timezone = SelectField(
         "Timezone",
         description="Note that time zone being used is UTC.",
-        choices=list(pendulum.timezones),
+        choices=[(elem, elem) for elem in pendulum.timezones],
         widget=Select2Widget(),
         validators=[DataRequired()],
     )

@@ -48,7 +48,10 @@
   }
   function setDefaultTimezone(){
     const manualTz = localStorage.getItem('chosen-timezone');
-    scheduleTimezoneInput.selected = manualTz
+    console.log(manualTz)
+    scheduleTimezoneInput.value = manualTz
+    scheduleTimezoneInput.dispatchEvent(new Event('change'));
+    console.log(scheduleTimezoneInput)
   }
   /**
    * Display daily schedule fields
