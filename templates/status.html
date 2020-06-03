@@ -17,23 +17,16 @@
 {{ super() }}
 <script src="{{ url_for_asset('d3.min.js') }}"></script>
 <script>
-	const content = {{ content.reports| tojson }}
+	const content = {{ content.reports| tojson }};
 	function getReportTime(reports){
 		for(var id in reports){
 		  report_id = `report-${ reports[id].report_title_url }-heading .report-highlights .report-meta`;
-		  g = d3.select('div#' + report_id).selectAll('a')
-		  g.insert( () => {
-		  	elem = isoDateToTimeEl(reports[id].updated, {title: false})
-		  	elem.innerHTML = moment(elem.innerHTML).format('MMMM Do [at] HH:mm')
-		  	return elem
-		  })
+		  g = d3.select('div#' + report_id).selectAll('a');
+		  f = d3.select(`.report-header .updated`).selectAll('a');
+		  g.insert(isoDateToTimeEl.bind(null,reports[id].updated, {title: false}));
+		  f.insert(isoDateToTimeEl.bind(null,reports[id].updated, {title: false}));
 		}	
 	}
-	getReportTime(content)
-	$(document).ready(() => {
-		$('time').html( function(i, content) {
-			return moment(content).format('MMMM Do [at] HH:mm')
-		})
-	})
+	getReportTime(content);
 </script>
 {% endblock %}
