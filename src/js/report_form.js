@@ -11,6 +11,10 @@
   const scheduleCustomRow =
     scheduleCustomInput.closest("tr") ||
     scheduleCustomInput.closest(".form-group");
+  const scheduleTimezoneInput = document.getElementById("schedule_timezone")
+  const scheduleTimezoneRow =
+    scheduleTimezoneInput.closest("tr") ||
+    scheduleTimezoneInput.closest(".form-group");
 
   // detect currently selected schedule type and
   // display appropriate fields
@@ -27,9 +31,11 @@
   function configureScheduleUI(scheduleType) {
     switch (scheduleType) {
       case "daily":
+        setDefaultTimezone();
         enableDailySchedule();
         break;
       case "weekly":
+        setDefaultTimezone();
         enableWeeklySchedule();
         break;
       case "custom":
@@ -40,7 +46,10 @@
         break;
     }
   }
-
+  function setDefaultTimezone(){
+    const manualTz = localStorage.getItem('chosen-timezone');
+    scheduleTimezoneInput.selected = manualTz
+  }
   /**
    * Display daily schedule fields
    */
@@ -48,7 +57,9 @@
     scheduleTimeRow.hidden = false;
     scheduleWeekDayRow.hidden = true;
     scheduleCustomRow.hidden = true;
+    scheduleTimezoneRow.hidden = false;
 
+    scheduleTimezoneInput.required = true;
     scheduleTimeInput.required = true;
     scheduleWeekDayInput.required = false;
     scheduleCustomInput.required = false;
@@ -61,7 +72,9 @@
     scheduleTimeRow.hidden = false;
     scheduleWeekDayRow.hidden = false;
     scheduleCustomRow.hidden = true;
+    scheduleTimezoneRow.hidden = false;
 
+    scheduleTimezoneInput.required = true;
     scheduleTimeInput.required = true;
     scheduleWeekDayInput.required = true;
     scheduleCustomInput.required = false;
@@ -74,7 +87,9 @@
     scheduleTimeRow.hidden = true;
     scheduleWeekDayRow.hidden = true;
     scheduleCustomRow.hidden = false;
+    scheduleTimezoneRow.hidden = true;
 
+    scheduleTimezoneInput.required = false;
     scheduleTimeInput.required = false;
     scheduleWeekDayInput.required = false;
     scheduleCustomInput.required = true;
@@ -87,7 +102,9 @@
     scheduleTimeRow.hidden = true;
     scheduleWeekDayRow.hidden = true;
     scheduleCustomRow.hidden = true;
+    scheduleTimezoneRow.hidden = true;
 
+    scheduleTimezoneInput.required = false;
     scheduleTimeInput.required = false;
     scheduleWeekDayInput.required = false;
     scheduleCustomInput.required = false;

@@ -254,7 +254,6 @@ class NewReportFormView(SimpleFormView):
     # the form and refresh all its test choices
     def form_get(self, form):
         form.tests.choices = get_all_test_choices()
-        form.schedule_timezone.default = pendulum()
         return form
 
     @expose("/", methods=["GET"])
