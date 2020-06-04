@@ -26,7 +26,7 @@ class ReportFormSaver:
         self.form = form
         self.format_emails()
         self.report_dict["report_title"] = self.form.report_title.data
-        self.report_dict["report_title_url"] = parameterize(self.form.report_title.data)
+        self.report_dict["report_title_id"] = parameterize(self.form.report_title.data)
         self.report_dict["description"] = self.form.description.data
         self.report_dict["owner_name"] = self.form.owner_name.data
         self.report_dict["owner_email"] = self.form.owner_email.data
@@ -77,7 +77,7 @@ class ReportFormSaver:
                 )
                 if not self.check_unique_field(report_exists, "report_id"):
                     return False
-            if self.check_unique_field(report_exists, "report_title_url"):
+            if self.check_unique_field(report_exists, "report_title_id"):
                 return True
         return False
 

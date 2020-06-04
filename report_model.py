@@ -118,7 +118,7 @@ class ReportModel(BaseModelView):
         return [
             "report_id",
             "report_title",
-            "report_title_url",
+            "report_title_id",
             "description",
             "owner_name",
             "owner_email",

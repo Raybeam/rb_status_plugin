@@ -1,6 +1,6 @@
 {
   "report_title": "success_sample",
-  "report_title_url": "success_sample",
+  "report_title_id": "success_sample",
   "description": "A sample report which should succeed.",
   "owner_name": "John Doe",
   "owner_email": "jdoe@raybeam.com",

@@ -1,6 +1,6 @@
 {
   "report_title": "failure_sample",
-  "report_title_url": "failure_sample",
+  "report_title_id": "failure_sample",
   "description": "A sample report which should fail.",
   "owner_name": "John Doe",
   "owner_email": "jdoe@raybeam.com",

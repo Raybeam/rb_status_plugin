@@ -20,7 +20,7 @@
 	const content = {{ content.reports| tojson }};
 	function getReportTime(reports){
 		for(var id in reports){
-		  report_id = `report-${ reports[id].report_title_url }-heading .report-highlights .report-meta`;
+		  report_id = `report-${ reports[id].report_title_id }-heading .report-highlights .report-meta`;
 		  g = d3.select('div#' + report_id).selectAll('.report-datetime');
 		  f = d3.select(`.report-header .updated`).selectAll('.report-datetime');
 		  g.insert(isoDateToTimeEl.bind(null,reports[id].updated, {title: false}));

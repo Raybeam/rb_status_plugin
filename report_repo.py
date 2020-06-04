@@ -83,7 +83,7 @@ class VariablesReportRepo(ReportRepo):
         r = Report(name)
         r.report_id = v["report_id"]
         r.report_title = v["report_title"]
-        r.report_title_url = v["report_title_url"]
+        r.report_title_id = v["report_title_id"]
         r.description = v["description"]
         r.owner_name = v["owner_name"]
         r.owner_email = v["owner_email"]
