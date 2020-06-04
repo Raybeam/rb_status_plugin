@@ -4,7 +4,7 @@ import logging
 import re
 from flask import flash
 from inflection import parameterize
-
+import pendulum
 from rb_status_plugin.report_repo import VariablesReportRepo
 
 
@@ -32,6 +32,7 @@ class ReportFormSaver:
         self.report_dict["owner_email"] = self.form.owner_email.data
         self.report_dict["tests"] = self.form.tests.data
         self.report_dict["schedule_type"] = self.form.schedule_type.data
+        self.report_dict["schedule_timezone"] = self.form.schedule_timezone.data
         if self.report_dict["schedule_type"] == "custom":
             self.report_dict["schedule"] = self.form.schedule_custom.data
         elif self.report_dict["schedule_type"] == "manual":
@@ -201,8 +202,11 @@ class ReportFormSaver:
 
         try:
             # add time of day
-            time_of_day = self.form.schedule_time.data.strftime("%H:%M")
+            utc_time = self.form.schedule_time.in_timezone(self.report_dict["schedule_timezone"])
+            # time_of_day = self.form.schedule_time.data.strftime("%H:%M")
+            time_of_day = utc_time.strftime("%H:%M")
             self.report_dict["schedule_time"] = time_of_day
+
             hour, minute = time_of_day.split(":")
             cron_expression = f"{minute} {hour} * * "
 
