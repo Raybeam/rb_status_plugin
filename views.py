@@ -90,7 +90,7 @@ class StatusView(AppBuilderBaseView):
                     "passed": ri.passed,
                     "updated": ri.updated.isoformat(),
                     "report_title": report.report_title,
-                    "report_title_url": report.report_title_url,
+                    "report_title_id": report.report_title_id,
                     "owner_name": report.owner_name,
                     "owner_email": report.owner_email,
                     "description": report.description,
@@ -310,7 +310,7 @@ class EditReportFormView(SimpleFormView):
         # !get report by report_title and prefill form with its values
         requested_report = {}
         for report in VariablesReportRepo.list():
-            if str(report.report_title_url) == report_title:
+            if str(report.report_title_id) == report_title:
                 requested_report = report
 
         if requested_report:
