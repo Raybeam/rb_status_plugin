@@ -6,7 +6,7 @@ from flask import flash
 from inflection import parameterize
 import pendulum
 from rb_status_plugin.report_repo import VariablesReportRepo
-
+from airflow.configuration import conf
 
 class ReportFormSaver:
     """
@@ -200,27 +200,32 @@ class ReportFormSaver:
         saves attributes to self.report_dict
         """
 
-        try:
-            # add time of day
-            utc_time = self.form.schedule_time.in_timezone(self.report_dict["schedule_timezone"])
-            # time_of_day = self.form.schedule_time.data.strftime("%H:%M")
-            time_of_day = utc_time.strftime("%H:%M")
-            self.report_dict["schedule_time"] = time_of_day
+        # add time of day
+        #in_utc = self.form.schedule_time.data
+        default_tz = pendulum.timezone(conf.get("core", "default_timezone"))
 
-            hour, minute = time_of_day.split(":")
-            cron_expression = f"{minute} {hour} * * "
+        time_of_day_to_local = pendulum.datetime(
+            1970,
+            1,
+            1,
+            self.form.schedule_time.data.hour,
+            self.form.schedule_time.data.minute,
+            tzinfo=self.report_dict["schedule_timezone"]
+        )
+        time_of_day_to_utc = time_of_day_to_local.in_timezone(default_tz)
+        self.report_dict["schedule_time"] = time_of_day_to_utc
 
-            # add day of week if applicable
-            if self.form.schedule_type.data == "weekly":
-                cron_expression += self.form.schedule_week_day.data
-                self.report_dict["schedule_week_day"] = self.form.schedule_week_day.data
-            else:
-                cron_expression += "*"
+        hour, minute = time_of_day_to_utc.split(":")
+        cron_expression = f"{minute} {hour} * * "
 
-            self.report_dict["schedule"] = cron_expression
-        except AttributeError:
-            logging.info("Error: Schedule's time is invalid.")
-            flash("Error: Schedule's time is invalid.")
+        # add day of week if applicable
+        if self.form.schedule_type.data == "weekly":
+            cron_expression += self.form.schedule_week_day.data
+            self.report_dict["schedule_week_day"] = self.form.schedule_week_day.data
+        else:
+            cron_expression += "*"
+
+        self.report_dict["schedule"] = cron_expression
 
     @staticmethod
     def load_form(form, requested_report):

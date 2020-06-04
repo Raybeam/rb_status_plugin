@@ -205,13 +205,13 @@ class ReportForm(DynamicForm):
     )
     schedule_time = TimeField(
         "Time",
-        description="Note that time zone being used is UTC.",
+        description="Note that time zone being used is navBar's Timezone.",
         render_kw={"class": "form-control"},
         validators=[DataRequired()],
     )
     schedule_timezone = SelectField(
         "Timezone",
-        description="Note that time zone being used is UTC.",
+        description="Note that time zone being used is your navBar's Timezone.",
         choices=[(elem, elem) for elem in pendulum.timezones],
         widget=Select2Widget(),
         validators=[DataRequired()],
