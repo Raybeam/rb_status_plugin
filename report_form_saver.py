@@ -194,6 +194,20 @@ class ReportFormSaver:
             flash(f"Email ({email}) is not valid. Please enter a valid email address.")
             return False
 
+    def convert_to_default_timezone(self, time):
+        default_tz = pendulum.timezone(conf.get("core", "default_timezone"))
+
+        time_of_day_to_local = pendulum.datetime(
+            1970,
+            1,
+            1,
+            time.hour,
+            time.minute,
+            tzinfo=self.report_dict["schedule_timezone"]
+        )
+        time_of_day_to_utc = (time_of_day_to_local.in_timezone(default_tz)).strftime("%H:%M") 
+        return time_of_day_to_utc
+
     def convert_schedule_to_cron_expression(self):
         """
         Convert Weekly and Daily schedules into a cron expression, and
@@ -201,18 +215,10 @@ class ReportFormSaver:
         """
 
         # add time of day
-        default_tz = pendulum.timezone(conf.get("core", "default_timezone"))
 
-        time_of_day_to_local = pendulum.datetime(
-            1970,
-            1,
-            1,
-            self.form.schedule_time.data.hour,
-            self.form.schedule_time.data.minute,
-            tzinfo=self.report_dict["schedule_timezone"]
+        time_of_day_to_utc = self.convert_to_default_timezone(
+            self.form.schedule_time.data
         )
-        time_of_day_to_utc = (time_of_day_to_local.in_timezone(default_tz)).strftime("%H:%M")
-
         self.report_dict["schedule_time"] = time_of_day_to_utc
 
         hour, minute = time_of_day_to_utc.split(":")
@@ -252,9 +258,13 @@ class ReportFormSaver:
         if form.schedule_type.data == "custom":
             form.schedule_custom.data = requested_report.schedule
         if form.schedule_type.data == "daily":
-            form.schedule_time.data = requested_report.schedule_time
+            form.schedule_time.data = self.convert_to_default_timezone(
+                requested_report.schedule_time
+            )
         if form.schedule_type.data == "weekly":
-            form.schedule_time.data = requested_report.schedule_time
+            form.schedule_time.data = self.convert_to_default_timezone(
+                requested_report.schedule_time
+            )
             form.schedule_week_day.data = requested_report.schedule_week_day
         form.tests.data = requested_report.tests
         return form
