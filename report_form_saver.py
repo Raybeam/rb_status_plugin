@@ -201,7 +201,6 @@ class ReportFormSaver:
         """
 
         # add time of day
-        #in_utc = self.form.schedule_time.data
         default_tz = pendulum.timezone(conf.get("core", "default_timezone"))
 
         time_of_day_to_local = pendulum.datetime(
@@ -212,12 +211,15 @@ class ReportFormSaver:
             self.form.schedule_time.data.minute,
             tzinfo=self.report_dict["schedule_timezone"]
         )
-        time_of_day_to_utc = time_of_day_to_local.in_timezone(default_tz)
+        time_of_day_to_utc = (time_of_day_to_local.in_timezone(default_tz)).strftime("%H:%M")
+
         self.report_dict["schedule_time"] = time_of_day_to_utc
 
         hour, minute = time_of_day_to_utc.split(":")
         cron_expression = f"{minute} {hour} * * "
 
+        logging.info(time_of_day_to_utc)
+        logging.info(time_of_day_to_utc.format("HH:mm"))
         # add day of week if applicable
         if self.form.schedule_type.data == "weekly":
             cron_expression += self.form.schedule_week_day.data
