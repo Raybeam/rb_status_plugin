@@ -9,8 +9,6 @@ from flask_appbuilder.fieldwidgets import (
     Select2Widget,
 )
 from flask_appbuilder.security.decorators import has_access
-from inflection import parameterize
-
 from wtforms import (
     StringField,
     TextAreaField,
