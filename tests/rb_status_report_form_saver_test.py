@@ -41,6 +41,7 @@ class ReportSaveTest(unittest.TestCase):
                 }
             ),
             "schedule_type": AttributeDict({"data": "custom"}),
+            "schedule_timezone": AttributeDict({"data": "UTC"}),
             "schedule_custom": AttributeDict({"data": "* * * 1 *"}),
         }
     )
@@ -63,6 +64,7 @@ class ReportSaveTest(unittest.TestCase):
                 }
             ),
             "schedule_type": AttributeDict({"data": "custom"}),
+            "schedule_timezone": AttributeDict({"data": "UTC"}),
             "schedule_custom": AttributeDict({"data": "* * * 1 1"}),
             "report_id": AttributeDict({"data": "rb_status_new test report title"}),
         }
@@ -86,6 +88,7 @@ class ReportSaveTest(unittest.TestCase):
                 }
             ),
             "schedule_type": AttributeDict({"data": "daily"}),
+            "schedule_timezone": AttributeDict({"data": "UTC"}),
             "schedule_time": AttributeDict(
                 {"data": datetime.datetime(year=2000, month=1, day=1, hour=5, minute=0)}
             ),
@@ -110,6 +113,7 @@ class ReportSaveTest(unittest.TestCase):
                 }
             ),
             "schedule_type": AttributeDict({"data": "weekly"}),
+            "schedule_timezone": AttributeDict({"data": "UTC"}),
             "schedule_time": AttributeDict(
                 {
                     "data": datetime.datetime(
