@@ -18,6 +18,7 @@
 {% block tail %}
 {{ super() }}
 {{ lib.form_js() }}
+<script> const isRBAC = false </script>
 <script src="{{url_for('rb_status.static',filename='report_form.js')}}"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
 <script>
