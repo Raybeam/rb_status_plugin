@@ -3,7 +3,10 @@ from rb_status_plugin.report_instance import ReportInstance
 from rb_status_plugin.views import StatusView
 from airflow.configuration import conf
 from rb_status_plugin.flask_admin_packages import v_admin_status_package
+from airflow.configuration import conf
+from datetime import datetime
 import logging
+import pendulum
 
 
 def get_details_link():
@@ -45,6 +48,8 @@ def report_notify_email(report, email_template_location, **context):
     ri = ReportInstance(context["dag_run"])
 
     updated_time = ri.updated
+    timezone = pendulum.timezone(conf.get("core", "default_timezone"))
+    updated_time.replace(tzinfo=timezone)
     passed = ri.passed
     status = get_status(passed)
     details_link = get_details_link()
