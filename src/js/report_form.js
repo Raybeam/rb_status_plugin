@@ -1,4 +1,5 @@
 (function reportFormSetUp() {
+  const defaultDate = '1970-01-01'
   const scheduleTypeInput = document.getElementById("schedule_type");
   const scheduleWeekDayInput = document.getElementById("schedule_week_day");
   const scheduleWeekDayRow =
@@ -18,9 +19,9 @@
 
   // detect currently selected schedule type and
   // display appropriate fields
-  configureScheduleUI(scheduleTypeInput.value);
+  configureScheduleUI(scheduleTypeInput.value, true);
   $(scheduleTypeInput).on("change", ($event) => {
-    configureScheduleUI($event.target.value);
+    configureScheduleUI($event.target.value, false);
   });
 
   /**
@@ -28,14 +29,14 @@
    *
    * @param {string} scheduleType type of the schedule
    */
-  function configureScheduleUI(scheduleType) {
+  function configureScheduleUI(scheduleType, isInit) {
     switch (scheduleType) {
       case "daily":
-        setDefaultTimezone();
+        if(isInit === true){ setDefaultTimezone(scheduleType) }
         enableDailySchedule();
         break;
       case "weekly":
-        setDefaultTimezone();
+        if(isInit === true){ setDefaultTimezone(scheduleType) }
         enableWeeklySchedule();
         break;
       case "custom":
@@ -49,21 +50,44 @@
 
   function convertToLocalTimezone(time, tz){
     if(time === ""){ return "" }
-    let dateTimeObj = moment.utc('1970-01-01 ' + time);
+    let dateTimeObj = moment.utc(`${defaultDate} ${time}`);
     dateTimeObj.tz(tz);
-    return dateTimeObj.format('HH:mm')
+    return dateTimeObj
   }
 
-  function setDefaultTimezone(){
+  function offsetDayOfWeek(time){
+    goForward = moment(defaultDate).add(1, 'day');
+    goBackwards = moment(defaultDate).subtract(1, 'day');
+
+    if (goForward.date() === time.date()){
+      return 1
+    }
+    if (goBackwards.date() === time.date()){
+      return -1
+    }
+    return 0
+  }
+
+  function setDefaultTimezone(scheduleType, isInit){
     const manualTz = localStorage.getItem('chosen-timezone');
     const selectedTz = localStorage.getItem('selected-timezone');
     scheduleTimezoneInput.value = selectedTz || manualTz;
-    scheduleTimeInput.value = convertToLocalTimezone(
+
+    let convertedTime = convertToLocalTimezone(
       scheduleTimeInput.value,
-      scheduleTimezoneInput.value
-    );
+      scheduleTimezoneInput.value,
+    )
+
+    scheduleTimeInput.value = (convertedTime !== "") ? convertedTime.format('HH:mm'): ""
     scheduleTimeInput.dispatchEvent(new Event('change'));
     scheduleTimezoneInput.dispatchEvent(new Event('change'));
+
+    if(scheduleType === 'weekly' && scheduleWeekDayInput.value !== ''){
+      const offset = offsetDayOfWeek(convertedTime)
+      const currWeekDay = moment().day(scheduleWeekDayInput.value).add(offset, 'day')
+      scheduleWeekDayInput.value = currWeekDay.day()
+      scheduleWeekDayInput.dispatchEvent(new Event('change'))
+    }
   }
   /**
    * Display daily schedule fields

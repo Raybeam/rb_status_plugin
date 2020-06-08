@@ -296,7 +296,7 @@ class EditReportFormView(SimpleFormView):
     def this_form_get(self, report_title):
         self._init_vars()
         form = self.form.refresh()
-        form = self.form_get(form, report_title)
+        form = self.form_get(form, report_id)
         form.tests.choices = get_all_test_choices()
         if form:
             widgets = self._get_edit_widget(form=form)
@@ -312,7 +312,10 @@ class EditReportFormView(SimpleFormView):
 
     def form_get(self, form, report_title):
         # !get report by report_title and prefill form with its values
-        requested_report = VariablesReportRepo.get_report(report_title)
+        requested_report = {}
+        for report in VariablesReportRepo.list():
+            if str(report.report_title_id) == report_title:
+                requested_report = report
 
         if requested_report:
             form = ReportFormSaver.load_form(form, requested_report)
