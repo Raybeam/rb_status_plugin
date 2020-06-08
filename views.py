@@ -112,7 +112,7 @@ class StatusView(AppBuilderBaseView):
 
         rbac_val = conf.getboolean("webserver", "rbac")
         data = {
-            "summary": {"passed": passed, "updated": get_updated(updated)},
+            "summary": {"passed": passed, "updated": self.get_updated(updated)},
             "reports": reports,
             "rbac": rbac_val,
         }
