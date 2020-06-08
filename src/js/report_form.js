@@ -46,10 +46,24 @@
         break;
     }
   }
+  function convertToLocalTimezone(datetime, tz){
+    let dateTimeObj = moment.utc('1970-01-01 ' + datetime);
+    if (datetime !== null && typeof datetime !== 'undefined'){
+      dateTimeObj.tz(tz);
+    }
+    console.log(dateTimeObj)
+    return dateTimeObj
+  }
+
   function setDefaultTimezone(){
     const manualTz = localStorage.getItem('chosen-timezone');
     const selectedTz = localStorage.getItem('selected-timezone');
-    scheduleTimezoneInput.value = selectedTz || manualTz
+    scheduleTimezoneInput.value = selectedTz || manualTz;
+    scheduleTimeInput.value = convertToLocalTimezone(
+      scheduleTimeInput.value,
+      scheduleTimezoneInput.value
+    ).format('HH:mm');
+    scheduleTimeInput.dispatchEvent(new Event('change'));
     scheduleTimezoneInput.dispatchEvent(new Event('change'));
   }
   /**

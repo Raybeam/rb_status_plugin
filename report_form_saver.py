@@ -195,7 +195,7 @@ class ReportFormSaver:
             return False
 
     @staticmethod
-    def convert_default_to_local_timezone(time, timezone):
+    def make_tz_aware(time):
         default_tz = pendulum.timezone(conf.get("core", "default_timezone"))
         time_of_day_to_local = pendulum.datetime(
             1970,
@@ -205,7 +205,6 @@ class ReportFormSaver:
             time.minute,
             tzinfo=default_tz
         )
-        time_of_day_to_local = (time_of_day_to_local.in_timezone(timezone))
         return time_of_day_to_local
 
     def convert_to_default_timezone(self, time):
@@ -270,17 +269,13 @@ class ReportFormSaver:
         if form.schedule_type.data == "custom":
             form.schedule_custom.data = requested_report.schedule
         if form.schedule_type.data == "daily":
-            form.schedule_time.data = cls.convert_default_to_local_timezone(
+            form.schedule_time.data = cls.make_tz_aware(
                 requested_report.schedule_time,
-                form.schedule_timezone.data
             )
-            logging.info(form.schedule_time.data)
         if form.schedule_type.data == "weekly":
-            form.schedule_time.data = cls.convert_default_to_local_timezone(
+            form.schedule_time.data = cls.make_tz_aware(
                 requested_report.schedule_time,
-                form.schedule_timezone.data
             )
-            logging.info(form.schedule_time.data)
             form.schedule_week_day.data = requested_report.schedule_week_day
         form.tests.data = requested_report.tests
         return form
