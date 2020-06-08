@@ -32,13 +32,13 @@
   function configureScheduleUI(scheduleType, isInit) {
     switch (scheduleType) {
       case "daily":
-        if(isInit === true){ convertTimesToLocal(scheduleType); }
         setDefaultTimezone();
+        if(isInit === true){ convertTimesToLocal(scheduleType); }
         enableDailySchedule();
         break;
       case "weekly":
-        if(isInit === true){ convertTimesToLocal(scheduleType); }
         setDefaultTimezone();
+        if(isInit === true){ convertTimesToLocal(scheduleType); }
         enableWeeklySchedule();
         break;
       case "custom":
