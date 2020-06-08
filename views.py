@@ -85,7 +85,7 @@ class StatusView(AppBuilderBaseView):
                 if not updated:
                     updated = self.get_updated(ri)
 
-                if updated < ri.updated:
+                if updated.fromisoformat() < ri.updated:
                     updated = self.get_updated(ri)
 
                 r = {
