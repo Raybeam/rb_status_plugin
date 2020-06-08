@@ -1,7 +1,4 @@
 (function reportFormSetUp() {
-
-  // const isRBAC = (typeof csrfToken === "undefined" || csrfToken === null) ? false : true
-
   const defaultDate = '1970-01-01'
   const scheduleTypeInput = document.getElementById("schedule_type");
   const scheduleWeekDayInput = document.getElementById("schedule_week_day");
