@@ -48,7 +48,7 @@
   }
 
   function convertToLocalTimezone(time, tz){
-    if(datetime === ""){ return "" }
+    if(time === ""){ return "" }
     let dateTimeObj = moment.utc('1970-01-01 ' + time);
     dateTimeObj.tz(tz);
     return dateTimeObj.format('HH:mm')

@@ -9,6 +9,7 @@ from flask_appbuilder.fieldwidgets import (
     Select2Widget,
 )
 from flask_appbuilder.security.decorators import has_access
+from inflection import parameterize
 
 from wtforms import (
     StringField,
@@ -311,10 +312,7 @@ class EditReportFormView(SimpleFormView):
 
     def form_get(self, form, report_title):
         # !get report by report_title and prefill form with its values
-        requested_report = {}
-        for report in VariablesReportRepo.list():
-            if str(report.report_title_id) == report_title:
-                requested_report = report
+        requested_report = VariablesReportRepo.get_report(report_title)
 
         if requested_report:
             form = ReportFormSaver.load_form(form, requested_report)
