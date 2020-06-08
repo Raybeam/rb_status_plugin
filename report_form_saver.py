@@ -194,6 +194,20 @@ class ReportFormSaver:
             flash(f"Email ({email}) is not valid. Please enter a valid email address.")
             return False
 
+    @staticmethod
+    def convert_default_to_local_timezone(time, timezone):
+        default_tz = pendulum.timezone(conf.get("core", "default_timezone"))
+        time_of_day_to_local = pendulum.datetime(
+            1970,
+            1,
+            1,
+            time.hour,
+            time.minute,
+            tzinfo=default_tz
+        )
+        time_of_day_to_local = (time_of_day_to_local.in_timezone(timezone))
+        return time_of_day_to_local
+
     def convert_to_default_timezone(self, time):
         default_tz = pendulum.timezone(conf.get("core", "default_timezone"))
 
@@ -224,8 +238,6 @@ class ReportFormSaver:
         hour, minute = time_of_day_to_utc.split(":")
         cron_expression = f"{minute} {hour} * * "
 
-        logging.info(time_of_day_to_utc)
-        logging.info(time_of_day_to_utc.format("HH:mm"))
         # add day of week if applicable
         if self.form.schedule_type.data == "weekly":
             cron_expression += self.form.schedule_week_day.data
@@ -235,8 +247,8 @@ class ReportFormSaver:
 
         self.report_dict["schedule"] = cron_expression
 
-    @staticmethod
-    def load_form(form, requested_report):
+    @classmethod
+    def load_form(cls, form, requested_report):
         """
         Update form using a requested report's configuation.
 
@@ -258,13 +270,17 @@ class ReportFormSaver:
         if form.schedule_type.data == "custom":
             form.schedule_custom.data = requested_report.schedule
         if form.schedule_type.data == "daily":
-            form.schedule_time.data = self.convert_to_default_timezone(
-                requested_report.schedule_time
+            form.schedule_time.data = cls.convert_default_to_local_timezone(
+                requested_report.schedule_time,
+                form.schedule_timezone.data
             )
+            logging.info(form.schedule_time.data)
         if form.schedule_type.data == "weekly":
-            form.schedule_time.data = self.convert_to_default_timezone(
-                requested_report.schedule_time
+            form.schedule_time.data = cls.convert_default_to_local_timezone(
+                requested_report.schedule_time,
+                form.schedule_timezone.data
             )
+            logging.info(form.schedule_time.data)
             form.schedule_week_day.data = requested_report.schedule_week_day
         form.tests.data = requested_report.tests
         return form
