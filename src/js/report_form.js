@@ -46,8 +46,10 @@
         break;
     }
   }
-  function convertToLocalTimezone(datetime, tz){
-    let dateTimeObj = moment.utc('1970-01-01 ' + datetime);
+
+  function convertToLocalTimezone(time, tz){
+    if(datetime === ""){ return "" }
+    let dateTimeObj = moment.utc('1970-01-01 ' + time);
     dateTimeObj.tz(tz);
     return dateTimeObj.format('HH:mm')
   }
@@ -56,7 +58,7 @@
     const manualTz = localStorage.getItem('chosen-timezone');
     const selectedTz = localStorage.getItem('selected-timezone');
     scheduleTimezoneInput.value = selectedTz || manualTz;
-    scheduleTimeInput.value = (scheduleTimeInput.value === "") ? "" : convertToLocalTimezone(
+    scheduleTimeInput.value = convertToLocalTimezone(
       scheduleTimeInput.value,
       scheduleTimezoneInput.value
     );
