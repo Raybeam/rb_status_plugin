@@ -65,6 +65,9 @@ class StatusView(AppBuilderBaseView):
 
     route_base = "/rb/status"
 
+    def get_updated(self, ri):
+        return None if not ri.updated else ri.updated.isoformat()
+
     def reports_data(self):
         """
         Generate reports data.
@@ -80,15 +83,15 @@ class StatusView(AppBuilderBaseView):
                 ri = ReportInstance.get_latest(report)
 
                 if not updated:
-                    updated = ri.updated
+                    updated = self.get_updated(ri)
 
                 if updated < ri.updated:
-                    updated = ri.updated
+                    updated = self.get_updated(ri)
 
                 r = {
                     "id": ri.id,
                     "passed": ri.passed,
-                    "updated": ri.updated.isoformat(),
+                    "updated": self.get_updated(ri),
                     "report_title": report.report_title,
                     "report_title_id": report.report_title_id,
                     "owner_name": report.owner_name,
@@ -108,7 +111,7 @@ class StatusView(AppBuilderBaseView):
 
         rbac_val = conf.getboolean("webserver", "rbac")
         data = {
-            "summary": {"passed": passed, "updated": updated.isoformat()},
+            "summary": {"passed": passed, "updated": updated},
             "reports": reports,
             "rbac": rbac_val,
         }
