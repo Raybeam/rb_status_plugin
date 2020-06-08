@@ -28,7 +28,6 @@ from rb_status_plugin.helpers.list_tasks_helper import get_all_test_choices
 from airflow.configuration import conf
 import logging
 import pendulum
-from datetime import datetime
 
 form_fieldsets_config = [
     (
