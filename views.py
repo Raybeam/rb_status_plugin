@@ -28,6 +28,7 @@ from rb_status_plugin.helpers.list_tasks_helper import get_all_test_choices
 from airflow.configuration import conf
 import logging
 import pendulum
+from datetime import date
 
 form_fieldsets_config = [
     (
@@ -85,7 +86,7 @@ class StatusView(AppBuilderBaseView):
                 if not updated:
                     updated = self.get_updated(ri)
 
-                if updated.fromisoformat() < ri.updated:
+                if date.fromisoformat(updated) < ri.updated:
                     updated = self.get_updated(ri)
 
                 r = {
