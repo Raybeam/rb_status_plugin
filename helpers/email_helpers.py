@@ -3,8 +3,6 @@ from rb_status_plugin.report_instance import ReportInstance
 from rb_status_plugin.views import StatusView
 from airflow.configuration import conf
 from rb_status_plugin.flask_admin_packages import v_admin_status_package
-from airflow.configuration import conf
-from datetime import datetime
 import logging
 import pendulum
 
