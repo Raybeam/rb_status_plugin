@@ -5,8 +5,16 @@
 <link href="{{ url_for('rb_status.static', filename='mgmt.css') }}" rel="stylesheet" type="text/css">
 {% endblock %}
 
-{% block add_tail_js %}
+{% block tail_js %}
+{{ super() }}
 <script> const isRBAC = true </script>
+{% endblock %}
+
+{% block add_tail_js %}
+{{ super() }}
 <script src="{{url_for('appbuilder.static',filename='js/ab_keep_tab.js')}}"></script>
 <script src="{{url_for('rb_status.static',filename='report_form.js')}}"></script>
 {% endblock %}
+
+
+

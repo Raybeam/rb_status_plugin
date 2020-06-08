@@ -17,8 +17,8 @@
     scheduleCustomInput.closest(".form-group");
 
   if (isRBAC === true){
-    const scheduleTimezoneInput = document.getElementById("schedule_timezone")
-    const scheduleTimezoneRow =
+    var scheduleTimezoneInput = document.getElementById("schedule_timezone")
+    var scheduleTimezoneRow =
       scheduleTimezoneInput.closest("tr") ||
       scheduleTimezoneInput.closest(".form-group");
   }
