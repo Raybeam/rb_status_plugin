@@ -27,7 +27,7 @@
     <tbody>
       {% for report in content %}
         <tr>
-          <!-- Column 1: View Report -->
+          <!-- Column 1: Edit Report -->
           <td class="text-center" style="width:10px;">
             {% set query_string = {'url': url_for('rb/reports.list'), 'id': report.report_id } %}
             <a href="/admin/rb/report_mgmt/edit?{{query_string | urlencode}}">
