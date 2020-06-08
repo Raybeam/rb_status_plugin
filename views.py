@@ -66,8 +66,8 @@ class StatusView(AppBuilderBaseView):
 
     route_base = "/rb/status"
 
-    def get_updated(self, ri):
-        return None if not ri.updated else ri.updated.isoformat()
+    def get_updated(self, updated):
+        return None if not updated else updated.isoformat()
 
     def reports_data(self):
         """
@@ -92,7 +92,7 @@ class StatusView(AppBuilderBaseView):
                 r = {
                     "id": ri.id,
                     "passed": ri.passed,
-                    "updated": self.get_updated(ri),
+                    "updated": self.get_updated(ri.updated),
                     "report_title": report.report_title,
                     "report_title_id": report.report_title_id,
                     "owner_name": report.owner_name,
