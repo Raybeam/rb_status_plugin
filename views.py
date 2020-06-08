@@ -296,7 +296,7 @@ class EditReportFormView(SimpleFormView):
     def this_form_get(self, report_title):
         self._init_vars()
         form = self.form.refresh()
-        form = self.form_get(form, report_id)
+        form = self.form_get(form, report_title)
         form.tests.choices = get_all_test_choices()
         if form:
             widgets = self._get_edit_widget(form=form)
