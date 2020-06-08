@@ -32,11 +32,13 @@
   function configureScheduleUI(scheduleType, isInit) {
     switch (scheduleType) {
       case "daily":
-        if(isInit === true){ setDefaultTimezone(scheduleType) }
+        if(isInit === true){ convertTimesToLocal(scheduleType); }
+        setDefaultTimezone();
         enableDailySchedule();
         break;
       case "weekly":
-        if(isInit === true){ setDefaultTimezone(scheduleType) }
+        if(isInit === true){ convertTimesToLocal(scheduleType); }
+        setDefaultTimezone();
         enableWeeklySchedule();
         break;
       case "custom":
@@ -68,11 +70,14 @@
     return 0
   }
 
-  function setDefaultTimezone(scheduleType, isInit){
+  function setDefaultTimezone(){
     const manualTz = localStorage.getItem('chosen-timezone');
     const selectedTz = localStorage.getItem('selected-timezone');
     scheduleTimezoneInput.value = selectedTz || manualTz;
+    scheduleTimezoneInput.dispatchEvent(new Event('change'));
+  }
 
+  function convertTimesToLocal(scheduleType){
     let convertedTime = convertToLocalTimezone(
       scheduleTimeInput.value,
       scheduleTimezoneInput.value,
@@ -80,7 +85,6 @@
 
     scheduleTimeInput.value = (convertedTime !== "") ? convertedTime.format('HH:mm'): ""
     scheduleTimeInput.dispatchEvent(new Event('change'));
-    scheduleTimezoneInput.dispatchEvent(new Event('change'));
 
     if(scheduleType === 'weekly' && scheduleWeekDayInput.value !== ''){
       const offset = offsetDayOfWeek(convertedTime)
