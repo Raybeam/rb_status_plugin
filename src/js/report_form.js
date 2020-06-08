@@ -1,4 +1,7 @@
 (function reportFormSetUp() {
+
+  const isRBAC = (typeof csrfToken === "undefined" || csrfToken === null) ? false : true
+
   const defaultDate = '1970-01-01'
   const scheduleTypeInput = document.getElementById("schedule_type");
   const scheduleWeekDayInput = document.getElementById("schedule_week_day");
@@ -12,11 +15,13 @@
   const scheduleCustomRow =
     scheduleCustomInput.closest("tr") ||
     scheduleCustomInput.closest(".form-group");
-  const scheduleTimezoneInput = document.getElementById("schedule_timezone")
-  const scheduleTimezoneRow =
-    scheduleTimezoneInput.closest("tr") ||
-    scheduleTimezoneInput.closest(".form-group");
 
+  if (isRBAC === true){
+    const scheduleTimezoneInput = document.getElementById("schedule_timezone")
+    const scheduleTimezoneRow =
+      scheduleTimezoneInput.closest("tr") ||
+      scheduleTimezoneInput.closest(".form-group");
+  }
   // detect currently selected schedule type and
   // display appropriate fields
   configureScheduleUI(scheduleTypeInput.value, true);
@@ -32,13 +37,11 @@
   function configureScheduleUI(scheduleType, isInit) {
     switch (scheduleType) {
       case "daily":
-        setDefaultTimezone();
-        if(isInit === true){ convertTimesToLocal(scheduleType); }
+        if (isRBAC === true){ handleTimezones(isInit, scheduleType); }
         enableDailySchedule();
         break;
       case "weekly":
-        setDefaultTimezone();
-        if(isInit === true){ convertTimesToLocal(scheduleType); }
+        if (isRBAC === true){ handleTimezones(isInit, scheduleType); }
         enableWeeklySchedule();
         break;
       case "custom":
@@ -47,6 +50,13 @@
       default:
         enableManualSchedule();
         break;
+    }
+  }
+
+  function handleTimezones(isInit, scheduleType){
+    setDefaultTimezone();
+    if(isInit === true){ 
+      convertTimesToLocalTimezone(scheduleType); 
     }
   }
 
@@ -77,7 +87,7 @@
     scheduleTimezoneInput.dispatchEvent(new Event('change'));
   }
 
-  function convertTimesToLocal(scheduleType){
+  function convertTimesToLocalTimezone(scheduleType){
     let convertedTime = convertToLocalTimezone(
       scheduleTimeInput.value,
       scheduleTimezoneInput.value,
@@ -100,12 +110,15 @@
     scheduleTimeRow.hidden = false;
     scheduleWeekDayRow.hidden = true;
     scheduleCustomRow.hidden = true;
-    scheduleTimezoneRow.hidden = false;
 
-    scheduleTimezoneInput.required = true;
     scheduleTimeInput.required = true;
     scheduleWeekDayInput.required = false;
     scheduleCustomInput.required = false;
+
+    if(isRBAC === true){
+      scheduleTimezoneRow.hidden = false;
+      scheduleTimezoneInput.required = true;
+    }
   }
 
   /**
@@ -115,12 +128,15 @@
     scheduleTimeRow.hidden = false;
     scheduleWeekDayRow.hidden = false;
     scheduleCustomRow.hidden = true;
-    scheduleTimezoneRow.hidden = false;
 
-    scheduleTimezoneInput.required = true;
     scheduleTimeInput.required = true;
     scheduleWeekDayInput.required = true;
     scheduleCustomInput.required = false;
+
+    if(isRBAC === true){
+      scheduleTimezoneRow.hidden = false;
+      scheduleTimezoneInput.required = true;     
+    }
   }
 
   /**
@@ -130,12 +146,15 @@
     scheduleTimeRow.hidden = true;
     scheduleWeekDayRow.hidden = true;
     scheduleCustomRow.hidden = false;
-    scheduleTimezoneRow.hidden = true;
 
-    scheduleTimezoneInput.required = false;
     scheduleTimeInput.required = false;
     scheduleWeekDayInput.required = false;
     scheduleCustomInput.required = true;
+
+    if(isRBAC === true){
+      scheduleTimezoneRow.hidden = true;
+      scheduleTimezoneInput.required = false;
+    }
   }
 
   /**
@@ -145,11 +164,14 @@
     scheduleTimeRow.hidden = true;
     scheduleWeekDayRow.hidden = true;
     scheduleCustomRow.hidden = true;
-    scheduleTimezoneRow.hidden = true;
 
-    scheduleTimezoneInput.required = false;
     scheduleTimeInput.required = false;
     scheduleWeekDayInput.required = false;
     scheduleCustomInput.required = false;
+
+    if(isRBAC === true){
+      scheduleTimezoneRow.hidden = true;
+      scheduleTimezoneInput.required = false;
+    }
   }
-})();
+})()
