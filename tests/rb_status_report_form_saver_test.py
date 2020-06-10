@@ -287,7 +287,7 @@ class ReportSaveTest(unittest.TestCase):
             deserialize_json=True,
         )
         Variable.delete("rb_status_" + self.report_form_sample_daily.report_title.data)
-        self.assertEqual("00 11 * * *", report_airflow_variable["schedule"])
+        self.assertEqual("0 11 * * *", report_airflow_variable["schedule"])
 
     def test_weekly_schedule_conversion(self):
         """
@@ -300,7 +300,7 @@ class ReportSaveTest(unittest.TestCase):
             deserialize_json=True,
         )
         Variable.delete("rb_status_" + self.report_form_sample_weekly.report_title.data)
-        self.assertEqual("30 09 * * 0", report_airflow_variable["schedule"])
+        self.assertEqual("30 9 * * 0", report_airflow_variable["schedule"])
 
     def test_duplicate_report(self):
         """
