@@ -1,5 +1,7 @@
+/* global isRBAC, moment */
+
 (function reportFormSetUp() {
-  const defaultDate = '1970-01-01'
+  const defaultDate = "1970-01-01";
   const scheduleTypeInput = document.getElementById("schedule_type");
   const scheduleWeekDayInput = document.getElementById("schedule_week_day");
   const scheduleWeekDayRow =
@@ -13,8 +15,8 @@
     scheduleCustomInput.closest("tr") ||
     scheduleCustomInput.closest(".form-group");
 
-  if (isRBAC === true){
-    var scheduleTimezoneInput = document.getElementById("schedule_timezone")
+  if (isRBAC === true) {
+    var scheduleTimezoneInput = document.getElementById("schedule_timezone");
     var scheduleTimezoneRow =
       scheduleTimezoneInput.closest("tr") ||
       scheduleTimezoneInput.closest(".form-group");
@@ -34,11 +36,15 @@
   function configureScheduleUI(scheduleType, isInit) {
     switch (scheduleType) {
       case "daily":
-        if (isRBAC === true){ handleTimezones(isInit, scheduleType); }
+        if (isRBAC === true) {
+          handleTimezones(isInit, scheduleType);
+        }
         enableDailySchedule();
         break;
       case "weekly":
-        if (isRBAC === true){ handleTimezones(isInit, scheduleType); }
+        if (isRBAC === true) {
+          handleTimezones(isInit, scheduleType);
+        }
         enableWeeklySchedule();
         break;
       case "custom":
@@ -50,54 +56,59 @@
     }
   }
 
-  function handleTimezones(isInit, scheduleType){
+  function handleTimezones(isInit, scheduleType) {
     setDefaultTimezone();
-    if(isInit === true){ 
-      convertTimesToLocalTimezone(scheduleType); 
+    if (isInit === true) {
+      convertTimesToLocalTimezone(scheduleType);
     }
   }
 
-  function convertToLocalTimezone(time, tz){
-    if(time === ""){ return "" }
+  function convertToLocalTimezone(time, tz) {
+    if (time === "") {
+      return "";
+    }
     let dateTimeObj = moment.utc(`${defaultDate} ${time}`);
     dateTimeObj.tz(tz);
-    return dateTimeObj
+    return dateTimeObj;
   }
 
-  function offsetDayOfWeek(time){
-    goForward = moment(defaultDate).add(1, 'day');
-    goBackwards = moment(defaultDate).subtract(1, 'day');
+  function offsetDayOfWeek(time) {
+    const goForward = moment(defaultDate).add(1, "day");
+    const goBackward = moment(defaultDate).subtract(1, "day");
 
-    if (goForward.date() === time.date()){
-      return 1
+    if (goForward.date() === time.date()) {
+      return 1;
     }
-    if (goBackwards.date() === time.date()){
-      return -1
+    if (goBackward.date() === time.date()) {
+      return -1;
     }
-    return 0
+    return 0;
   }
 
-  function setDefaultTimezone(){
-    const manualTz = localStorage.getItem('chosen-timezone');
-    const selectedTz = localStorage.getItem('selected-timezone');
+  function setDefaultTimezone() {
+    const manualTz = localStorage.getItem("chosen-timezone");
+    const selectedTz = localStorage.getItem("selected-timezone");
     scheduleTimezoneInput.value = selectedTz || manualTz;
-    scheduleTimezoneInput.dispatchEvent(new Event('change'));
+    scheduleTimezoneInput.dispatchEvent(new Event("change"));
   }
 
-  function convertTimesToLocalTimezone(scheduleType){
+  function convertTimesToLocalTimezone(scheduleType) {
     let convertedTime = convertToLocalTimezone(
       scheduleTimeInput.value,
-      scheduleTimezoneInput.value,
-    )
+      scheduleTimezoneInput.value
+    );
 
-    scheduleTimeInput.value = (convertedTime !== "") ? convertedTime.format('HH:mm'): ""
-    scheduleTimeInput.dispatchEvent(new Event('change'));
+    scheduleTimeInput.value =
+      convertedTime !== "" ? convertedTime.format("HH:mm") : "";
+    scheduleTimeInput.dispatchEvent(new Event("change"));
 
-    if(scheduleType === 'weekly' && scheduleWeekDayInput.value !== ''){
-      const offset = offsetDayOfWeek(convertedTime)
-      const currWeekDay = moment().day(scheduleWeekDayInput.value).add(offset, 'day')
-      scheduleWeekDayInput.value = currWeekDay.day()
-      scheduleWeekDayInput.dispatchEvent(new Event('change'))
+    if (scheduleType === "weekly" && scheduleWeekDayInput.value !== "") {
+      const offset = offsetDayOfWeek(convertedTime);
+      const currWeekDay = moment()
+        .day(scheduleWeekDayInput.value)
+        .add(offset, "day");
+      scheduleWeekDayInput.value = currWeekDay.day();
+      scheduleWeekDayInput.dispatchEvent(new Event("change"));
     }
   }
   /**
@@ -112,7 +123,7 @@
     scheduleWeekDayInput.required = false;
     scheduleCustomInput.required = false;
 
-    if(isRBAC === true){
+    if (isRBAC === true) {
       scheduleTimezoneRow.hidden = false;
       scheduleTimezoneInput.required = true;
     }
@@ -130,9 +141,9 @@
     scheduleWeekDayInput.required = true;
     scheduleCustomInput.required = false;
 
-    if(isRBAC === true){
+    if (isRBAC === true) {
       scheduleTimezoneRow.hidden = false;
-      scheduleTimezoneInput.required = true;     
+      scheduleTimezoneInput.required = true;
     }
   }
 
@@ -148,7 +159,7 @@
     scheduleWeekDayInput.required = false;
     scheduleCustomInput.required = true;
 
-    if(isRBAC === true){
+    if (isRBAC === true) {
       scheduleTimezoneRow.hidden = true;
       scheduleTimezoneInput.required = false;
     }
@@ -166,9 +177,9 @@
     scheduleWeekDayInput.required = false;
     scheduleCustomInput.required = false;
 
-    if(isRBAC === true){
+    if (isRBAC === true) {
       scheduleTimezoneRow.hidden = true;
       scheduleTimezoneInput.required = false;
     }
   }
-})()
+})();
