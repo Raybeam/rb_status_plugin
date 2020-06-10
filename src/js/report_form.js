@@ -28,8 +28,6 @@
    * Configure schedule UI according to the schedule type
    *
    * @param {string} scheduleType type of the schedule
-   * @param {boolean} isInit whether func is trigger by a page
-   *    refresh or schedule type change
    */
   function configureScheduleUI(scheduleType) {
     switch (scheduleType) {
@@ -68,20 +66,11 @@
     dateTimeObj.tz(tz);
     return dateTimeObj;
   }
-
-  function offsetDayOfWeek(time) {
-    const goForward = moment(defaultDate).add(1, "day");
-    const goBackward = moment(defaultDate).subtract(1, "day");
-
-    if (goForward.date() === time.date()) {
-      return 1;
-    }
-    if (goBackward.date() === time.date()) {
-      return -1;
-    }
-    return 0;
-  }
-
+  /**
+   * Gets current timezone from local storage
+   * @returns {datetime} either the browser
+   *   timezone or manually selected timezone
+   */
   function getSelectedTimezone() {
     const manualTz = localStorage.getItem("chosen-timezone");
     const selectedTz = localStorage.getItem("selected-timezone");
@@ -100,11 +89,13 @@
     scheduleTimeInput.dispatchEvent(new Event("change"));
 
     if (scheduleType === "weekly" && scheduleWeekDayInput.value !== "") {
-      const offset = offsetDayOfWeek(convertedTime);
-      const currWeekDay = moment()
-        .day(scheduleWeekDayInput.value)
-        .add(offset, "day");
-      scheduleWeekDayInput.value = currWeekDay.day();
+      const offset = convertedTime.day() - moment(defaultDate).day();
+      const currDayOfWeek =
+        offset > 0
+          ? scheduleWeekDayInput.value + 1
+          : scheduleWeekDayInput.value - 1;
+
+      scheduleWeekDayInput.value = currDayOfWeek;
       scheduleWeekDayInput.dispatchEvent(new Event("change"));
     }
   }
