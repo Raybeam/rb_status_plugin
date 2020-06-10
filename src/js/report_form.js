@@ -76,7 +76,11 @@
     const selectedTz = localStorage.getItem("selected-timezone");
     return selectedTz || manualTz;
   }
-
+  /**
+   * Gets current timezone from local storage
+   * @param {scheduleType} type of schedule so we know whether
+   *   to update the weekdayinput
+   */
   function convertTimesToLocalTimezone(scheduleType) {
     scheduleTimezoneInput.value = getSelectedTimezone();
     let convertedTime = convertToTimezone(
@@ -90,13 +94,16 @@
 
     if (scheduleType === "weekly" && scheduleWeekDayInput.value !== "") {
       const offset = convertedTime.day() - moment(defaultDate).day();
-      const currDayOfWeek =
-        offset > 0
-          ? scheduleWeekDayInput.value + 1
-          : scheduleWeekDayInput.value - 1;
 
-      scheduleWeekDayInput.value = currDayOfWeek;
-      scheduleWeekDayInput.dispatchEvent(new Event("change"));
+      if (offset != 0) {
+        const currDayOfWeek =
+          offset > 0
+            ? scheduleWeekDayInput.value + 1
+            : scheduleWeekDayInput.value - 1;
+
+        scheduleWeekDayInput.value = currDayOfWeek;
+        scheduleWeekDayInput.dispatchEvent(new Event("change"));
+      }
     }
   }
   /**
