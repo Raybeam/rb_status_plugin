@@ -9,6 +9,7 @@ module.exports = {
     SharedArrayBuffer: "readonly",
     $: "readonly",
     csrfToken: "readonly",
+    CSRF: "readonly",
   },
   parserOptions: {
     ecmaVersion: 2018,
