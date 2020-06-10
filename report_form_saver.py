@@ -236,7 +236,7 @@ class ReportFormSaver:
             tzinfo=self.report_dict["schedule_timezone"]
         )
         time_of_day_to_utc = time_of_day_to_local.in_timezone(default_tz)
-        return time_of_day_to_utc.strftime("%H:%M")
+        return time_of_day_to_utc
 
     def convert_schedule_to_cron_expression(self):
         """
@@ -249,9 +249,12 @@ class ReportFormSaver:
         time_of_day_to_utc = self.convert_to_default_timezone(
             self.form.schedule_time.data
         )
-        self.report_dict["schedule_time"] = time_of_day_to_utc
+        self.report_dict["schedule_time"] = time_of_day_to_utc.strftime(
+            "%H:%M"
+        )
 
-        hour, minute = time_of_day_to_utc.split(":")
+        hour = time_of_day_to_utc.hour
+        minute = time_of_day_to_utc.minute
         cron_expression = f"{minute} {hour} * * "
 
         # add day of week if applicable
