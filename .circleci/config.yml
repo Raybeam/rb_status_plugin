@@ -60,16 +60,17 @@ jobs:
     steps:
     - checkout
     - restore_cache:
-      keys:
-        - rb-node-dependencies-{{ checksum "package.json" }}
-        # fallback to using the latest cache if no exact match is found
-        - rb-node-dependencies-
+        keys:
+          - rb-node-dependencies-{{ checksum "package.json" }}
+          # fallback to using the latest cache if no exact match is found
+          - rb-node-dependencies-
     - run:
         command: npm ci
         name: Install Node dependencies
     - save_cache:
-      paths:
-        - node_modules
+        paths:
+          - node_modules
+        key: rb-node-dependencies-{{ checksum "package.json" }}
     - run:
         command: npm run lint
         name: Run ESLint
