@@ -14,12 +14,14 @@
   const scheduleCustomRow =
     scheduleCustomInput.closest("tr") ||
     scheduleCustomInput.closest(".form-group");
+  const scheduleTimezoneInput = document.getElementById("schedule_timezone");
 
   // detect currently selected schedule type and
   // display appropriate fields
-  configureScheduleUI(scheduleTypeInput.value, true);
+  configureScheduleUI(scheduleTypeInput.value);
+
   $(scheduleTypeInput).on("change", ($event) => {
-    configureScheduleUI($event.target.value, false);
+    configureScheduleUI($event.target.value);
   });
 
   /**
@@ -29,17 +31,17 @@
    * @param {boolean} isInit whether func is trigger by a page
    *    refresh or schedule type change
    */
-  function configureScheduleUI(scheduleType, isInit) {
+  function configureScheduleUI(scheduleType) {
     switch (scheduleType) {
       case "daily":
         if (isRBAC === true) {
-          convertTimesToLocalTimezone(isInit, scheduleType);
+          convertTimesToLocalTimezone(scheduleType);
         }
         enableDailySchedule();
         break;
       case "weekly":
         if (isRBAC === true) {
-          convertTimesToLocalTimezone(isInit, scheduleType);
+          convertTimesToLocalTimezone(scheduleType);
         }
         enableWeeklySchedule();
         break;
@@ -86,25 +88,24 @@
     return selectedTz || manualTz;
   }
 
-  function convertTimesToLocalTimezone(isInit, scheduleType) {
-    if (isInit === true) {
-      let convertedTime = convertToTimezone(
-        scheduleTimeInput.value,
-        getSelectedTimezone()
-      );
+  function convertTimesToLocalTimezone(scheduleType) {
+    scheduleTimezoneInput.value = getSelectedTimezone();
+    let convertedTime = convertToTimezone(
+      scheduleTimeInput.value,
+      scheduleTimezoneInput.value
+    );
 
-      scheduleTimeInput.value =
-        convertedTime !== "" ? convertedTime.format("HH:mm") : "";
-      scheduleTimeInput.dispatchEvent(new Event("change"));
+    scheduleTimeInput.value =
+      convertedTime !== "" ? convertedTime.format("HH:mm") : "";
+    scheduleTimeInput.dispatchEvent(new Event("change"));
 
-      if (scheduleType === "weekly" && scheduleWeekDayInput.value !== "") {
-        const offset = offsetDayOfWeek(convertedTime);
-        const currWeekDay = moment()
-          .day(scheduleWeekDayInput.value)
-          .add(offset, "day");
-        scheduleWeekDayInput.value = currWeekDay.day();
-        scheduleWeekDayInput.dispatchEvent(new Event("change"));
-      }
+    if (scheduleType === "weekly" && scheduleWeekDayInput.value !== "") {
+      const offset = offsetDayOfWeek(convertedTime);
+      const currWeekDay = moment()
+        .day(scheduleWeekDayInput.value)
+        .add(offset, "day");
+      scheduleWeekDayInput.value = currWeekDay.day();
+      scheduleWeekDayInput.dispatchEvent(new Event("change"));
     }
   }
   /**

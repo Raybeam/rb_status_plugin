@@ -157,6 +157,7 @@ class ReportsView(AppBuilderBaseView):
 
 class ReportForm(DynamicForm):
     report_id = HiddenField()
+    schedule_timezone = HiddenField()
     report_title = StringField(
         ("Title"),
         description="Title will be used as the report's name",
