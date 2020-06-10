@@ -32,18 +32,20 @@
    * Configure schedule UI according to the schedule type
    *
    * @param {string} scheduleType type of the schedule
+   * @param {boolean} isInit whether func is trigger by a page
+   *    refresh or schedule type change
    */
   function configureScheduleUI(scheduleType, isInit) {
     switch (scheduleType) {
       case "daily":
         if (isRBAC === true) {
-          handleTimezones(isInit, scheduleType);
+          convertTimesToLocalTimezone(isInit, scheduleType);
         }
         enableDailySchedule();
         break;
       case "weekly":
         if (isRBAC === true) {
-          handleTimezones(isInit, scheduleType);
+          convertTimesToLocalTimezone(isInit, scheduleType);
         }
         enableWeeklySchedule();
         break;
@@ -56,14 +58,13 @@
     }
   }
 
-  function handleTimezones(isInit, scheduleType) {
-    setDefaultTimezone();
-    if (isInit === true) {
-      convertTimesToLocalTimezone(scheduleType);
-    }
-  }
-
-  function convertToLocalTimezone(time, tz) {
+  /**
+   * Converts the specified time to the timezone provided
+   *
+   * @param {string} time string representing HH:mm string
+   * @param {string} tz which timezone to convert to
+   */
+  function convertToTimezone(time, tz) {
     if (time === "") {
       return "";
     }
@@ -85,30 +86,25 @@
     return 0;
   }
 
-  function setDefaultTimezone() {
-    const manualTz = localStorage.getItem("chosen-timezone");
-    const selectedTz = localStorage.getItem("selected-timezone");
-    scheduleTimezoneInput.value = selectedTz || manualTz;
-    scheduleTimezoneInput.dispatchEvent(new Event("change"));
-  }
+  function convertTimesToLocalTimezone(isInit, scheduleType) {
+    if (isInit === true) {
+      let convertedTime = convertToTimezone(
+        scheduleTimeInput.value,
+        scheduleTimezoneInput.value
+      );
 
-  function convertTimesToLocalTimezone(scheduleType) {
-    let convertedTime = convertToLocalTimezone(
-      scheduleTimeInput.value,
-      scheduleTimezoneInput.value
-    );
+      scheduleTimeInput.value =
+        convertedTime !== "" ? convertedTime.format("HH:mm") : "";
+      scheduleTimeInput.dispatchEvent(new Event("change"));
 
-    scheduleTimeInput.value =
-      convertedTime !== "" ? convertedTime.format("HH:mm") : "";
-    scheduleTimeInput.dispatchEvent(new Event("change"));
-
-    if (scheduleType === "weekly" && scheduleWeekDayInput.value !== "") {
-      const offset = offsetDayOfWeek(convertedTime);
-      const currWeekDay = moment()
-        .day(scheduleWeekDayInput.value)
-        .add(offset, "day");
-      scheduleWeekDayInput.value = currWeekDay.day();
-      scheduleWeekDayInput.dispatchEvent(new Event("change"));
+      if (scheduleType === "weekly" && scheduleWeekDayInput.value !== "") {
+        const offset = offsetDayOfWeek(convertedTime);
+        const currWeekDay = moment()
+          .day(scheduleWeekDayInput.value)
+          .add(offset, "day");
+        scheduleWeekDayInput.value = currWeekDay.day();
+        scheduleWeekDayInput.dispatchEvent(new Event("change"));
+      }
     }
   }
   /**
