@@ -64,16 +64,18 @@ jobs:
         - rb-node-dependencies-{{ checksum "package.json" }}
         # fallback to using the latest cache if no exact match is found
         - rb-node-dependencies-
-    - run: npm ci
+    - run:
+        command: npm ci
+        name: Install Node dependencies
     - save_cache:
       paths:
         - node_modules
     - run:
-      command: npm run lint
-      name: Run ESLint
+        command: npm run lint
+        name: Run ESLint
     - run:
-      command: npm run build
-      name: Build JS for production
+        command: npm run build
+        name: Build JS for production
 workflows:
   test:
     jobs:
