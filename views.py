@@ -209,7 +209,7 @@ class ReportForm(DynamicForm):
     schedule_time = TimeField(
         "Time",
         description=(
-            "Note that time zone being used is the"
+            "Note that time zone being used is the "
             "selected timezone in your clock interface."
         ),
         render_kw={"class": "form-control"},
