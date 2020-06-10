@@ -8,6 +8,7 @@ import pendulum
 from rb_status_plugin.report_repo import VariablesReportRepo
 from airflow.configuration import conf
 
+
 class ReportFormSaver:
     """
     A class for properly saving a report's form into an airflow variable.
