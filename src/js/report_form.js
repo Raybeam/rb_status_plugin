@@ -15,12 +15,6 @@
     scheduleCustomInput.closest("tr") ||
     scheduleCustomInput.closest(".form-group");
 
-  if (isRBAC === true) {
-    var scheduleTimezoneInput = document.getElementById("schedule_timezone");
-    var scheduleTimezoneRow =
-      scheduleTimezoneInput.closest("tr") ||
-      scheduleTimezoneInput.closest(".form-group");
-  }
   // detect currently selected schedule type and
   // display appropriate fields
   configureScheduleUI(scheduleTypeInput.value, true);
@@ -86,11 +80,17 @@
     return 0;
   }
 
+  function getSelectedTimezone() {
+    const manualTz = localStorage.getItem("chosen-timezone");
+    const selectedTz = localStorage.getItem("selected-timezone");
+    return selectedTz || manualTz;
+  }
+
   function convertTimesToLocalTimezone(isInit, scheduleType) {
     if (isInit === true) {
       let convertedTime = convertToTimezone(
         scheduleTimeInput.value,
-        scheduleTimezoneInput.value
+        getSelectedTimezone()
       );
 
       scheduleTimeInput.value =
@@ -118,11 +118,6 @@
     scheduleTimeInput.required = true;
     scheduleWeekDayInput.required = false;
     scheduleCustomInput.required = false;
-
-    if (isRBAC === true) {
-      scheduleTimezoneRow.hidden = false;
-      scheduleTimezoneInput.required = true;
-    }
   }
 
   /**
@@ -136,11 +131,6 @@
     scheduleTimeInput.required = true;
     scheduleWeekDayInput.required = true;
     scheduleCustomInput.required = false;
-
-    if (isRBAC === true) {
-      scheduleTimezoneRow.hidden = false;
-      scheduleTimezoneInput.required = true;
-    }
   }
 
   /**
@@ -154,11 +144,6 @@
     scheduleTimeInput.required = false;
     scheduleWeekDayInput.required = false;
     scheduleCustomInput.required = true;
-
-    if (isRBAC === true) {
-      scheduleTimezoneRow.hidden = true;
-      scheduleTimezoneInput.required = false;
-    }
   }
 
   /**
@@ -172,10 +157,5 @@
     scheduleTimeInput.required = false;
     scheduleWeekDayInput.required = false;
     scheduleCustomInput.required = false;
-
-    if (isRBAC === true) {
-      scheduleTimezoneRow.hidden = true;
-      scheduleTimezoneInput.required = false;
-    }
   }
 })();

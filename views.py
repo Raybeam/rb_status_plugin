@@ -26,7 +26,7 @@ from rb_status_plugin.report_form_saver import ReportFormSaver
 from rb_status_plugin.helpers.list_tasks_helper import get_all_test_choices
 from airflow.configuration import conf
 import logging
-import pendulum
+
 
 form_fieldsets_config = [
     (
