@@ -1,0 +1,7 @@
+templates
+static
+setup
+package*
+.astro
+.circleci
+README.md
