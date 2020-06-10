@@ -197,6 +197,14 @@ class ReportFormSaver:
 
     @staticmethod
     def make_tz_aware(time):
+        """
+        Used for loading reports. To convert timezones we need to have a
+        timezone aware datetime for pendulum to convert from. Appends the
+        airflow default timezone to the time datetime object
+
+        :param time: time to make timezone-aware
+        :type time: datetime
+        """
         default_tz = pendulum.timezone(conf.get("core", "default_timezone"))
         time_of_day_to_local = pendulum.datetime(
             1970,
@@ -209,6 +217,14 @@ class ReportFormSaver:
         return time_of_day_to_local
 
     def convert_to_default_timezone(self, time):
+        """
+        Uses the schedule timezone provided from the form
+        to convert the time provided into the default airflow timezone
+        in the backend. All times are stored as UTC in the variable.
+
+        :param time: Time to convert to the default timezone
+        :type time: datetime.time
+        """
         default_tz = pendulum.timezone(conf.get("core", "default_timezone"))
 
         time_of_day_to_local = pendulum.datetime(
