@@ -13,20 +13,7 @@
 {% include "partials/status_body.html" %}
 {% endblock %}
 
-{% block tail %}
-{{ super() }}
-<script src="{{ url_for_asset('d3.min.js') }}"></script>
-<script>
-	const content = {{ content | tojson }};
-	function getReportTime(reports, summary){
-		updated_header = d3.select(`.report-header .updated`).selectAll('.report-datetime');
-		updated_header.insert(isoDateToTimeEl.bind(null,summary.updated, {title: false}));
-		for(var id in reports){
-		  report_id = `report-${ reports[id].report_title_id }-heading .report-highlights .report-meta`;
-		  report_dt_elem = d3.select('div#' + report_id).selectAll('.report-datetime');
-		  report_dt_elem.insert(isoDateToTimeEl.bind(null,reports[id].updated, {title: false}));
-		}	
-	}
-	getReportTime(content.reports, content.summary);
-</script>
+{% block add_tail_js %}
+<script>const rbStatusContent = {{ content | tojson }};</script>
+<script src="{{url_for('rb_status.static',filename='status.js')}}"></script>
 {% endblock %}
