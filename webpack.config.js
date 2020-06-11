@@ -14,6 +14,7 @@ module.exports = (env) => {
       path: path.resolve(__dirname, "static"),
     },
     mode: env.production ? "production" : "development",
+    devtool: env.production ? "" : "inline-source-map",
     module: {
       rules: [
         {
