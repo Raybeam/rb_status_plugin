@@ -253,7 +253,7 @@ class ReportFormSaver:
         if converted_dt > 6:
             converted_dt = 0
 
-        # If the converted date is lower than the lower day index, 
+        # If the converted date is lower than the lower day index,
         # rollover to Saturday
         if converted_dt < 0:
             converted_dt = 6
