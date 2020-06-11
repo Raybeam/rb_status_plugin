@@ -216,7 +216,7 @@ class ReportFormSaver:
         )
         return time_of_day_to_local
 
-    def convert_to_default_timezone(self, time):
+    def convert_to_default_timezone(self, time, default_date):
         """
         Uses the schedule timezone provided from the form
         to convert the time provided into the default airflow timezone
@@ -228,9 +228,9 @@ class ReportFormSaver:
         default_tz = pendulum.timezone(conf.get("core", "default_timezone"))
 
         time_of_day_to_local = pendulum.datetime(
-            1970,
-            1,
-            1,
+            default_date.year,
+            default_date.month,
+            default_date.day,
             time.hour,
             time.minute,
             tzinfo=self.report_dict["schedule_timezone"]
@@ -238,29 +238,60 @@ class ReportFormSaver:
         time_of_day_to_utc = time_of_day_to_local.in_timezone(default_tz)
         return time_of_day_to_utc
 
+    def convert_weekday(self, curr_weekday, offset):
+        """
+        Converts the given weekday to a day with the given offset
+        """
+        converted_dt = curr_weekday
+        if offset == 0:
+            return converted_dt
+
+        converted_dt = curr_weekday + 1 if offset > 0 else curr_weekday - 1
+
+        # If the converted date is greater than the highest day index,
+        # rollover to Sunday
+        if converted_dt > 6:
+            converted_dt = 0
+
+        # If the converted date is lower than the lower day index, 
+        # rollover to Saturday
+        if converted_dt < 0:
+            converted_dt = 6
+
+        return converted_dt
+
     def convert_schedule_to_cron_expression(self):
         """
         Convert Weekly and Daily schedules into a cron expression, and
         saves attributes to self.report_dict
         """
 
-        # add time of day
-
-        time_of_day_to_utc = self.convert_to_default_timezone(
-            self.form.schedule_time.data
+        # We need a default date because the form schedule time only contains
+        # a datetime.time object and we need a datetime.datetime to calculate
+        # the offset
+        default_date = pendulum.datetime(1970, 1, 1)
+        utc_time = self.convert_to_default_timezone(
+            self.form.schedule_time.data,
+            default_date,
         )
-        self.report_dict["schedule_time"] = time_of_day_to_utc.strftime(
-            "%H:%M"
-        )
+        self.report_dict["schedule_time"] = utc_time.strftime("%H:%M")
 
-        hour = time_of_day_to_utc.hour
-        minute = time_of_day_to_utc.minute
+        hour = utc_time.hour
+        minute = utc_time.minute
         cron_expression = f"{minute} {hour} * * "
 
         # add day of week if applicable
         if self.form.schedule_type.data == "weekly":
-            cron_expression += self.form.schedule_week_day.data
-            self.report_dict["schedule_week_day"] = self.form.schedule_week_day.data
+            offset = utc_time.day_of_week - default_date.day_of_week
+            convert_dt = self.convert_weekday(
+                int(self.form.schedule_week_day.data),
+                offset,
+            )
+
+            # converting to a string because the input index is a string
+            self.report_dict["schedule_week_day"] = str(convert_dt)
+            # converting to string to concat to cron
+            cron_expression += str(convert_dt)
         else:
             cron_expression += "*"
 
