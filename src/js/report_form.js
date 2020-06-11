@@ -66,6 +66,7 @@
     dateTimeObj.tz(tz);
     return dateTimeObj;
   }
+
   /**
    * Gets current timezone from local storage
    * @returns {datetime} either the browser
@@ -76,6 +77,32 @@
     const selectedTz = localStorage.getItem("selected-timezone");
     return selectedTz || manualTz;
   }
+
+  /**
+   * Gets the weekday with given offset
+   * @param {integer} day_index the index representing the day
+   *    sunday is 0 saturday is 6
+   * @param {integer} offset the offset from the current day as
+   *    calculated by changing the timezone
+   * @returns {integer} the integer representation of the day
+   *   timezone or manually selected timezone
+   */
+  function getConvertedWeekDay(offset, day_index){
+    converted_dt = offset > 0
+      ? day_index + 1
+      : day_index - 1;
+
+    // Roll backward to Sunday
+    if (day_index > 6) {
+      converted_dt = 0
+    }
+    // Roll forward to Saturday
+    if (day_index < 0) {
+      converted_dt = 6
+    }
+    return converted_dt
+  }
+
   /**
    * Gets current timezone from local storage
    * @param {scheduleType} type of schedule so we know whether
@@ -96,11 +123,7 @@
       const offset = convertedTime.day() - moment(defaultDate).day();
 
       if (offset != 0) {
-        const currDayOfWeek =
-          offset > 0
-            ? scheduleWeekDayInput.value + 1
-            : scheduleWeekDayInput.value - 1;
-
+        const currDayOfWeek = getConvertedWeekDay(offset, scheduleWeekDayInput.value)
         scheduleWeekDayInput.value = currDayOfWeek;
         scheduleWeekDayInput.dispatchEvent(new Event("change"));
       }
