@@ -88,9 +88,7 @@
    *   timezone or manually selected timezone
    */
   function getConvertedWeekDay(offset, day_index) {
-    let converted_dt = offset > 0
-      ? day_index + 1
-      : day_index - 1;
+    let converted_dt = offset > 0 ? day_index + 1 : day_index - 1;
 
     // Roll backward to Sunday
     if (day_index > 6) {
@@ -123,7 +121,10 @@
       const offset = convertedTime.day() - moment(defaultDate).day();
 
       if (offset != 0) {
-        const currDayOfWeek = getConvertedWeekDay(offset, scheduleWeekDayInput.value);
+        const currDayOfWeek = getConvertedWeekDay(
+          offset,
+          scheduleWeekDayInput.value
+        );
         scheduleWeekDayInput.value = currDayOfWeek;
         scheduleWeekDayInput.dispatchEvent(new Event("change"));
       }
