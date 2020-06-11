@@ -94,13 +94,13 @@
 
     // Roll backward to Sunday
     if (day_index > 6) {
-      converted_dt = 0
+      converted_dt = 0;
     }
     // Roll forward to Saturday
     if (day_index < 0) {
-      converted_dt = 6
+      converted_dt = 6;
     }
-    return converted_dt
+    return converted_dt;
   }
 
   /**
