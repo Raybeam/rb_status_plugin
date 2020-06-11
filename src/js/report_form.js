@@ -123,7 +123,7 @@
       const offset = convertedTime.day() - moment(defaultDate).day();
 
       if (offset != 0) {
-        const currDayOfWeek = getConvertedWeekDay(offset, scheduleWeekDayInput.value)
+        const currDayOfWeek = getConvertedWeekDay(offset, scheduleWeekDayInput.value);
         scheduleWeekDayInput.value = currDayOfWeek;
         scheduleWeekDayInput.dispatchEvent(new Event("change"));
       }
