@@ -6,7 +6,6 @@ from flask import flash
 from inflection import parameterize
 import pendulum
 from rb_status_plugin.report_repo import VariablesReportRepo
-from airflow.configuration import conf
 
 
 class ReportFormSaver:
@@ -205,14 +204,13 @@ class ReportFormSaver:
         :param time: time to make timezone-aware
         :type time: datetime
         """
-        default_tz = pendulum.timezone(conf.get("core", "default_timezone"))
         time_of_day_to_local = pendulum.datetime(
             1970,
             1,
             1,
             time.hour,
             time.minute,
-            tzinfo=default_tz
+            tzinfo='UTC'
         )
         return time_of_day_to_local
 
@@ -225,8 +223,6 @@ class ReportFormSaver:
         :param time: Time to convert to the default timezone
         :type time: datetime.time
         """
-        default_tz = pendulum.timezone(conf.get("core", "default_timezone"))
-
         time_of_day_to_local = pendulum.datetime(
             default_date.year,
             default_date.month,
@@ -235,7 +231,7 @@ class ReportFormSaver:
             time.minute,
             tzinfo=self.report_dict["schedule_timezone"]
         )
-        time_of_day_to_utc = time_of_day_to_local.in_timezone(default_tz)
+        time_of_day_to_utc = time_of_day_to_local.in_timezone('UTC')
         return time_of_day_to_utc
 
     def convert_weekday(self, curr_weekday, offset):
