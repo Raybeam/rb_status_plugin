@@ -48,7 +48,6 @@ form_fieldsets_config = [
                 "schedule_type",
                 "schedule_week_day",
                 "schedule_time",
-                "schedule_timezone",
                 "schedule_custom",
             ]
         },
