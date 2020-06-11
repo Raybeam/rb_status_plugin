@@ -108,6 +108,7 @@
    */
   function convertTimesToLocalTimezone(scheduleType) {
     scheduleTimezoneInput.value = getSelectedTimezone();
+
     let convertedTime = convertToTimezone(
       scheduleTimeInput.value,
       scheduleTimezoneInput.value
@@ -115,18 +116,15 @@
 
     scheduleTimeInput.value =
       convertedTime !== "" ? convertedTime.format("HH:mm") : "";
-    scheduleTimeInput.dispatchEvent(new Event("change"));
 
     if (scheduleType === "weekly" && scheduleWeekDayInput.value !== "") {
       const offset = convertedTime.day() - moment(defaultDate).day();
-
       if (offset != 0) {
         const currDayOfWeek = getConvertedWeekDay(
           offset,
-          scheduleWeekDayInput.value
+          parseInt(scheduleWeekDayInput.value)
         );
         scheduleWeekDayInput.value = currDayOfWeek;
-        scheduleWeekDayInput.dispatchEvent(new Event("change"));
       }
     }
   }
