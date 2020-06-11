@@ -87,8 +87,8 @@
    * @returns {integer} the integer representation of the day
    *   timezone or manually selected timezone
    */
-  function getConvertedWeekDay(offset, day_index){
-    converted_dt = offset > 0
+  function getConvertedWeekDay(offset, day_index) {
+    let converted_dt = offset > 0
       ? day_index + 1
       : day_index - 1;
 
