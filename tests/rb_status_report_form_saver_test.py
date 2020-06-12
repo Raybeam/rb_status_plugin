@@ -4,7 +4,6 @@ import datetime
 import copy
 
 import unittest
-from airflow.configuration import conf
 import pendulum
 
 
@@ -94,6 +93,41 @@ class ReportSaveTest(unittest.TestCase):
             "schedule_time": AttributeDict(
                 {"data": datetime.datetime(year=2000, month=1, day=1, hour=5, minute=0)}
             ),
+            "schedule_week_day": AttributeDict({"data": "0"}),
+            "schedule_custom": AttributeDict({"data": ""}),
+        }
+    )
+
+    report_form_sample_timezone_daily = AttributeDict(
+        {
+            "report_title": AttributeDict({"data": "test report timezone daily"}),
+            "description": AttributeDict({"data": "test description"}),
+            "owner_name": AttributeDict({"data": "John Doe"}),
+            "owner_email": AttributeDict({"data": "jdoe@raybeam.com"}),
+            "subscribers": AttributeDict(
+                {"data": "email1@raybeam.com,email2@raybeam.com"}
+            ),
+            "tests": AttributeDict(
+                {
+                    "data": [
+                        "example_dag.python_print_date_0",
+                        "example_dag.python_random_0",
+                    ]
+                }
+            ),
+            "schedule_type": AttributeDict({"data": "daily"}),
+            "schedule_timezone": AttributeDict({"data": "America/Chicago"}),
+            "schedule_time": AttributeDict(
+                {"data": datetime.datetime(
+                    year=2000,
+                    month=1,
+                    day=1,
+                    hour=22,
+                    minute=0
+                )}
+            ),
+            "schedule_week_day": AttributeDict({"data": "0"}),
+            "schedule_custom": AttributeDict({"data": ""}),
         }
     )
 
@@ -162,42 +196,26 @@ class ReportSaveTest(unittest.TestCase):
         Tests that the schedule time is converted to airflow default
         timezone in the backend (i.e. America/Chicago -> UTC)
         """
-        default_tz = pendulum.timezone(conf.get("core", "default_timezone"))
-        report_saver = ReportFormSaver(self.report_form_sample_daily)
+        report_saver = ReportFormSaver(self.report_form_sample_timezone_daily)
         report_saver.extract_report_data_into_airflow(report_exists=False)
         report_airflow_variable = Variable.get(
-            "rb_status_" + self.report_form_sample_daily.report_title.data,
+            "rb_status_" + self.report_form_sample_timezone_daily.report_title.data,
             deserialize_json=True,
         )
 
-        schedule_time_before = pendulum.datetime(
-            self.report_form_sample_daily.schedule_time.data.year,
-            self.report_form_sample_daily.schedule_time.data.month,
-            self.report_form_sample_daily.schedule_time.data.day,
-            self.report_form_sample_daily.schedule_time.data.hour,
-            self.report_form_sample_daily.schedule_time.data.minute,
-            tzinfo=self.report_form_sample_daily.schedule_timezone.data
+        time = self.report_form_sample_timezone_daily.schedule_time.data
+        tz = self.report_form_sample_timezone_daily.schedule_timezone.data
+
+        before_dt = pendulum.now().in_tz(tz).at(time.hour, time.minute, 0)
+
+        after_dt = before_dt.in_tz('UTC')
+
+        Variable.delete(
+            "rb_status_" + self.report_form_sample_timezone_daily.report_title.data
         )
-        after_dt = datetime.datetime.strptime(
+        self.assertEqual(
             report_airflow_variable["schedule_time"],
-            "%H:%M"
-        )
-        schedule_time_after = pendulum.datetime(
-            after_dt.year,
-            after_dt.month,
-            after_dt.day,
-            after_dt.hour,
-            after_dt.minute,
-            tzinfo=default_tz
-        )
-        Variable.delete("rb_status_" + self.report_form_sample_daily.report_title.data)
-        self.assertEqual(
-            schedule_time_before.in_timezone(default_tz).hour,
-            schedule_time_after.hour
-        )
-        self.assertEqual(
-            schedule_time_before.in_timezone(default_tz).minute,
-            schedule_time_after.minute
+            after_dt.strftime("%H:%M")
         )
 
     def test_saved_description(self):
@@ -280,14 +298,25 @@ class ReportSaveTest(unittest.TestCase):
         """
         Test that daily schedule is converted properly into cron expression.
         """
+        Variable.delete("rb_status_" + self.report_form_sample_daily.report_title.data)
         report_saver = ReportFormSaver(self.report_form_sample_daily)
         report_saver.extract_report_data_into_airflow(report_exists=False)
         report_airflow_variable = Variable.get(
             "rb_status_" + self.report_form_sample_daily.report_title.data,
             deserialize_json=True,
         )
+
+        time = self.report_form_sample_daily.schedule_time.data
+        tz = self.report_form_sample_daily.schedule_timezone.data
+
+        before_dt = pendulum.now().in_tz(tz).at(time.hour, time.minute, 0)
+        after_dt = before_dt.in_tz('UTC')
+
         Variable.delete("rb_status_" + self.report_form_sample_daily.report_title.data)
-        self.assertEqual("0 11 * * *", report_airflow_variable["schedule"])
+        self.assertEqual(
+            f"{after_dt.minute} {after_dt.hour} * * *",
+            report_airflow_variable["schedule"]
+        )
 
     def test_weekly_schedule_conversion(self):
         """
@@ -299,8 +328,26 @@ class ReportSaveTest(unittest.TestCase):
             "rb_status_" + self.report_form_sample_weekly.report_title.data,
             deserialize_json=True,
         )
-        Variable.delete("rb_status_" + self.report_form_sample_weekly.report_title.data)
-        self.assertEqual("30 9 * * 0", report_airflow_variable["schedule"])
+
+        time = self.report_form_sample_weekly.schedule_time.data
+        week_day = int(self.report_form_sample_weekly.schedule_week_day.data)
+        tz = self.report_form_sample_weekly.schedule_timezone.data
+
+        before_dt = pendulum.now() \
+            .in_tz(tz) \
+            .next(int(week_day)) \
+            .at(time.hour, time.minute, 0)
+
+        after_dt = before_dt.in_tz('UTC')
+
+        Variable.delete(
+            "rb_status_" + self.report_form_sample_weekly.report_title.data
+        )
+
+        self.assertEqual(
+            f"{after_dt.minute} {after_dt.hour} * * {after_dt.day_of_week}",
+            report_airflow_variable["schedule"]
+        )
 
     def test_duplicate_report(self):
         """

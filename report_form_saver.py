@@ -38,8 +38,11 @@ class ReportFormSaver:
         elif self.report_dict["schedule_type"] == "manual":
             self.report_dict["schedule"] = None
         else:
-            self.report_dict["schedule_time"] = None
-            self.convert_schedule_to_cron_expression()
+            utc_week_day, utc_time = self.get_utc_time_and_week_day()
+            self.report_dict['schedule_time'] = utc_time
+            if self.report_dict['schedule_type'] == 'weekly':
+                self.report_dict['schedule_week_day'] = utc_week_day
+            self.report_dict['schedule'] = self.get_cron_schedule()
 
     def extract_report_data_into_airflow(self, report_exists):
         """
@@ -84,7 +87,7 @@ class ReportFormSaver:
 
     def check_unique_field(self, report_exists, field_name):
         """
-        Chack if field is already exists.
+        Check if field is already exists.
 
         :param report_exists: whether the report exists
         :type report_exists: Boolean
@@ -124,7 +127,7 @@ class ReportFormSaver:
         Return boolean on whether field is filled.
         """
 
-        if self.report_dict[field_name]:
+        if self.report_dict[field_name] or self.report_dict[field_name] == 0:
             return True
 
         # manual schedules will store a null schedule field
@@ -194,104 +197,36 @@ class ReportFormSaver:
             flash(f"Email ({email}) is not valid. Please enter a valid email address.")
             return False
 
-    @staticmethod
-    def make_tz_aware(time):
+    def get_utc_time_and_week_day(self):
         """
-        Used for loading reports. To convert timezones we need to have a
-        timezone aware datetime for pendulum to convert from. Appends the
-        airflow default timezone to the time datetime object
-
-        :param time: time to make timezone-aware
-        :type time: datetime
+        Get schedule time and weekday in UTC timezone
         """
-        time_of_day_to_local = pendulum.datetime(
-            1970,
-            1,
-            1,
-            time.hour,
-            time.minute,
-            tzinfo='UTC'
-        )
-        return time_of_day_to_local
+        time = self.form.schedule_time.data
+        week_day = self.form.schedule_week_day.data
+        tz = self.report_dict["schedule_timezone"]
 
-    def convert_to_default_timezone(self, time, default_date):
+        dt = pendulum.now()
+        dt = dt.in_tz(tz)
+        if week_day:
+            dt = dt.next(int(week_day))
+        dt = dt.at(time.hour, time.minute, 0)
+        dt = dt.in_tz('UTC')
+
+        return (dt.day_of_week, dt.strftime('%H:%M'))
+
+    def get_cron_schedule(self):
         """
-        Uses the schedule timezone provided from the form
-        to convert the time provided into the default airflow timezone
-        in the backend. All times are stored as UTC in the variable.
-
-        :param time: Time to convert to the default timezone
-        :type time: datetime.time
+        Convert schedule time and weekday into cron schedule
         """
-        time_of_day_to_local = pendulum.datetime(
-            default_date.year,
-            default_date.month,
-            default_date.day,
-            time.hour,
-            time.minute,
-            tzinfo=self.report_dict["schedule_timezone"]
-        )
-        time_of_day_to_utc = time_of_day_to_local.in_timezone('UTC')
-        return time_of_day_to_utc
-
-    def convert_weekday(self, curr_weekday, offset):
-        """
-        Converts the given weekday to a day with the given offset
-        """
-        converted_dt = curr_weekday
-        if offset == 0:
-            return converted_dt
-
-        converted_dt = curr_weekday + 1 if offset > 0 else curr_weekday - 1
-
-        # If the converted date is greater than the highest day index,
-        # rollover to Sunday
-        if converted_dt > 6:
-            converted_dt = 0
-
-        # If the converted date is lower than the lower day index,
-        # rollover to Saturday
-        if converted_dt < 0:
-            converted_dt = 6
-
-        return converted_dt
-
-    def convert_schedule_to_cron_expression(self):
-        """
-        Convert Weekly and Daily schedules into a cron expression, and
-        saves attributes to self.report_dict
-        """
-
-        # We need a default date because the form schedule time only contains
-        # a datetime.time object and we need a datetime.datetime to calculate
-        # the offset
-        default_date = pendulum.datetime(1970, 1, 1)
-        utc_time = self.convert_to_default_timezone(
-            self.form.schedule_time.data,
-            default_date,
-        )
-        self.report_dict["schedule_time"] = utc_time.strftime("%H:%M")
-
-        hour = utc_time.hour
-        minute = utc_time.minute
+        hour, minute = [int(value) for value in
+                        self.report_dict['schedule_time'].split(':')]
         cron_expression = f"{minute} {hour} * * "
-
-        # add day of week if applicable
-        if self.form.schedule_type.data == "weekly":
-            offset = utc_time.day_of_week - default_date.day_of_week
-            convert_dt = self.convert_weekday(
-                int(self.form.schedule_week_day.data),
-                offset,
-            )
-
-            # converting to a string because the input index is a string
-            self.report_dict["schedule_week_day"] = str(convert_dt)
-            # converting to string to concat to cron
-            cron_expression += str(convert_dt)
+        if self.report_dict['schedule_type'] == 'weekly':
+            cron_expression += str(self.report_dict['schedule_week_day'])
         else:
-            cron_expression += "*"
+            cron_expression += '*'
 
-        self.report_dict["schedule"] = cron_expression
+        return cron_expression
 
     @classmethod
     def load_form(cls, form, requested_report):
@@ -316,13 +251,9 @@ class ReportFormSaver:
         if form.schedule_type.data == "custom":
             form.schedule_custom.data = requested_report.schedule
         if form.schedule_type.data == "daily":
-            form.schedule_time.data = cls.make_tz_aware(
-                requested_report.schedule_time,
-            )
+            form.schedule_time.data = requested_report.schedule_time
         if form.schedule_type.data == "weekly":
-            form.schedule_time.data = cls.make_tz_aware(
-                requested_report.schedule_time,
-            )
-            form.schedule_week_day.data = requested_report.schedule_week_day
+            form.schedule_time.data = requested_report.schedule_time
+            form.schedule_week_day.data = str(requested_report.schedule_week_day)
         form.tests.data = requested_report.tests
         return form

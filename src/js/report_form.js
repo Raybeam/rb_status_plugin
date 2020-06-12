@@ -1,7 +1,6 @@
 /* global isRBAC, moment */
 
 (function reportFormSetUp() {
-  const defaultDate = "1970-01-01";
   const scheduleTypeInput = document.getElementById("schedule_type");
   const scheduleWeekDayInput = document.getElementById("schedule_week_day");
   const scheduleWeekDayRow =
@@ -15,6 +14,11 @@
     scheduleCustomInput.closest("tr") ||
     scheduleCustomInput.closest(".form-group");
   const scheduleTimezoneInput = document.getElementById("schedule_timezone");
+
+  // read time and weekDay while it's in UTC
+  const time = scheduleTimeInput.value;
+  const weekDay = scheduleWeekDayInput.value;
+  const timeZone = getClientTimezone();
 
   // detect currently selected schedule type and
   // display appropriate fields
@@ -30,16 +34,18 @@
    * @param {string} scheduleType type of the schedule
    */
   function configureScheduleUI(scheduleType) {
+    scheduleTimezoneInput.value = timeZone;
+
     switch (scheduleType) {
       case "daily":
         if (isRBAC === true) {
-          convertTimesToLocalTimezone(scheduleType);
+          convertToClientTimezone();
         }
         enableDailySchedule();
         break;
       case "weekly":
         if (isRBAC === true) {
-          convertTimesToLocalTimezone(scheduleType);
+          convertToClientTimezone();
         }
         enableWeeklySchedule();
         break;
@@ -53,81 +59,33 @@
   }
 
   /**
-   * Converts the specified time to the timezone provided
-   *
-   * @param {string} time string representing HH:mm string
-   * @param {string} tz which timezone to convert to
+   * Retrieve airflow client timezone
    */
-  function convertToTimezone(time, tz) {
-    if (time === "") {
-      return "";
-    }
-    let dateTimeObj = moment.utc(`${defaultDate} ${time}`);
-    dateTimeObj.tz(tz);
-    return dateTimeObj;
-  }
-
-  /**
-   * Gets current timezone from local storage
-   * @returns {datetime} either the browser
-   *   timezone or manually selected timezone
-   */
-  function getSelectedTimezone() {
-    const manualTz = localStorage.getItem("chosen-timezone");
-    const selectedTz = localStorage.getItem("selected-timezone");
-    return selectedTz || manualTz;
-  }
-
-  /**
-   * Gets the weekday with given offset
-   * @param {integer} day_index the index representing the day
-   *    sunday is 0 saturday is 6
-   * @param {integer} offset the offset from the current day as
-   *    calculated by changing the timezone
-   * @returns {integer} the integer representation of the day
-   *   timezone or manually selected timezone
-   */
-  function getConvertedWeekDay(offset, day_index) {
-    let converted_dt = offset > 0 ? day_index + 1 : day_index - 1;
-
-    // Roll backward to Sunday
-    if (day_index > 6) {
-      converted_dt = 0;
-    }
-    // Roll forward to Saturday
-    if (day_index < 0) {
-      converted_dt = 6;
-    }
-    return converted_dt;
-  }
-
-  /**
-   * Gets current timezone from local storage
-   * @param {scheduleType} type of schedule so we know whether
-   *   to update the weekdayinput
-   */
-  function convertTimesToLocalTimezone(scheduleType) {
-    scheduleTimezoneInput.value = getSelectedTimezone();
-
-    let convertedTime = convertToTimezone(
-      scheduleTimeInput.value,
-      scheduleTimezoneInput.value
+  function getClientTimezone() {
+    return (
+      localStorage.getItem("selected-timezone") ||
+      localStorage.getItem("chosen-timezone")
     );
-
-    scheduleTimeInput.value =
-      convertedTime !== "" ? convertedTime.format("HH:mm") : "";
-
-    if (scheduleType === "weekly" && scheduleWeekDayInput.value !== "") {
-      const offset = convertedTime.day() - moment(defaultDate).day();
-      if (offset != 0) {
-        const currDayOfWeek = getConvertedWeekDay(
-          offset,
-          parseInt(scheduleWeekDayInput.value)
-        );
-        scheduleWeekDayInput.value = currDayOfWeek;
-      }
-    }
   }
+
+  /**
+   * Convert schedule from UTC to client timezone
+   */
+  function convertToClientTimezone() {
+    if (!time) {
+      return;
+    }
+
+    const dateTimeUTC = moment.utc(time, "HH:mm");
+    if (weekDay) {
+      dateTimeUTC.day(Number(weekDay));
+    }
+
+    const dateTimeInClientTZ = dateTimeUTC.clone().tz(timeZone);
+    scheduleTimeInput.value = dateTimeInClientTZ.format("HH:mm");
+    scheduleWeekDayInput.value = String(dateTimeInClientTZ.day());
+  }
+
   /**
    * Display daily schedule fields
    */
