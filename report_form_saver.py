@@ -41,7 +41,6 @@ class ReportFormSaver:
             utc_week_day, utc_time = self.get_utc_time_and_week_day()
             self.report_dict['schedule_time'] = utc_time
             if self.report_dict['schedule_type'] == 'weekly':
-                print('@@@@@@@@@@@@@@@@@@@@@@@@@@', 'test')
                 self.report_dict['schedule_week_day'] = utc_week_day
             self.report_dict['schedule'] = self.get_cron_schedule()
 
