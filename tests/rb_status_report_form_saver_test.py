@@ -4,7 +4,6 @@ import datetime
 import copy
 
 import unittest
-from airflow.configuration import conf
 import pendulum
 
 
