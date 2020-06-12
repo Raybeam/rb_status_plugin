@@ -197,7 +197,6 @@ class ReportSaveTest(unittest.TestCase):
         Tests that the schedule time is converted to airflow default
         timezone in the backend (i.e. America/Chicago -> UTC)
         """
-        default_tz = pendulum.timezone(conf.get("core", "default_timezone"))
         report_saver = ReportFormSaver(self.report_form_sample_timezone_daily)
         report_saver.extract_report_data_into_airflow(report_exists=False)
         report_airflow_variable = Variable.get(
@@ -216,8 +215,8 @@ class ReportSaveTest(unittest.TestCase):
             "rb_status_" + self.report_form_sample_timezone_daily.report_title.data
         )
         self.assertEqual(
-            before_dt,
-            after_dt
+            report_airflow_variable["schedule_time"],
+            after_dt.strftime("%H:%M")
         )
 
     def test_saved_description(self):
