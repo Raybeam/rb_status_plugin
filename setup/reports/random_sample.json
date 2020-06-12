@@ -1,6 +1,6 @@
 {
   "report_title": "random_sample",
-  "report_title_url": "random_sample",
+  "report_title_id": "random_sample",
   "description": "A sample report which should randomly fail or succeed each day.",
   "owner_name": "John Doe",
   "owner_email": "jdoe@raybeam.com",

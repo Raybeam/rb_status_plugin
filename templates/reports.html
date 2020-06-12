@@ -43,7 +43,7 @@
       <tr>
         <!-- Column 1: View Report -->
         <td class="text-center" style="width:10px;">
-          <a href="{{ url_for('EditReportFormView.this_form_get', report_title=report.report_title_url) }}"
+          <a href="{{ url_for('EditReportFormView.this_form_get', report_title=report.report_title_id) }}"
             title="Edit">
             <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
           </a>
@@ -56,24 +56,24 @@
             onchange="return lumen.triggerReportStartPause(this)" {% if report.is_paused == False %}checked{% endif%} />
         </td>
 
-        <!-- Column 2: Name -->
+        <!-- Column 3: Name -->
         <td>
           {{ report.report_title }}
         </td>
 
-        <!-- Column 3: Report Schedule -->
+        <!-- Column 4: Report Schedule -->
         <td>
           {{ report.schedule }}
         </td>
 
-        <!-- Column 4: Report Tests -->
+        <!-- Column 5: Report Tests -->
         <td>
           {% for test in report.tests %}
           {{ test }}{% if not loop.last %}, <br>{% endif %}
           {% endfor %}
         </td>
 
-        <!-- Column 5: Report Owner -->
+        <!-- Column 6: Report Owner -->
         <td>
           {% if report.owner_email %}
           <a href="mailto:{{ report.owner_email }}">
@@ -84,14 +84,14 @@
           {% endif %}
         </td>
 
-        <!-- Column 6: Report Subscribers -->
+        <!-- Column 7: Report Subscribers -->
         <td>
           {% for subscriber in report.subscribers %}
           {{ subscriber }}{% if not loop.last %},{% endif %}
           {% endfor %}
         </td>
 
-        <!-- Column 7: Links -->
+        <!-- Column 8: Links -->
         <td class="text-center">
           <!-- Trigger Report -->
           <a href="{{ url_for('ReportsView.trigger', report_name=report.name) }}" id="report-run-trigger">

@@ -12,3 +12,8 @@
 {% block content %}
 {% include "partials/status_body.html" %}
 {% endblock %}
+
+{% block add_tail_js %}
+<script>const rbStatusContent = {{ content | tojson }};</script>
+<script src="{{url_for('rb_status.static',filename='status.js')}}"></script>
+{% endblock %}

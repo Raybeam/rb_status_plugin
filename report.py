@@ -25,7 +25,7 @@ class Report:
         self.name = name
         self.__report_id = None
         self.__report_title = None
-        self.__report_title_url = None
+        self.__report_title_id = None
         self.__description = None
         self.__owner_name = None
         self.__owner_email = None
@@ -55,13 +55,13 @@ class Report:
         self.__report_id = val
 
     @property
-    def report_title_url(self):
+    def report_title_id(self):
         """ Formatted title of the report for url path """
-        return self.__report_title_url
+        return self.__report_title_id
 
-    @report_title_url.setter
-    def report_title_url(self, val):
-        self.__report_title_url = val
+    @report_title_id.setter
+    def report_title_id(self, val):
+        self.__report_title_id = val
 
     @property
     def description(self):

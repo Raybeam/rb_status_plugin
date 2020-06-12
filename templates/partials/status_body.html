@@ -14,7 +14,7 @@
         </h2>
       </div>
       <div class="updated">
-        Updated {{ content.summary.updated.strftime('%b %d at %H:%M') }}
+        <span class="report-datetime-header"></span>
       </div>
     </div>
   </div>
@@ -31,7 +31,7 @@
         {% else %}
           unknown
         {% endif %}">
-    <div id="report-{{ loop.index }}-heading" class="report-header" role="tab">
+    <div id="report-{{ report.report_title_id }}-heading" class="report-header" role="tab">
       <div class="report-highlights">
         <div class="report-indicator"></div>
         <div class="report-meta">
@@ -44,7 +44,8 @@
             Unknown
             {% endif %}
           </span> /
-          Updated {{ report.updated.strftime('%b %d at %H:%M') }}
+          Updated 
+          <span class="report-datetime"></span>
           <h3>{{ report.report_title }}</h3>
         </div>
       </div>

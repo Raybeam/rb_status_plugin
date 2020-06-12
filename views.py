@@ -9,7 +9,6 @@ from flask_appbuilder.fieldwidgets import (
     Select2Widget,
 )
 from flask_appbuilder.security.decorators import has_access
-
 from wtforms import (
     StringField,
     TextAreaField,
@@ -64,6 +63,9 @@ class StatusView(AppBuilderBaseView):
 
     route_base = "/rb/status"
 
+    def get_updated(self, updated):
+        return None if not updated else updated.isoformat()
+
     def reports_data(self):
         """
         Generate reports data.
@@ -87,8 +89,9 @@ class StatusView(AppBuilderBaseView):
                 r = {
                     "id": ri.id,
                     "passed": ri.passed,
-                    "updated": ri.updated,
+                    "updated": self.get_updated(ri.updated),
                     "report_title": report.report_title,
+                    "report_title_id": report.report_title_id,
                     "owner_name": report.owner_name,
                     "owner_email": report.owner_email,
                     "description": report.description,
@@ -106,7 +109,7 @@ class StatusView(AppBuilderBaseView):
 
         rbac_val = conf.getboolean("webserver", "rbac")
         data = {
-            "summary": {"passed": passed, "updated": updated},
+            "summary": {"passed": passed, "updated": self.get_updated(updated)},
             "reports": reports,
             "rbac": rbac_val,
         }
@@ -153,6 +156,7 @@ class ReportsView(AppBuilderBaseView):
 
 class ReportForm(DynamicForm):
     report_id = HiddenField()
+    schedule_timezone = HiddenField()
     report_title = StringField(
         ("Title"),
         description="Title will be used as the report's name",
@@ -203,7 +207,10 @@ class ReportForm(DynamicForm):
     )
     schedule_time = TimeField(
         "Time",
-        description="Note that time zone being used is UTC.",
+        description=(
+            "Note that time zone being used is the "
+            "selected timezone in your clock interface."
+        ),
         render_kw={"class": "form-control"},
         validators=[DataRequired()],
     )
@@ -301,7 +308,7 @@ class EditReportFormView(SimpleFormView):
         # !get report by report_title and prefill form with its values
         requested_report = {}
         for report in VariablesReportRepo.list():
-            if str(report.report_title_url) == report_title:
+            if str(report.report_title_id) == report_title:
                 requested_report = report
 
         if requested_report:

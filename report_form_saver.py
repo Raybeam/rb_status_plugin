@@ -4,7 +4,7 @@ import logging
 import re
 from flask import flash
 from inflection import parameterize
-
+import pendulum
 from rb_status_plugin.report_repo import VariablesReportRepo
 
 
@@ -26,19 +26,23 @@ class ReportFormSaver:
         self.form = form
         self.format_emails()
         self.report_dict["report_title"] = self.form.report_title.data
-        self.report_dict["report_title_url"] = parameterize(self.form.report_title.data)
+        self.report_dict["report_title_id"] = parameterize(self.form.report_title.data)
         self.report_dict["description"] = self.form.description.data
         self.report_dict["owner_name"] = self.form.owner_name.data
         self.report_dict["owner_email"] = self.form.owner_email.data
         self.report_dict["tests"] = self.form.tests.data
         self.report_dict["schedule_type"] = self.form.schedule_type.data
+        self.report_dict["schedule_timezone"] = self.form.schedule_timezone.data
         if self.report_dict["schedule_type"] == "custom":
             self.report_dict["schedule"] = self.form.schedule_custom.data
         elif self.report_dict["schedule_type"] == "manual":
             self.report_dict["schedule"] = None
         else:
-            self.report_dict["schedule_time"] = None
-            self.convert_schedule_to_cron_expression()
+            utc_week_day, utc_time = self.get_utc_time_and_week_day()
+            self.report_dict['schedule_time'] = utc_time
+            if self.report_dict['schedule_type'] == 'weekly':
+                self.report_dict['schedule_week_day'] = utc_week_day
+            self.report_dict['schedule'] = self.get_cron_schedule()
 
     def extract_report_data_into_airflow(self, report_exists):
         """
@@ -77,13 +81,13 @@ class ReportFormSaver:
                 )
                 if not self.check_unique_field(report_exists, "report_id"):
                     return False
-            if self.check_unique_field(report_exists, "report_title_url"):
+            if self.check_unique_field(report_exists, "report_title_id"):
                 return True
         return False
 
     def check_unique_field(self, report_exists, field_name):
         """
-        Chack if field is already exists.
+        Check if field is already exists.
 
         :param report_exists: whether the report exists
         :type report_exists: Boolean
@@ -123,7 +127,7 @@ class ReportFormSaver:
         Return boolean on whether field is filled.
         """
 
-        if self.report_dict[field_name]:
+        if self.report_dict[field_name] or self.report_dict[field_name] == 0:
             return True
 
         # manual schedules will store a null schedule field
@@ -193,33 +197,39 @@ class ReportFormSaver:
             flash(f"Email ({email}) is not valid. Please enter a valid email address.")
             return False
 
-    def convert_schedule_to_cron_expression(self):
+    def get_utc_time_and_week_day(self):
         """
-        Convert Weekly and Daily schedules into a cron expression, and
-        saves attributes to self.report_dict
+        Get schedule time and weekday in UTC timezone
         """
+        time = self.form.schedule_time.data
+        week_day = self.form.schedule_week_day.data
+        tz = self.report_dict["schedule_timezone"]
 
-        try:
-            # add time of day
-            time_of_day = self.form.schedule_time.data.strftime("%H:%M")
-            self.report_dict["schedule_time"] = time_of_day
-            hour, minute = time_of_day.split(":")
-            cron_expression = f"{minute} {hour} * * "
+        dt = pendulum.now()
+        dt = dt.in_tz(tz)
+        if week_day:
+            dt = dt.next(int(week_day))
+        dt = dt.at(time.hour, time.minute, 0)
+        dt = dt.in_tz('UTC')
 
-            # add day of week if applicable
-            if self.form.schedule_type.data == "weekly":
-                cron_expression += self.form.schedule_week_day.data
-                self.report_dict["schedule_week_day"] = self.form.schedule_week_day.data
-            else:
-                cron_expression += "*"
+        return (dt.day_of_week, dt.strftime('%H:%M'))
 
-            self.report_dict["schedule"] = cron_expression
-        except AttributeError:
-            logging.info("Error: Schedule's time is invalid.")
-            flash("Error: Schedule's time is invalid.")
+    def get_cron_schedule(self):
+        """
+        Convert schedule time and weekday into cron schedule
+        """
+        hour, minute = [int(value) for value in
+                        self.report_dict['schedule_time'].split(':')]
+        cron_expression = f"{minute} {hour} * * "
+        if self.report_dict['schedule_type'] == 'weekly':
+            cron_expression += str(self.report_dict['schedule_week_day'])
+        else:
+            cron_expression += '*'
 
-    @staticmethod
-    def load_form(form, requested_report):
+        return cron_expression
+
+    @classmethod
+    def load_form(cls, form, requested_report):
         """
         Update form using a requested report's configuation.
 
@@ -244,6 +254,6 @@ class ReportFormSaver:
             form.schedule_time.data = requested_report.schedule_time
         if form.schedule_type.data == "weekly":
             form.schedule_time.data = requested_report.schedule_time
-            form.schedule_week_day.data = requested_report.schedule_week_day
+            form.schedule_week_day.data = str(requested_report.schedule_week_day)
         form.tests.data = requested_report.tests
         return form
