@@ -44,6 +44,7 @@ jobs:
           $schedule_airflow &
           $webserve_airflow &
           pytest plugins/rb_status_plugin/tests/
+        name: start up airflow and run tests
     - run:
         command: |-
           echo "TRIGGERER: ${CIRCLE_USERNAME}"
