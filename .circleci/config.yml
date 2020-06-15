@@ -38,6 +38,7 @@ jobs:
           mkdir ./plugins/
           ln -s /home/circleci/project ./plugins/rb_status_plugin
           airflow create_user -r Admin -u admin -e admin@example.com -f admin -l user -p admin
+          plugins/rb_status_plugin/bin/rb_status init
           schedule_airflow="airflow scheduler"
           webserve_airflow="airflow webserver"
           echo -e "spinning up scheduler and webserver..."
