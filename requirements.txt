@@ -1,3 +1,4 @@
 wtforms-components
 flake8
 inflection~=0.3.1
+pytest
