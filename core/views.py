@@ -19,10 +19,10 @@ from wtforms import (
 from wtforms.validators import DataRequired, Email
 from wtforms_components import TimeField
 
-from rb_status_plugin.report import Report
-from rb_status_plugin.report_repo import VariablesReportRepo
-from rb_status_plugin.report_instance import ReportInstance
-from rb_status_plugin.report_form_saver import ReportFormSaver
+from rb_status_plugin.core.report import Report
+from rb_status_plugin.core.report_repo import VariablesReportRepo
+from rb_status_plugin.core.report_instance import ReportInstance
+from rb_status_plugin.core.report_form_saver import ReportFormSaver
 from rb_status_plugin.helpers.list_tasks_helper import get_all_test_choices
 from airflow.configuration import conf
 import logging

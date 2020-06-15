@@ -1,4 +1,4 @@
-from rb_status_plugin.report import Report
+from rb_status_plugin.core.report import Report
 
 import unittest
 

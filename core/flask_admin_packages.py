@@ -1,9 +1,9 @@
-from rb_status_plugin.views_no_rbac import (
+from rb_status_plugin.core.views_no_rbac import (
     StatusViewAdmin,
     ReportsViewAdmin,
     ReportMgmtViewAdmin,
 )
-from rb_status_plugin.report import Report
+from rb_status_plugin.core.report import Report
 from airflow.settings import Session
 
 v_admin_status_package = StatusViewAdmin(

@@ -1,10 +1,11 @@
 from airflow.models import Variable
-from rb_status_plugin.report_form_saver import ReportFormSaver
+
 import datetime
 import copy
-
 import unittest
 import pendulum
+
+from rb_status_plugin.core.report_form_saver import ReportFormSaver
 
 
 class AttributeDict(dict):

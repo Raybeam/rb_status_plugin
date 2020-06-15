@@ -2,11 +2,11 @@ from datetime import timedelta
 from airflow import DAG, configuration
 from airflow.operators.python_operator import PythonOperator
 from airflow.operators.latest_only_operator import LatestOnlyOperator
+import airflow.utils.dates as dt
 
-from rb_status_plugin.report_repo import VariablesReportRepo
+from rb_status_plugin.core.report_repo import VariablesReportRepo
 from rb_status_plugin.sensors.status_sensor import StatusSensor
 from rb_status_plugin.helpers.email_helpers import report_notify_email
-import airflow.utils.dates as dt
 
 
 # Default settings applied to all tests

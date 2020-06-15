@@ -5,7 +5,7 @@ import re
 from flask import flash
 from inflection import parameterize
 import pendulum
-from rb_status_plugin.report_repo import VariablesReportRepo
+from rb_status_plugin.core.report_repo import VariablesReportRepo
 
 
 class ReportFormSaver:
