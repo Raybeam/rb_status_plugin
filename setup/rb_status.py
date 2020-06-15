@@ -6,7 +6,7 @@ import airflow.utils.dates as dt
 
 from rb_status_plugin.core.report_repo import VariablesReportRepo
 from rb_status_plugin.sensors.status_sensor import StatusSensor
-from rb_status_plugin.helpers.email_helpers import report_notify_email
+from rb_status_plugin.core.helpers.email_helpers import report_notify_email
 
 
 # Default settings applied to all tests

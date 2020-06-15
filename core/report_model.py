@@ -12,7 +12,7 @@ from wtforms import (
     HiddenField,
 )
 from flask_admin.helpers import get_form_data
-from rb_status_plugin.helpers.list_tasks_helper import get_all_test_choices
+from rb_status_plugin.core.helpers.list_tasks_helper import get_all_test_choices
 from rb_status_plugin.core.report_repo import VariablesReportRepo
 from rb_status_plugin.core.report_form_saver import ReportFormSaver
 
