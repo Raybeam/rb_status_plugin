@@ -97,17 +97,22 @@ def delete_report(driver, report_name):
                     '//*[@id="reports"]/tbody/tr[%d]/td[8]/a[2]' % index
                 ).click()
                 obj = driver.switch_to.alert
-                time.sleep(5)
+                time.sleep(2)
                 obj.accept()
         index += 1
 
 
+report_name = "selenium report test"
+driver = webdriver.Chrome()
+airflow_login(driver)
+
 @pytest.mark.compatibility
 def test_report_creation():
-    report_name = "selenium report test"
-    driver = webdriver.Chrome()
-    airflow_login(driver)
     create_report(driver, report_name)
-    report_created = check_report_exists(driver, report_name)
+    return check_report_exists(driver, report_name)
+
+
+@pytest.mark.compatibility
+def test_report_deletion():
+    time.sleep(2)
     delete_report(driver, report_name)
-    return report_created
