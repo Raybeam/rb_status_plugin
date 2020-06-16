@@ -4,10 +4,10 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 module.exports = (env) => {
   return {
     entry: {
-      status: ["./src/scss/status.scss", "./src/js/status.js"],
-      mgmt: ["./src/scss/mgmt.scss"],
-      report_form: ["./src/js/report_form.js"],
-      reports: ["./src/js/reports.js"],
+      status: ["./static/src/scss/status.scss", "./static/src/js/status.js"],
+      mgmt: ["./static/src/scss/mgmt.scss"],
+      report_form: ["./static/src/js/report_form.js"],
+      reports: ["./static/src/js/reports.js"],
     },
     output: {
       filename: "[name].js",

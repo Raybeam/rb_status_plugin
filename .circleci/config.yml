@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-    - image: circleci/python:3.7.7
+    - image: circleci/python:3.6.2-stretch-browsers
     steps:
     - checkout
     - restore_cache:
@@ -38,7 +38,14 @@ jobs:
           mkdir ./plugins/
           ln -s /home/circleci/project ./plugins/rb_status_plugin
           airflow create_user -r Admin -u admin -e admin@example.com -f admin -l user -p admin
-          python -m unittest discover -s plugins/rb_status_plugin/tests/ -p '*_test.py'
+          plugins/rb_status_plugin/bin/rb_status init
+          schedule_airflow="airflow scheduler"
+          webserve_airflow="airflow webserver"
+          echo -e "spinning up scheduler and webserver..."
+          $schedule_airflow &
+          $webserve_airflow &
+          pytest plugins/rb_status_plugin/tests/
+        name: start up airflow and run tests
     - run:
         command: |-
           echo "TRIGGERER: ${CIRCLE_USERNAME}"
