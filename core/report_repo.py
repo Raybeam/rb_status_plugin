@@ -3,7 +3,7 @@ import re
 import abc
 from airflow.utils.db import provide_session
 from airflow.models import Variable
-from rb_status_plugin.report import Report
+from rb_status_plugin.core.report import Report
 
 
 class ReportRepo(abc.ABC):

@@ -1,13 +1,13 @@
 from airflow.plugins_manager import AirflowPlugin
 from flask import Blueprint
-from rb_status_plugin.views import (
+from rb_status_plugin.core.views import (
     StatusView,
     ReportsView,
     NewReportFormView,
     EditReportFormView,
 )
 from rb_status_plugin.sensors.status_sensor import StatusSensor
-from rb_status_plugin.flask_admin_packages import (
+from rb_status_plugin.core.flask_admin_packages import (
     v_admin_status_package,
     v_admin_reports_package,
     v_admin_reports_mgmt_package,

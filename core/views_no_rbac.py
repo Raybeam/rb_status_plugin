@@ -1,14 +1,15 @@
 from flask_admin import BaseView, expose
 from flask_admin.form import rules
-from rb_status_plugin.report_model import ReportModel
 
-from rb_status_plugin.views import (
+from flask import flash, redirect, url_for, request
+
+from rb_status_plugin.core.report_model import ReportModel
+from rb_status_plugin.core.report_repo import VariablesReportRepo
+from rb_status_plugin.core.report import Report
+from rb_status_plugin.core.views import (
     StatusView,
     ReportsView,
 )
-from rb_status_plugin.report_repo import VariablesReportRepo
-from rb_status_plugin.report import Report
-from flask import flash, redirect, url_for, request
 
 status_view_rbac = StatusView()
 reports_view_rbac = ReportsView()

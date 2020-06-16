@@ -1,11 +1,12 @@
-from rb_status_plugin.sensors.status_sensor import StatusSensor
-from airflow.operators.dummy_operator import DummyOperator
-from airflow.models.taskinstance import TaskInstance
 from datetime import datetime, timedelta
 import unittest
-from airflow.utils.state import State
 
+from airflow.operators.dummy_operator import DummyOperator
+from airflow.models.taskinstance import TaskInstance
+from airflow.utils.state import State
 from airflow import DAG
+
+from rb_status_plugin.sensors.status_sensor import StatusSensor
 
 # Default settings applied to all tests
 default_args = {
