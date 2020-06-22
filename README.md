@@ -16,7 +16,7 @@ These are instructions for importing this plugin into an existing airflow worksp
 To start, navigate to the root of your airflow workspace.  
 If you don't have an existing workspace, you can download the sample:  
 ```
->git clone https://github.com/Raybeam/rb-test-airflow/ sample_workspace
+>git clone https://github.com/Raybeam/rb_test_airflow/ sample_workspace
 >cd sample_workspace
 ```
   
