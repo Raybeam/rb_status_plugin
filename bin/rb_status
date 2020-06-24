@@ -141,7 +141,7 @@ def add_sample_dag(setup_path, args):
     if not args.dry:
         shutil.copy(os.path.join(setup_path, "rb_status_sample_dag.py"), dags_folder)
 
-    if not os.path.isfile(os.path.join(setup_path, "rb_status_sample_dag.py")):
+    if not os.path.isfile(os.path.join(dags_folder, "rb_status_sample_dag.py")):
         err = (
             "Could not find file after copying, check "
             + "that rb_status_sample_dag.py exists in your DAGs folder"  # noqa: W503
