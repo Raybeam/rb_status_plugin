@@ -55,6 +55,7 @@ form_fieldsets_config = [
     ("Tests", {"fields": ["tests"]}),
 ]
 
+
 # Creating a flask appbuilder BaseView
 class StatusView(AppBuilderBaseView):
     """
