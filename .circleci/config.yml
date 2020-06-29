@@ -24,7 +24,7 @@ jobs:
     - run:
         command: |-
           . ~/.venv/bin/activate
-          flake8 --config=/home/circleci/project/.flake8
+          flake8
         name: Run flake8 linter
     - run:
         command: git clone https://github.com/Raybeam/rb_test_airflow /home/circleci/rb_test_airflow
