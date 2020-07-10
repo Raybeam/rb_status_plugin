@@ -72,6 +72,9 @@ jobs:
               fi
             fi
           done
+          cp -r /home/circleci/project/ /home/circleci/rb_test_airflow/plugins/${CIRCLE_PROJECT_REPONAME}
+          pip3 install -r /home/circleci/rb_test_airflow/plugins/${CIRCLE_PROJECT_REPONAME}/requirements.txt
+          plugins/${CIRCLE_PROJECT_REPONAME}/bin/setup init
         name: Clone rb airflow plugins and install their requirements
     - run:
         command: |-
@@ -104,7 +107,7 @@ jobs:
               fi
             fi
           done
-          pytest  plugins/${CIRCLE_PROJECT_REPONAME}/tests/ || ret=$?
+          pytest plugins/${CIRCLE_PROJECT_REPONAME}/tests || ret=$?
           if [ -n "$ret" ]; then
             if ! [[ "05" =~ "$ret" ]]; then
               exit "$ret"
