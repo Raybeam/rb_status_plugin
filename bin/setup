@@ -176,7 +176,7 @@ if __name__ == "__main__":
     subparsers = parser.add_subparsers()
 
     parser_init = subparsers.add_parser(
-        "init", help="Add rb status plugin to the DAGs folder"
+        "init", help=f"Add { plugin_name } to the DAGs folder"
     )
     parser_init.add_argument(
         "--dry", action="store_true", help="Do a dry run.  No files are moved."

@@ -66,6 +66,7 @@ jobs:
               if [[ $plugin_name != ${CIRCLE_PROJECT_REPONAME} ]]; then
                 git clone https://github.com/Raybeam/$plugin_name /home/circleci/rb_test_airflow/plugins/$plugin_name
                 pip3 install -r /home/circleci/rb_test_airflow/plugins/$plugin_name/requirements.txt
+                sudo chmod -R 777 /home/circleci/rb_test_airflow/plugins/$plugin_name/
                 if [[ -f "/home/circleci/rb_test_airflow/plugins/$plugin_name/bin/setup" ]]; then
                   home/circleci/rb_test_airflow/plugins/$plugin_name/bin/setup init
                 fi
@@ -77,7 +78,7 @@ jobs:
         command: |-
           . ~/.venv/bin/activate
           cp -r /home/circleci/project/ /home/circleci/rb_test_airflow/plugins/${CIRCLE_PROJECT_REPONAME}
-          pip3 install -r /home/circleci/rb_test_airflow/plugins/${CIRCLE_PROJECT_REPONAME} iiii/requirements.txt
+          pip3 install -r /home/circleci/rb_test_airflow/plugins/${CIRCLE_PROJECT_REPONAME}/requirements.txt
           home/circleci/rb_test_airflow/plugins/${CIRCLE_PROJECT_REPONAME}/bin/setup init
           pytest  /home/circleci/rb_test_airflow/plugins/${CIRCLE_PROJECT_REPONAME}/tests/ -m "not compatibility"
         name: Run current plugin's unittests
