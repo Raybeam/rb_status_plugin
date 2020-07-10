@@ -1,8 +1,10 @@
 from rb_status_plugin.core.report import Report
 
 import unittest
+import pytest
 
 
+@pytest.mark.compatibility
 class ReportTest(unittest.TestCase):
     def test_task_id_naming(self):
         r = Report("dummy name")

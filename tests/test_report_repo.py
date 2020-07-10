@@ -3,8 +3,10 @@ from rb_status_plugin.core.report import Report
 
 import json
 import unittest
+import pytest
 
 
+@pytest.mark.compatibility
 class VariablesReportRepoTest(unittest.TestCase):
     dummy_test = """
             {

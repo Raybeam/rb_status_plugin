@@ -4,6 +4,7 @@ import datetime
 import copy
 import unittest
 import pendulum
+import pytest
 
 from rb_status_plugin.core.report_form_saver import ReportFormSaver
 
@@ -20,6 +21,7 @@ class AttributeDict(dict):
         return AttributeDict(copy.deepcopy(dict(self)))
 
 
+@pytest.mark.compatibility
 class ReportSaveTest(unittest.TestCase):
     """
     Class for testing the ability to save report forms.

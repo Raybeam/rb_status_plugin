@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 import unittest
+import pytest
 
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.models.taskinstance import TaskInstance
@@ -20,6 +21,7 @@ default_args = {
 }
 
 
+@pytest.mark.compatibility
 class SensorTest(unittest.TestCase):
     rb_status_dag = DAG(
         "rb_status_dag", schedule_interval=None, default_args=default_args
