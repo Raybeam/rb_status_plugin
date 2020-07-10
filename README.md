@@ -55,6 +55,13 @@ By putting the `AIRFLOW_HOME` env in the `bin/activate` file, you set the path e
 ### Activate your venv
 `> source bin/activate`
 
+### Clone the status plugin into your plugins
+`> git clone https://github.com/Raybeam/rb_status_plugin plugins/rb_status_plugin`
+
+### Copy over rb status requirements
+`> cat plugins/rb_status_plugin/requirements.txt >> requirements.txt`  
+`> pip install -r requirements.txt`
+
 ### Install airflow
 `> pip install apache-airflow`
 
@@ -63,13 +70,6 @@ By putting the `AIRFLOW_HOME` env in the `bin/activate` file, you set the path e
 
 ### Set up a user (admin:admin)
 `> airflow create_user -r Admin -u admin -e admin@example.com -f admin -l user -p admin`
-
-### Clone the status plugin into your plugins
-`> git clone https://github.com/Raybeam/rb_status_plugin plugins/rb_status_plugin`
-
-### Copy over rb status requirements
-`> cat plugins/rb_status_plugin/requirements.txt >> requirements.txt`  
-`> pip install -r requirements.txt`
 
 ### Set up rb status
 Move over the main rb status DAG and sample DAGs (if wanted)
