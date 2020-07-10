@@ -174,7 +174,7 @@ class ReportModel(BaseModelView):
                     "List of the tests to include in the report. Only includes\
                  tasks that have ran in airflow."
                 ),
-                choices=get_all_test_choices(),
+                choices=None,
                 widget=Select2ManyWidget(),
                 validators=[DataRequired()],
             )
