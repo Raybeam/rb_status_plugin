@@ -11,21 +11,23 @@ import sys
 from airflow.configuration import conf
 from airflow.models import Variable
 
+plugin_name = "rb_plugin_status"
+
 manual_instructions = f"""
     MANUAL SETUP INSTRUCTIONS:
-
     For one reason or another we couldn't set up your system for you.  Have
     no fear, it's easy to do it yourself.
-
-    Just copy the rb_status.py file from the rb_status_plugin/setup directory into
-    your DAGs folder.  That's it.  The rb status plugin will take care of the rest.
-
-    It might be something like:
-    > cp $AIRFLOW_HOME/plugins/rb_status_plugin/setup/rb_status.py $AIRFLOW_HOME/dags/
-
-    If you'd like a sample DAG that fails and succeeds randomly to test our sample,
-    copy the rb_status_sample_dag.py into your DAGs folder.
     """
+
+
+def copytree(src, dst, symlinks=False, ignore=None):
+    for item in os.listdir(src):
+        s = os.path.join(src, item)
+        d = os.path.join(dst, item)
+        if os.path.isdir(s):
+            shutil.copytree(s, d, symlinks, ignore)
+        else:
+            shutil.copy2(s, d)
 
 
 def find_dags_folder():
@@ -56,7 +58,7 @@ def find_dags_folder():
 
 def find_setup_path():
     plugins_folder = conf.get("core", "plugins_folder")
-    setup_path = os.path.join(plugins_folder, "rb_status_plugin", "setup")
+    setup_path = os.path.join(plugins_folder, plugin_name, "setup")
     if setup_path and os.path.isdir(setup_path):
         logging.info(f"Assuming setup path at {setup_path}")
         return setup_path
@@ -64,13 +66,13 @@ def find_setup_path():
 
     airflow_home = os.environ.get("AIRFLOW_HOME")
     if airflow_home:
-        setup_path = os.path.join(airflow_home, "plugins", "rb_status_plugin", "setup")
+        setup_path = os.path.join(airflow_home, "plugins", plugin_name, "setup")
         if setup_path and os.path.isdir(setup_path):
             logging.info(f"Assuming setup path at {setup_path}")
             return setup_path
         logging.warning(f"Could not find setup path at {setup_path}, trying $PWD")
 
-    setup_path = os.path.join(os.environ["PWD"], "plugins", "rb_status_plugin", "setup")
+    setup_path = os.path.join(os.environ["PWD"], "plugins", plugin_name, "setup")
     if setup_path and os.path.isdir(setup_path):
         logging.info(f"Assuming setup path at {setup_path}")
         return setup_path
@@ -98,16 +100,20 @@ def init(args):
         dags_folder = find_dags_folder()
         setup_path = find_setup_path()
 
-        logging.info(f"Copying rb_status.py from {setup_path} to {dags_folder}")
+        logging.info(f"Copying dags from {setup_path} to {dags_folder}")
         if not args.dry:
-            shutil.copy(os.path.join(setup_path, "rb_status.py"), dags_folder)
+            src_files = os.listdir(setup_path)
+            for file_name in src_files:
+                full_file_name = os.path.join(setup_path, file_name)
+                if os.path.isfile(full_file_name) and full_file_name.ends_with(".py"):
+                    shutil.copy(full_file_name, dags_folder)
 
-        if not os.path.isfile(os.path.join(setup_path, "rb_status.py")):
-            err = (
-                "Could not find file after copying, "
-                + "check that rb_status.py exists in your DAGs folder"  # noqa: W503
-            )
-            raise OSError(err)
+                    if not os.path.exists(os.path.join(dags_folder, full_file_name)):
+                        err = (
+                            "Could not find file after copying, "
+                            + "check that dags exists in your DAGs folder"  # noqa: W503
+                        )
+                        raise OSError(err)
     except Exception:
         print(manual_instructions)
         raise
@@ -123,7 +129,7 @@ def add_samples(args):
 
         report_files = find_sample_reports(setup_path)
         for fname, path in report_files.items():
-            report_name = f"rb_status_{fname}"
+            report_name = f"{plugin_name}_{fname}"
             logging.info(f"Adding report {report_name} with json at {path}")
             if not args.dry:
                 with open(path) as f:
@@ -139,12 +145,15 @@ def add_sample_dag(setup_path, args):
 
     logging.info("Adding sample DAG to DAGs folder")
     if not args.dry:
-        shutil.copy(os.path.join(setup_path, "rb_status_sample_dag.py"), dags_folder)
+        sample_dags_dst = os.path.join(dags_folder, f"{plugin_name}_example_dags")
+        if not os.path.exists(sample_dags_dst):
+            os.makedirs(sample_dags_dst)
+        copytree(os.path.join(setup_path, "dags"), sample_dags_dst)
 
-    if not os.path.isfile(os.path.join(dags_folder, "rb_status_sample_dag.py")):
+    if not os.path.isdir(os.path.join(dags_folder, f"{plugin_name}_example_dags")):
         err = (
             "Could not find file after copying, check "
-            + "that rb_status_sample_dag.py exists in your DAGs folder"  # noqa: W503
+            + f"that {os.path.join(dags_folder, plugin_name + '_example_dags')} exists in your DAGs folder"  # noqa: W503
         )
         raise OSError(err)
 
@@ -157,7 +166,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(
         description="""
-    rb status is a plugin for Airflow that handles data confidence.  To operate, it needs
+    This plugin does X.  To operate, it needs
     to include a file in the DAGs folder.  A sample DAG is also provided if you'd like
     to get some sample data in the Airflow DB in order to try the plugin out.
     """
