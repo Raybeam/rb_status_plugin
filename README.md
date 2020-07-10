@@ -74,13 +74,13 @@ By putting the `AIRFLOW_HOME` env in the `bin/activate` file, you set the path e
 ### Set up rb status
 Move over the main rb status DAG and sample DAGs (if wanted)
 
-`> plugins/rb_status_plugin/bin/rb_status init`
+`> plugins/rb_status_plugin/bin/setup init`
 
-`> plugins/rb_status_plugin/bin/rb_status add_samples`
+`> plugins/rb_status_plugin/bin/setup add_samples`
 
 Only the DAG works from the rb status plugin binary right now.
 
-`> plugins/rb_status_plugin/bin/rb_status add_samples --dag_only`
+`> plugins/rb_status_plugin/bin/setup add_samples --dag_only`
 
 ### Enable rbac
 In the root directory of your airflow workspace, open airflow.cfg and set `rbac=True`.
