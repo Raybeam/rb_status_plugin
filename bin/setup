@@ -105,7 +105,7 @@ def init(args):
             src_files = os.listdir(setup_path)
             for file_name in src_files:
                 full_file_name = os.path.join(setup_path, file_name)
-                if os.path.isfile(full_file_name) and full_file_name.ends_with(".py"):
+                if os.path.isfile(full_file_name) and full_file_name.endswith(".py"):
                     shutil.copy(full_file_name, dags_folder)
 
                     if not os.path.exists(os.path.join(dags_folder, full_file_name)):
@@ -148,9 +148,11 @@ def add_sample_dag(setup_path, args):
         sample_dags_dst = os.path.join(dags_folder, f"{plugin_name}_example_dags")
         if not os.path.exists(sample_dags_dst):
             os.makedirs(sample_dags_dst)
-        copytree(os.path.join(setup_path, "dags"), sample_dags_dst)
+            copytree(os.path.join(setup_path, "dags"), sample_dags_dst)
+        else:
+            print(f"\n\nWARNING: \"{ sample_dags_dst }\" already exists.\nSkipping copying of sample dags.\n\n")
 
-    if not os.path.isdir(os.path.join(dags_folder, f"{plugin_name}_example_dags")):
+    if not os.path.isdir(sample_dags_dst):
         err = (
             "Could not find file after copying, check "
             + f"that {os.path.join(dags_folder, plugin_name + '_example_dags')} exists in your DAGs folder"  # noqa: W503
