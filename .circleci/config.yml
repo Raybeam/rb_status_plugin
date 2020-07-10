@@ -80,7 +80,13 @@ jobs:
           cp -r /home/circleci/project/ /home/circleci/rb_test_airflow/plugins/${CIRCLE_PROJECT_REPONAME}
           pip3 install -r /home/circleci/rb_test_airflow/plugins/${CIRCLE_PROJECT_REPONAME}/requirements.txt
           plugins/${CIRCLE_PROJECT_REPONAME}/bin/setup init
-          pytest  /home/circleci/rb_test_airflow/plugins/${CIRCLE_PROJECT_REPONAME}/tests/ -m "not compatibility"
+          unset ret
+          pytest  /home/circleci/rb_test_airflow/plugins/${CIRCLE_PROJECT_REPONAME}/tests/ -m "not compatibility" || ret=$?
+              if [ -n "$ret" ]; then
+                if ! [[ "05" =~ "$ret" ]]; then
+                  exit "$ret"
+                fi
+              fi
         name: Run current plugin's unittests
     - run:
         command: |-
