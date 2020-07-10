@@ -39,10 +39,10 @@ class ReportFormSaver:
             self.report_dict["schedule"] = None
         else:
             utc_week_day, utc_time = self.get_utc_time_and_week_day()
-            self.report_dict['schedule_time'] = utc_time
-            if self.report_dict['schedule_type'] == 'weekly':
-                self.report_dict['schedule_week_day'] = utc_week_day
-            self.report_dict['schedule'] = self.get_cron_schedule()
+            self.report_dict["schedule_time"] = utc_time
+            if self.report_dict["schedule_type"] == "weekly":
+                self.report_dict["schedule_week_day"] = utc_week_day
+            self.report_dict["schedule"] = self.get_cron_schedule()
 
     def extract_report_data_into_airflow(self, report_exists):
         """
@@ -210,21 +210,22 @@ class ReportFormSaver:
         if week_day:
             dt = dt.next(int(week_day))
         dt = dt.at(time.hour, time.minute, 0)
-        dt = dt.in_tz('UTC')
+        dt = dt.in_tz("UTC")
 
-        return (dt.day_of_week, dt.strftime('%H:%M'))
+        return (dt.day_of_week, dt.strftime("%H:%M"))
 
     def get_cron_schedule(self):
         """
         Convert schedule time and weekday into cron schedule
         """
-        hour, minute = [int(value) for value in
-                        self.report_dict['schedule_time'].split(':')]
+        hour, minute = [
+            int(value) for value in self.report_dict["schedule_time"].split(":")
+        ]
         cron_expression = f"{minute} {hour} * * "
-        if self.report_dict['schedule_type'] == 'weekly':
-            cron_expression += str(self.report_dict['schedule_week_day'])
+        if self.report_dict["schedule_type"] == "weekly":
+            cron_expression += str(self.report_dict["schedule_week_day"])
         else:
-            cron_expression += '*'
+            cron_expression += "*"
 
         return cron_expression
 
