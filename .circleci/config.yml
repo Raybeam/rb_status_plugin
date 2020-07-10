@@ -77,15 +77,6 @@ jobs:
         command: |-
           . ~/.venv/bin/activate
           cd /home/circleci/rb_test_airflow
-          cp -r /home/circleci/project/ /home/circleci/rb_test_airflow/plugins/${CIRCLE_PROJECT_REPONAME}
-          pip3 install -r /home/circleci/rb_test_airflow/plugins/${CIRCLE_PROJECT_REPONAME}/requirements.txt
-          plugins/${CIRCLE_PROJECT_REPONAME}/bin/setup init
-          pytest plugins/${CIRCLE_PROJECT_REPONAME}/tests/ -m "not compatibility"
-        name: Run current plugin's unittests
-    - run:
-        command: |-
-          . ~/.venv/bin/activate
-          cd /home/circleci/rb_test_airflow
           export AIRFLOW_HOME=$PWD
           cp ~/project/.circleci/airflow.cfg $AIRFLOW_HOME/airflow.cfg
           echo "Attempting to initialize airflow..."
@@ -113,7 +104,7 @@ jobs:
               fi
             fi
           done
-          pytest  plugins/${CIRCLE_PROJECT_REPONAME}/tests/ -m compatibility || ret=$?
+          pytest  plugins/${CIRCLE_PROJECT_REPONAME}/tests/ || ret=$?
           if [ -n "$ret" ]; then
             if ! [[ "05" =~ "$ret" ]]; then
               exit "$ret"
