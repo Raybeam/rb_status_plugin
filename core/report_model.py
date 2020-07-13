@@ -128,6 +128,7 @@ class ReportModel(BaseModelView):
             "schedule_time",
             "schedule_week_day",
             "schedule",
+            "schedule_timezone"
         ]
 
     def scaffold_sortable_columns(self):
@@ -139,6 +140,7 @@ class ReportModel(BaseModelView):
     def scaffold_form(self):
         class ReportForm(Form):
             report_id = HiddenField("")
+            schedule_timezone = HiddenField("")
             report_title = StringField(
                 ("Title"),
                 description="Title will be used as the report's name",
@@ -174,7 +176,7 @@ class ReportModel(BaseModelView):
                     "List of the tests to include in the report. Only includes\
                  tasks that have ran in airflow."
                 ),
-                choices=get_all_test_choices(),
+                choices=None,
                 widget=Select2ManyWidget(),
                 validators=[DataRequired()],
             )

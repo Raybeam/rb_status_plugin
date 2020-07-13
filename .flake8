@@ -1,4 +1,12 @@
 [flake8]
-ignore = E226,E302,E41
-max-line-length = 90 
-max-complexity = 10
+
+ignore = E203, W503, E501
+# E203 info: https://github.com/psf/black/issues/544
+# W503 info: https://black.readthedocs.io/en/stable/the_black_code_style.html#:~:text=Black%20will%20break%20a%20line,of%20code%20over%20multiple%20lines.&text=This%20behaviour%20may%20raise%20W503,Flake8%20to%20ignore%20these%20warnings.
+# E501 info: https://black.readthedocs.io/en/stable/the_black_code_style.html#line-length
+exclude=
+    dags/scratch
+    bin/
+    lib/
+    include/
+max-line-length = 88

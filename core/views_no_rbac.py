@@ -60,7 +60,7 @@ class ReportMgmtViewAdmin(ReportModel):
     create_template = "no_rbac/report_create_form.html"
     edit_template = "no_rbac/report_edit_form.html"
     form_rules = [
-        rules.FieldSet(("report_id",), ""),
+        rules.FieldSet(("report_id", "schedule_timezone"), ""),
         rules.FieldSet(
             ("report_title", "description", "owner_name", "owner_email", "subscribers"),
             "General",

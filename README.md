@@ -31,16 +31,18 @@ The deployment environments are:
 ## Quick Setup
 Clone a sample airflow workspace (if you dont have an existing airflow repository).  
 ```
-git clone https://github.com/Raybeam/rb_test_airflow/ deploy_test
-cd deploy_test
+git clone https://github.com/Raybeam/rb_test_airflow/ sample_workspace
+cd sample_workspace
 ```
-Clone plugin into local workspace  
+
+Clone deploy script into local workspace  
 ```
-git clone https://github.com/Raybeam/rb_status_plugin plugins/rb_status_plugin
+git clone https://github.com/Raybeam/rb_plugin_deploy plugins/rb_plugin_deploy
+```  
+  
+Run deploy script.  
 ```
-Run plugin's deploy script.  
-```
-./plugins/rb_status_plugin/deploy.sh
+./plugins/rb_plugin_deploy/deploy.sh
 ```
   
 ## Set up : Local Deploy
@@ -56,6 +58,13 @@ By putting the `AIRFLOW_HOME` env in the `bin/activate` file, you set the path e
 ### Activate your venv
 `> source bin/activate`
 
+### Clone the status plugin into your plugins
+`> git clone https://github.com/Raybeam/rb_status_plugin plugins/rb_status_plugin`
+
+### Copy over rb status requirements
+`> cat plugins/rb_status_plugin/requirements.txt >> requirements.txt`  
+`> pip install -r requirements.txt`
+
 ### Install airflow
 `> pip install apache-airflow`
 
@@ -65,23 +74,16 @@ By putting the `AIRFLOW_HOME` env in the `bin/activate` file, you set the path e
 ### Set up a user (admin:admin)
 `> airflow create_user -r Admin -u admin -e admin@example.com -f admin -l user -p admin`
 
-### Clone the status plugin into your plugins
-`> git clone https://github.com/Raybeam/rb_status_plugin plugins/rb_status_plugin`
-
-### Copy over rb status requirements
-`> cat plugins/rb_status_plugin/requirements.txt >> requirements.txt`  
-`> pip install -r requirements.txt`
-
 ### Set up rb status
 Move over the main rb status DAG and sample DAGs (if wanted)
 
-`> plugins/rb_status_plugin/bin/rb_status init`
+`> plugins/rb_status_plugin/bin/setup init`
 
-`> plugins/rb_status_plugin/bin/rb_status add_samples`
+`> plugins/rb_status_plugin/bin/setup add_samples`
 
 Only the DAG works from the rb status plugin binary right now.
 
-`> plugins/rb_status_plugin/bin/rb_status add_samples --dag_only`
+`> plugins/rb_status_plugin/bin/setup add_samples --dag_only`
 
 ### Enable rbac
 In the root directory of your airflow workspace, open airflow.cfg and set `rbac=True`.

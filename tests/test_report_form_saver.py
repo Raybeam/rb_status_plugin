@@ -2,8 +2,8 @@ from airflow.models import Variable
 
 import datetime
 import copy
-import unittest
 import pendulum
+import pytest
 
 from rb_status_plugin.core.report_form_saver import ReportFormSaver
 
@@ -20,7 +20,8 @@ class AttributeDict(dict):
         return AttributeDict(copy.deepcopy(dict(self)))
 
 
-class ReportSaveTest(unittest.TestCase):
+@pytest.mark.compatibility
+class ReportSaveTest:
     """
     Class for testing the ability to save report forms.
     """
@@ -119,13 +120,11 @@ class ReportSaveTest(unittest.TestCase):
             "schedule_type": AttributeDict({"data": "daily"}),
             "schedule_timezone": AttributeDict({"data": "America/Chicago"}),
             "schedule_time": AttributeDict(
-                {"data": datetime.datetime(
-                    year=2000,
-                    month=1,
-                    day=1,
-                    hour=22,
-                    minute=0
-                )}
+                {
+                    "data": datetime.datetime(
+                        year=2000, month=1, day=1, hour=22, minute=0
+                    )
+                }
             ),
             "schedule_week_day": AttributeDict({"data": "0"}),
             "schedule_custom": AttributeDict({"data": ""}),
@@ -209,14 +208,13 @@ class ReportSaveTest(unittest.TestCase):
 
         before_dt = pendulum.now().in_tz(tz).at(time.hour, time.minute, 0)
 
-        after_dt = before_dt.in_tz('UTC')
+        after_dt = before_dt.in_tz("UTC")
 
         Variable.delete(
             "rb_status_" + self.report_form_sample_timezone_daily.report_title.data
         )
         self.assertEqual(
-            report_airflow_variable["schedule_time"],
-            after_dt.strftime("%H:%M")
+            report_airflow_variable["schedule_time"], after_dt.strftime("%H:%M")
         )
 
     def test_saved_description(self):
@@ -311,12 +309,12 @@ class ReportSaveTest(unittest.TestCase):
         tz = self.report_form_sample_daily.schedule_timezone.data
 
         before_dt = pendulum.now().in_tz(tz).at(time.hour, time.minute, 0)
-        after_dt = before_dt.in_tz('UTC')
+        after_dt = before_dt.in_tz("UTC")
 
         Variable.delete("rb_status_" + self.report_form_sample_daily.report_title.data)
         self.assertEqual(
             f"{after_dt.minute} {after_dt.hour} * * *",
-            report_airflow_variable["schedule"]
+            report_airflow_variable["schedule"],
         )
 
     def test_weekly_schedule_conversion(self):
@@ -334,20 +332,17 @@ class ReportSaveTest(unittest.TestCase):
         week_day = int(self.report_form_sample_weekly.schedule_week_day.data)
         tz = self.report_form_sample_weekly.schedule_timezone.data
 
-        before_dt = pendulum.now() \
-            .in_tz(tz) \
-            .next(int(week_day)) \
-            .at(time.hour, time.minute, 0)
-
-        after_dt = before_dt.in_tz('UTC')
-
-        Variable.delete(
-            "rb_status_" + self.report_form_sample_weekly.report_title.data
+        before_dt = (
+            pendulum.now().in_tz(tz).next(int(week_day)).at(time.hour, time.minute, 0)
         )
+
+        after_dt = before_dt.in_tz("UTC")
+
+        Variable.delete("rb_status_" + self.report_form_sample_weekly.report_title.data)
 
         self.assertEqual(
             f"{after_dt.minute} {after_dt.hour} * * {after_dt.day_of_week}",
-            report_airflow_variable["schedule"]
+            report_airflow_variable["schedule"],
         )
 
     def test_duplicate_report(self):
@@ -379,7 +374,3 @@ class ReportSaveTest(unittest.TestCase):
         self.assertEqual(
             updated_report.schedule_custom.data, report_airflow_variable["schedule"]
         )
-
-
-if __name__ == "__main__":
-    unittest.main()

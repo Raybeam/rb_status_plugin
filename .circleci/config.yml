@@ -3,6 +3,9 @@ jobs:
   build:
     docker:
     - image: circleci/python:3.6.2-stretch-browsers
+    ports:
+      -"8080"
+      -"5432"
     steps:
     - checkout
     - restore_cache:
@@ -12,10 +15,11 @@ jobs:
           - rb-dependencies-
     - run:
         command: |-
-          python -m venv ~/.venv
+          python3 -m venv ~/.venv
           . ~/.venv/bin/activate
-          pip install apache-airflow
-          pip install -r requirements.txt
+          pip3 install --upgrade pip
+          pip3 install --upgrade apache-airflow
+          pip3 install -r requirements.txt
         name: Setup venv
     - save_cache:
         paths:
@@ -27,25 +31,102 @@ jobs:
           flake8
         name: Run flake8 linter
     - run:
-        command: git clone https://github.com/Raybeam/rb_test_airflow /home/circleci/rb_test_airflow
-        name: Set up Airflow
+        command: |-
+          . ~/.venv/bin/activate
+          sudo apt-get update
+          sudo apt-get install postgresql postgresql-contrib
+          sudo sed -i 's~host    all             all             127.0.0.1/32            md5~host    all             all             0.0.0.0/0               trust~g' /etc/postgresql/$(ls /etc/postgresql)/main/pg_hba.conf
+          sudo sed -i 's~local   all             postgres                                peer~local   all             postgres                                trust~g' /etc/postgresql/$(ls /etc/postgresql)/main/pg_hba.conf
+          sudo service postgresql restart
+          psql -U postgres -c "CREATE USER airflow PASSWORD 'password';"
+          psql -U postgres -c "CREATE DATABASE airflow;"
+          psql -U postgres -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO airflow;"
+        name: Set up Postgres
+    - run:
+        command: |-
+          . ~/.venv/bin/activate
+          git clone https://github.com/Raybeam/rb_test_airflow /home/circleci/rb_test_airflow
+        name: Clone rb_test_airflow
+    - run:
+        command: |-
+          . ~/.venv/bin/activate
+          cd /home/circleci/rb_test_airflow
+          mkdir /home/circleci/rb_test_airflow/plugins/
+          git clone https://github.com/Raybeam/rb_plugin_deploy /home/circleci/rb_test_airflow/plugins/rb_plugin_deploy
+        name: Clone rb_plugin_deploy
+    - run:
+        command: |-
+          . ~/.venv/bin/activate
+          cd /home/circleci/rb_test_airflow
+          cat /home/circleci/rb_test_airflow/plugins/rb_plugin_deploy/VERSIONS.md  | while read line || [[ -n $line ]];
+          do
+            if [[ $line =~ "["*"]"  ]]; then
+              plugin_name=${line#*\[}
+              plugin_name=${plugin_name%\]*}
+              if [[ $plugin_name != ${CIRCLE_PROJECT_REPONAME} ]]; then
+                git clone https://github.com/Raybeam/$plugin_name /home/circleci/rb_test_airflow/plugins/$plugin_name
+                pip3 install -r /home/circleci/rb_test_airflow/plugins/$plugin_name/requirements.txt
+                # if [[ -f "/home/circleci/rb_test_airflow/plugins/$plugin_name/bin/setup" ]]; then
+                #   plugins/$plugin_name/bin/setup init
+                # fi
+              fi
+            fi
+          done
+        name: Clone rb airflow plugins and install their requirements
+    - run:
+        command: |-
+          . ~/.venv/bin/activate
+          cd /home/circleci/rb_test_airflow
+          cp -r /home/circleci/project/ /home/circleci/rb_test_airflow/plugins/${CIRCLE_PROJECT_REPONAME}
+          pip3 install -r /home/circleci/rb_test_airflow/plugins/${CIRCLE_PROJECT_REPONAME}/requirements.txt
+          plugins/${CIRCLE_PROJECT_REPONAME}/bin/setup init
+          unset ret
+          pytest  /home/circleci/rb_test_airflow/plugins/${CIRCLE_PROJECT_REPONAME}/tests/ -m "not compatibility" || ret=$?
+              if [ -n "$ret" ]; then
+                if ! [[ "05" =~ "$ret" ]]; then
+                  exit "$ret"
+                fi
+              fi
+        name: Run current plugin's unittests
     - run:
         command: |-
           . ~/.venv/bin/activate
           cd /home/circleci/rb_test_airflow
           export AIRFLOW_HOME=$PWD
+          cp ~/project/.circleci/airflow.cfg $AIRFLOW_HOME/airflow.cfg
+          echo "Attempting to initialize airflow..."
+          airflow initdb &> /dev/null || true
           airflow initdb
-          mkdir ./plugins/
-          ln -s /home/circleci/project ./plugins/rb_status_plugin
+          echo "Airflow initialized successfully."
           airflow create_user -r Admin -u admin -e admin@example.com -f admin -l user -p admin
-          plugins/rb_status_plugin/bin/rb_status init
           schedule_airflow="airflow scheduler"
           webserve_airflow="airflow webserver"
           echo -e "spinning up scheduler and webserver..."
           $schedule_airflow &
           $webserve_airflow &
-          pytest plugins/rb_status_plugin/tests/
-        name: start up airflow and run tests
+          set -e
+          cat /home/circleci/rb_test_airflow/plugins/rb_plugin_deploy/VERSIONS.md  | while read line || [[ -n $line ]];
+          do
+            if [[ $line =~ "["*"]"  ]]; then
+              plugin_name=${line#*\[}
+              plugin_name=${plugin_name%\]*}
+              unset ret
+              pytest /home/circleci/rb_test_airflow/plugins/$plugin_name/tests -m compatibility || ret=$?
+              if [ -n "$ret" ]; then
+                if ! [[ "05" =~ "$ret" ]]; then
+                  exit "$ret"
+                fi
+              fi
+            fi
+          done
+          pytest  /home/circleci/rb_test_airflow/plugins/${CIRCLE_PROJECT_REPONAME}/tests -m compatibility || ret=$?
+          if [ -n "$ret" ]; then
+            if ! [[ "05" =~ "$ret" ]]; then
+              exit "$ret"
+            fi
+          fi
+          set +e
+        name: Start Airflow and run all plugins compatibility tests
     - run:
         command: |-
           echo "TRIGGERER: ${CIRCLE_USERNAME}"

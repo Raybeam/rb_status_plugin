@@ -55,6 +55,7 @@ form_fieldsets_config = [
     ("Tests", {"fields": ["tests"]}),
 ]
 
+
 # Creating a flask appbuilder BaseView
 class StatusView(AppBuilderBaseView):
     """
@@ -189,7 +190,7 @@ class ReportForm(DynamicForm):
             "List of the tests to include in the report. Only includes\
          tasks that have ran in airflow."
         ),
-        choices=get_all_test_choices(),
+        choices=None,
         widget=Select2ManyWidget(),
         validators=[DataRequired()],
     )
