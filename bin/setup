@@ -100,7 +100,7 @@ def init(args):
         dags_folder = find_dags_folder()
         setup_path = find_setup_path()
 
-        logging.info(f"Copying dags from {setup_path} to {dags_folder}")
+        logging.info(f"Copying essential python files from {setup_path} to {dags_folder}")
         if not args.dry:
             src_files = os.listdir(setup_path)
             for file_name in src_files:
@@ -121,8 +121,8 @@ def init(args):
 
 def add_samples(args):
     try:
+        init(args)
         setup_path = find_setup_path()
-
         add_sample_dag(setup_path, args)
         if args.dag_only:
             return
