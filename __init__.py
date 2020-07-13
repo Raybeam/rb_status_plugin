@@ -73,4 +73,3 @@ class RbStatusPlugin(AirflowPlugin):
         v_appbuilder_edit_report_form_package,
     ]
     appbuilder_menu_items = []
-
