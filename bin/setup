@@ -167,8 +167,8 @@ if __name__ == "__main__":
         os.environ["KRB5_KTNAME"] = conf.get("kerberos", "keytab")
 
     parser = argparse.ArgumentParser(
-        description="""
-    This plugin does X.  To operate, it needs
+        description=f"""
+    { plugin_name } is a plugin for Airflow that handles data confidence.  To operate, it needs
     to include a file in the DAGs folder.  A sample DAG is also provided if you'd like
     to get some sample data in the Airflow DB in order to try the plugin out.
     """
