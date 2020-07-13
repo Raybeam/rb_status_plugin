@@ -128,6 +128,7 @@ class ReportModel(BaseModelView):
             "schedule_time",
             "schedule_week_day",
             "schedule",
+            "schedule_timezone"
         ]
 
     def scaffold_sortable_columns(self):
