@@ -11,6 +11,9 @@
 
 The Status Airflow plugin makes it easy to communicate confidence about your data system to manager, executives and other stakeholders in your organization.  It improves trust in underlying data by increasing transparency.
 
+# How to use
+For a good walkthrough of the tool, head over to our [Medium article about the rb_status_plugin](https://medium.com/raybeam/use-airflow-to-project-confidence-in-your-data-abd160f3dc8c)
+
 # Set up
 These are instructions for importing this plugin into an existing airflow workspace.  
 To start, navigate to the root of your airflow workspace.  
