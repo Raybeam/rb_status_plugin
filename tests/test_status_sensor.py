@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta
-import unittest
 import pytest
 
 from airflow.operators.dummy_operator import DummyOperator
@@ -22,7 +21,7 @@ default_args = {
 
 
 @pytest.mark.compatibility
-class SensorTest(unittest.TestCase):
+class SensorTest:
     rb_status_dag = DAG(
         "rb_status_dag", schedule_interval=None, default_args=default_args
     )
@@ -128,7 +127,3 @@ class SensorTest(unittest.TestCase):
 
         self.assertRaises(AttributeError, sensor.poke, sensor_ti.get_template_context())
         self.assertEqual(expected_test_response, test_result)
-
-
-if __name__ == "__main__":
-    unittest.main()

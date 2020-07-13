@@ -2,7 +2,6 @@ from airflow.models import Variable
 
 import datetime
 import copy
-import unittest
 import pendulum
 import pytest
 
@@ -22,7 +21,7 @@ class AttributeDict(dict):
 
 
 @pytest.mark.compatibility
-class ReportSaveTest(unittest.TestCase):
+class ReportSaveTest:
     """
     Class for testing the ability to save report forms.
     """
@@ -375,7 +374,3 @@ class ReportSaveTest(unittest.TestCase):
         self.assertEqual(
             updated_report.schedule_custom.data, report_airflow_variable["schedule"]
         )
-
-
-if __name__ == "__main__":
-    unittest.main()

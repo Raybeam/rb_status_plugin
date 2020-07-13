@@ -2,12 +2,11 @@ from rb_status_plugin.core.report_repo import VariablesReportRepo
 from rb_status_plugin.core.report import Report
 
 import json
-import unittest
 import pytest
 
 
 @pytest.mark.compatibility
-class VariablesReportRepoTest(unittest.TestCase):
+class VariablesReportRepoTest:
     dummy_test = """
             {
                 "report_title": "my report title",
@@ -59,7 +58,3 @@ class VariablesReportRepoTest(unittest.TestCase):
         parsed = json.loads(self.dummy_test)
         r = VariablesReportRepo.to_report("bob", parsed)
         self.assertIsInstance(r, Report)
-
-
-if __name__ == "__main__":
-    unittest.main()
