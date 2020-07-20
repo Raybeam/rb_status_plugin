@@ -111,7 +111,7 @@ jobs:
               plugin_name=${line#*\[}
               plugin_name=${plugin_name%\]*}
               unset ret
-              pytest /home/circleci/rb_test_airflow/plugins/$plugin_name/tests -m compatibility || ret=$?
+              pytest /home/circleci/rb_test_airflow/plugins/$plugin_name/tests || ret=$?
               if [ -n "$ret" ]; then
                 if ! [[ "05" =~ "$ret" ]]; then
                   exit "$ret"
@@ -119,7 +119,7 @@ jobs:
               fi
             fi
           done
-          pytest  /home/circleci/rb_test_airflow/plugins/${CIRCLE_PROJECT_REPONAME}/tests -m compatibility || ret=$?
+          pytest  /home/circleci/rb_test_airflow/plugins/${CIRCLE_PROJECT_REPONAME}/tests || ret=$?
           if [ -n "$ret" ]; then
             if ! [[ "05" =~ "$ret" ]]; then
               exit "$ret"
