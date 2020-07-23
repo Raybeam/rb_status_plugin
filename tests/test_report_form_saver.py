@@ -5,7 +5,6 @@ import copy
 import pendulum
 import pytest
 from mock import patch
-from flask import flash
 
 from rb_status_plugin.core.report_form_saver import ReportFormSaver
 
@@ -276,7 +275,7 @@ class TestReportSave:
         Test that no errors are thrown with a correct email.
         """
         valid_email = "jdoe@raybeam.com"
-        assert None == ReportFormSaver.validate_email(ReportFormSaver, valid_email)
+        assert ReportFormSaver.validate_email(ReportFormSaver, valid_email) is None
 
     def test_invalid_email(self):
         """
