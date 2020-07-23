@@ -6,7 +6,7 @@ import pytest
 
 
 @pytest.mark.compatibility
-class VariablesReportRepoTest:
+class TestVariablesReportRepo:
     dummy_test = """
             {
                 "report_title": "my report title",
@@ -33,28 +33,28 @@ class VariablesReportRepoTest:
 
     def test_parse_variable_value(self):
         parsed = VariablesReportRepo.parse_variable_val(self.dummy_test)
-        self.assertEqual(
-            parsed["tests"],
-            ["example_dag.python_print_date_0", "example_dag.python_random_0"],
-        )
+        assert parsed["tests"] == [
+            "example_dag.python_print_date_0",
+            "example_dag.python_random_0",
+        ]
 
     def test_parse_variable_value_no_json(self):
         parsed = VariablesReportRepo.parse_variable_val("not_json")
-        self.assertIsNone(parsed)
+        assert parsed is None
 
     def test_parse_variable_name(self):
         parsed = VariablesReportRepo.parse_variable_name("rb_status_bob")
-        self.assertEqual(parsed, "bob")
+        assert parsed == "bob"
 
     def test_parse_variable_name_ci(self):
         parsed = VariablesReportRepo.parse_variable_name("RB_STATUS_BOB")
-        self.assertEqual(parsed, "BOB")
+        assert parsed == "BOB"
 
     def test_parse_variable_name_none(self):
         parsed = VariablesReportRepo.parse_variable_name("not_correct")
-        self.assertIsNone(parsed)
+        assert parsed is None
 
     def test_return_report(self):
         parsed = json.loads(self.dummy_test)
         r = VariablesReportRepo.to_report("bob", parsed)
-        self.assertIsInstance(r, Report)
+        assert type(r) == Report
