@@ -21,7 +21,7 @@ default_args = {
 
 
 @pytest.mark.compatibility
-class SensorTest:
+class TestSensor:
     rb_status_dag = DAG(
         "rb_status_dag", schedule_interval=None, default_args=default_args
     )
@@ -75,8 +75,8 @@ class SensorTest:
 
         test_result = sensor_ti.xcom_pull(key="rb_status_test_task_status")
 
-        self.assertEqual(expected_test_response, test_result)
-        self.assertEqual(expected_operational_response, op_result)
+        assert expected_test_response == test_result
+        assert expected_operational_response == op_result
 
     def test_failure(self):
         # test that StatusSensor processes a failed test operation
@@ -94,8 +94,8 @@ class SensorTest:
         op_result = sensor.poke(context=sensor_ti.get_template_context())
         test_result = sensor_ti.xcom_pull(key="rb_status_test_task_status")
 
-        self.assertEqual(expected_test_response, test_result)
-        self.assertEqual(expected_operational_response, op_result)
+        assert expected_test_response == test_result
+        assert expected_operational_response == op_result
 
     def test_intermittant_state(self):
         # tests that StatusSensor processes a test with
@@ -112,7 +112,7 @@ class SensorTest:
 
         op_result = sensor.poke(context=sensor_ti.get_template_context())
 
-        self.assertEqual(expected_response, op_result)
+        assert expected_response == op_result
 
     def test_unknown(self):
         # Testing that an operational failure results in an Unknown
@@ -125,5 +125,6 @@ class SensorTest:
 
         test_result = sensor_ti.xcom_pull(key="rb_status_test_task_status")
 
-        self.assertRaises(AttributeError, sensor.poke, sensor_ti.get_template_context())
-        self.assertEqual(expected_test_response, test_result)
+        with pytest.raises(AttributeError):
+            sensor.poke(sensor_ti.get_template_context())
+        assert expected_test_response == test_result

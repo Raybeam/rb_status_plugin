@@ -4,7 +4,7 @@ import pytest
 
 
 @pytest.mark.compatibility
-class ReportTest:
+class TestReport:
     def test_task_id_naming(self):
         r = Report("dummy name")
-        self.assertEqual(r.dag_id, "rb_status_dummy_name")
+        assert r.dag_id == "rb_status_dummy_name"
