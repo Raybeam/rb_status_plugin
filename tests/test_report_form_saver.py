@@ -168,7 +168,7 @@ class TestReportSave:
         """
         Extract report_form_sample into airflow variable.
         """
-        with patch('rb_status_plugin.core.report_form_saver.flash'):
+        with patch("rb_status_plugin.core.report_form_saver.flash"):
             print("Creating airflow variable...")
             report_saver = ReportFormSaver(cls.report_form_sample)
             report_saver.extract_report_data_into_airflow(report_exists=False)
@@ -189,7 +189,10 @@ class TestReportSave:
             "rb_status_" + self.report_form_sample.report_title.data,
             deserialize_json=True,
         )
-        assert self.report_form_sample.report_title.data == report_airflow_variable["report_title"]
+        assert (
+            self.report_form_sample.report_title.data
+            == report_airflow_variable["report_title"]
+        )
 
     def test_conversion_to_default_timezone(self):
         """
@@ -223,7 +226,10 @@ class TestReportSave:
             "rb_status_" + self.report_form_sample.report_title.data,
             deserialize_json=True,
         )
-        assert self.report_form_sample.description.data == report_airflow_variable["description"]
+        assert (
+            self.report_form_sample.description.data
+            == report_airflow_variable["description"]
+        )
 
     def test_saved_owner_name(self):
         """
@@ -233,7 +239,10 @@ class TestReportSave:
             "rb_status_" + self.report_form_sample.report_title.data,
             deserialize_json=True,
         )
-        assert self.report_form_sample.owner_name.data == report_airflow_variable["owner_name"]
+        assert (
+            self.report_form_sample.owner_name.data
+            == report_airflow_variable["owner_name"]
+        )
 
     def test_saved_owner_email(self):
         """
@@ -243,7 +252,10 @@ class TestReportSave:
             "rb_status_" + self.report_form_sample.report_title.data,
             deserialize_json=True,
         )
-        assert self.report_form_sample.owner_email.data == report_airflow_variable["owner_email"]
+        assert (
+            self.report_form_sample.owner_email.data
+            == report_airflow_variable["owner_email"]
+        )
 
     def test_saved_subscribers(self):
         """
@@ -253,7 +265,11 @@ class TestReportSave:
             "rb_status_" + self.report_form_sample.report_title.data,
             deserialize_json=True,
         )
-        assert report_airflow_variable["subscribers"] == ["email1@raybeam.com", "email2@raybeam.com", "jdoe@raybeam.com"]
+        assert report_airflow_variable["subscribers"] == [
+            "email1@raybeam.com",
+            "email2@raybeam.com",
+            "jdoe@raybeam.com",
+        ]
 
     def test_valid_email(self):
         """
@@ -270,9 +286,9 @@ class TestReportSave:
         with pytest.raises(Exception) as context:
             ReportFormSaver.validate_email(ReportFormSaver, invalid_email)
             assert (
-                    f"Email ({invalid_email}) is not valid."
-                    "Please enter a valid email address."
-                ) in str(context.exception)
+                f"Email ({invalid_email}) is not valid."
+                "Please enter a valid email address."
+            ) in str(context.exception)
 
     def test_daily_schedule_conversion(self):
         """
@@ -293,7 +309,10 @@ class TestReportSave:
         after_dt = before_dt.in_tz("UTC")
 
         Variable.delete("rb_status_" + self.report_form_sample_daily.report_title.data)
-        assert f"{after_dt.minute} {after_dt.hour} * * *" == report_airflow_variable["schedule"]
+        assert (
+            f"{after_dt.minute} {after_dt.hour} * * *"
+            == report_airflow_variable["schedule"]
+        )
 
     def test_weekly_schedule_conversion(self):
         """
@@ -318,7 +337,10 @@ class TestReportSave:
 
         Variable.delete("rb_status_" + self.report_form_sample_weekly.report_title.data)
 
-        assert f"{after_dt.minute} {after_dt.hour} * * {after_dt.day_of_week}" == report_airflow_variable["schedule"]
+        assert (
+            f"{after_dt.minute} {after_dt.hour} * * {after_dt.day_of_week}"
+            == report_airflow_variable["schedule"]
+        )
 
     def test_duplicate_report(self):
         """
@@ -346,4 +368,6 @@ class TestReportSave:
         report_saver = ReportFormSaver(updated_report)
         report_saver.extract_report_data_into_airflow(report_exists=True)
 
-        assert updated_report.schedule_custom.data == report_airflow_variable["schedule"]
+        assert (
+            updated_report.schedule_custom.data == report_airflow_variable["schedule"]
+        )
