@@ -32,7 +32,11 @@ class ReportFormSaver:
         self.report_dict["owner_email"] = self.form.owner_email.data
         self.report_dict["tests"] = self.form.tests.data
         self.report_dict["schedule_type"] = self.form.schedule_type.data
-        self.report_dict["schedule_timezone"] = self.form.schedule_timezone.data if self.form.schedule_timezone.data else "UTC"
+        self.report_dict["schedule_timezone"] = (
+            self.form.schedule_timezone.data
+            if self.form.schedule_timezone.data
+            else "UTC"
+        )
         if self.report_dict["schedule_type"] == "custom":
             self.report_dict["schedule"] = self.form.schedule_custom.data
         elif self.report_dict["schedule_type"] == "manual":
