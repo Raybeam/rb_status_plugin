@@ -57,7 +57,7 @@ def report_notify_email(report, email_template_location, **context):
     passed = ri.passed
     status = get_status(passed)
     details_link = get_details_link()
-    use_sendgrid = True if Variable.get("use_sendgrid", "false").lower() == 'true' else False
+    use_sendgrid = True if Variable.get("use_sendgrid", "true").lower() == 'true' else False
 
     with open(email_template_location) as file:
         send_email = EmailOperator(
@@ -85,10 +85,10 @@ def report_notify_email(report, email_template_location, **context):
             message = send_email.html_content
             dag_id = context["dag"].dag_id
             composer_instance_name = conf.get('webserver', 'web_server_name')
-            smtp_server = Variable.get("email_server", "smtp.bedbath.com")
+            smtp_server = Variable.get("email_server", "smtp.raybeam.com")
             sender_email = Variable.get(
                 f"{ dag_id }_sender_email",
-                f"no-reply@{ composer_instance_name }.bedbath.com",
+                f"no-reply@{ composer_instance_name }.raybeam.com",
             )
             receivers = ", ".join(report.subscribers)
             msg = MIMEMultipart("alternative")
