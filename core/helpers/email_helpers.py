@@ -1,4 +1,4 @@
-from airflow.operators.email_operator import EmailOperator
+from rb_status_plugin.operators.custom_email_operator import CustomEmailOperator
 from airflow.configuration import conf
 
 import logging
@@ -35,13 +35,10 @@ def report_notify_email(report, email_template_location, **context):
     """
     For the given report, sends a notification email in the format given
     in the email_template
-
     :param report: report being notified on
     :type report: Report
-
     :param email_template_location: location of html template to use for status
     :type email_template_location: str
-
     :param test_prefix: the prefix that precedes all test tasks
     :type test_prefix: str
     """
@@ -55,7 +52,7 @@ def report_notify_email(report, email_template_location, **context):
     details_link = get_details_link()
 
     with open(email_template_location) as file:
-        send_email = EmailOperator(
+        send_email = CustomEmailOperator(
             task_id="custom_email_notification",
             to=report.subscribers,
             subject="[{{status}}] {{title}}",
