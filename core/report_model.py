@@ -177,7 +177,7 @@ class ReportModel(BaseModelView):
                  tasks that have ran in airflow."
                 ),
                 choices=None,
-                widget=Select2ManyWidget(),
+                widget=Select2ManyWidget(style="width:50%"),
                 validators=[DataRequired()],
             )
             schedule_type = SelectField(
