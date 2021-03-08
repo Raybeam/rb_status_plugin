@@ -45,7 +45,7 @@ class TestReportSave:
                 }
             ),
             "schedule_type": AttributeDict({"data": "custom"}),
-            "schedule_timezone": AttributeDict({"data": "America/Chicago"}),
+            "schedule_timezone": AttributeDict({"data": "EST"}),
             "schedule_custom": AttributeDict({"data": "* * * 1 *"}),
         }
     )
@@ -68,7 +68,7 @@ class TestReportSave:
                 }
             ),
             "schedule_type": AttributeDict({"data": "custom"}),
-            "schedule_timezone": AttributeDict({"data": "America/Chicago"}),
+            "schedule_timezone": AttributeDict({"data": "EST"}),
             "schedule_custom": AttributeDict({"data": "* * * 1 1"}),
             "report_id": AttributeDict({"data": "rb_status_new test report title"}),
         }
@@ -92,7 +92,7 @@ class TestReportSave:
                 }
             ),
             "schedule_type": AttributeDict({"data": "daily"}),
-            "schedule_timezone": AttributeDict({"data": "America/Chicago"}),
+            "schedule_timezone": AttributeDict({"data": "EST"}),
             "schedule_time": AttributeDict(
                 {"data": datetime.datetime(year=2000, month=1, day=1, hour=5, minute=0)}
             ),
@@ -119,7 +119,7 @@ class TestReportSave:
                 }
             ),
             "schedule_type": AttributeDict({"data": "daily"}),
-            "schedule_timezone": AttributeDict({"data": "America/Chicago"}),
+            "schedule_timezone": AttributeDict({"data": "EST"}),
             "schedule_time": AttributeDict(
                 {
                     "data": datetime.datetime(
@@ -150,7 +150,7 @@ class TestReportSave:
                 }
             ),
             "schedule_type": AttributeDict({"data": "weekly"}),
-            "schedule_timezone": AttributeDict({"data": "America/Chicago"}),
+            "schedule_timezone": AttributeDict({"data": "EST"}),
             "schedule_time": AttributeDict(
                 {
                     "data": datetime.datetime(
@@ -196,7 +196,7 @@ class TestReportSave:
     def test_conversion_to_default_timezone(self):
         """
         Tests that the schedule time is converted to airflow default
-        timezone in the backend (i.e. America/Chicago -> UTC)
+        timezone in the backend (i.e. EST -> UTC)
         """
         report_saver = ReportFormSaver(self.report_form_sample_timezone_daily)
         report_saver.extract_report_data_into_airflow(report_exists=False)
@@ -209,9 +209,7 @@ class TestReportSave:
         tz = self.report_form_sample_timezone_daily.schedule_timezone.data
 
         before_dt = pendulum.now().in_tz(tz).at(time.hour, time.minute, 0)
-
         after_dt = before_dt.in_tz("UTC")
-
         Variable.delete(
             "rb_status_" + self.report_form_sample_timezone_daily.report_title.data
         )
