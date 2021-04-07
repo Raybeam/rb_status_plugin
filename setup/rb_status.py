@@ -47,10 +47,12 @@ def create_dag(report, default_args):
             provide_context=True,
         )
         for test in report.tests:
+            # This will interpret the first value as the dag id and everything else for the task id
+            dag_id, *task_id = test.split(".")
             t1 = StatusSensor(
                 task_id=test_prefix + test,
-                test_dag_id=test.split(".")[0],
-                test_task_id=test.split(".")[1],
+                test_dag_id=dag_id,
+                test_task_id=".".join(task_id),  # if task_id contains periods, will re-add periods
             )
             start >> t1 >> send_email
 
