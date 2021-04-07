@@ -52,7 +52,7 @@ def create_dag(report, default_args):
             t1 = StatusSensor(
                 task_id=test_prefix + test,
                 test_dag_id=dag_id,
-                test_task_id=".".join(task_id), #  if task_id contains periods, will re-add periods
+                test_task_id=".".join(task_id),  # if task_id contains periods, will re-add periods
             )
             start >> t1 >> send_email
 
